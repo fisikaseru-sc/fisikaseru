@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -24,3 +25,12 @@ dist-ssr
 *.sw?
 .codex/
 .next/
+=======
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.codex/
+>>>>>>> a816c69 (Update FisikaSeru)
