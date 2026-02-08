@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#083344"/>
+  <circle cx="270" cy="300" r="140" fill="#14b8a6" opacity="0.7"/>
+  <circle cx="430" cy="200" r="90" fill="#eab308" opacity="0.75"/>
+  <text x="80" y="120" fill="#e2e8f0" font-size="72" font-family="sans-serif" font-weight="700">FisikaSeru</text>
+  <text x="80" y="190" fill="#bae6fd" font-size="38" font-family="sans-serif">Virtual Labs for Inquiry Learning</text>
+</svg>

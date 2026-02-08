@@ -1,0 +1,20 @@
+# Step 4 — Analisis Data
+
+Panel analisis melakukan:
+
+1. Hitung `v1` dan `v2` dari `S`, `V_obj`, `t1`, `t2`.
+2. Hitung `r0` dan `q0` sesuai metode (`floating` atau `rising/falling`).
+3. Terapkan opsi Cunningham (`eta_c`, `q_c`) bila diaktifkan.
+4. Estimasi muatan elementer `e` dari set `q_i`:
+   - Urutkan `q_i` berdasarkan `|q|`.
+   - Inisialisasi `e_guess = median(|q|)/3`.
+   - Tetapkan `n_i = round(q_i/e_guess)` (hindari 0 untuk nilai non-zero).
+   - Fit linear tanpa intercept: `q_i ≈ n_i * e`.
+   - Ulangi 3 iterasi.
+5. Tampilkan grafik wajib:
+   - Time vs Voltage
+   - Radius vs Velocity
+   - q (atau qc) vs n + garis fit
+6. Isi CER untuk disalin ke laporan.
+
+Gunakan data dari beberapa droplet agar pola kuantisasi terlihat jelas.
