@@ -1,0 +1,282 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ═══════════════════════════════════════════════════════════════
+   FisikaSeru 3.0 — Design System Foundation
+   ═══════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Brand Colors ──────────────────────────────── */
+  --color-primary-navy: #14213D;
+  --color-primary-navy-light: #1E3358;
+  --color-accent-cobalt: #1B4FD8;
+  --color-accent-cobalt-light: #2E63E8;
+  --color-sky-blue: #3B9EE2;
+  --color-sky-blue-light: #5CB5F0;
+  --color-teal: #0D7C6B;
+  --color-teal-light: #10A88F;
+  --color-amber: #D97706;
+  --color-rose: #C0392B;
+  --color-violet: #5B21B6;
+
+  /* ── Background ────────────────────────────────── */
+  --color-bg-primary: #F8FAFC;
+  --color-bg-dark: #0F172A;
+  --color-surface-light: #FFFFFF;
+  --color-surface-dark: #1E293B;
+  --color-surface-raised: #FFFFFF;
+
+  /* ── Semantic ──────────────────────────────────── */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  /* ── Text ──────────────────────────────────────── */
+  --color-text-primary: #1F2937;
+  --color-text-muted: #6B7280;
+  --color-text-inverse: #FFFFFF;
+
+  /* ── Border ────────────────────────────────────── */
+  --color-border-default: #E5E7EB;
+  --color-border-strong: #D1D5DB;
+
+  /* ── Data Visualization ────────────────────────── */
+  --color-data-valid: #10B981;
+  --color-data-outlier: #F59E0B;
+  --color-regression: #14213D;
+
+  /* ── Font Families ─────────────────────────────── */
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Spacing ───────────────────────────────────── */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+
+  /* ── Shadows ───────────────────────────────────── */
+  --shadow-science: 0 4px 24px rgba(20, 33, 61, 0.08);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 20px rgba(27, 79, 216, 0.12);
+  --shadow-depth: 0 8px 40px rgba(0,0,0,0.12);
+
+  /* ── Border Radius ─────────────────────────────── */
+  --radius-sm: 4px;
+  --radius-base: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* ── Transitions ───────────────────────────────── */
+  --transition-fast: 100ms ease-out;
+  --transition-base: 200ms ease-out;
+  --transition-slow: 300ms ease-out;
+
+  /* ── Layout ────────────────────────────────────── */
+  --navbar-height: 64px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+}
+
+/* ── Selection ───────────────────────────────────── */
+::selection {
+  background-color: rgba(27, 79, 216, 0.15);
+  color: var(--color-primary-navy);
+}
+
+/* ── Focus Styles ────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-cobalt);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbar ───────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary-navy), var(--color-accent-cobalt));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-science {
+  background: linear-gradient(135deg, var(--color-accent-cobalt), var(--color-sky-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-discovery {
+  background: linear-gradient(135deg, var(--color-teal), var(--color-sky-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes expand-line {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.science-card {
+  background: white;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
+}
+
+.science-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgba(27, 79, 216, 0.2);
+  transform: translateY(-2px);
+}
+
+.badge-science {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* ── Screen Reader Only ──────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════════════════════ */
+
+.dark body {
+  background-color: var(--color-bg-dark);
+  color: #F1F5F9;
+}
+
+.dark .science-card {
+  background: var(--color-surface-dark);
+  border-color: #334155;
+}
+
+.dark .glass-panel {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(71, 85, 105, 0.4);
+}
