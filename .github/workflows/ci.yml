@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Generate Registry
+        run: npm run registry:generate
+
+      - name: Validate Manifests
+        run: npm run manifests:validate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+  visual-regression-placeholder:
+    runs-on: ubuntu-latest
+    if: ${{ false }}
+    steps:
+      - run: echo "Enable visual regression pipeline when baseline workflow is ready."

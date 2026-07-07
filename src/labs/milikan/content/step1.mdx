@@ -1,0 +1,61 @@
+# Step 1 — Tujuan, Konsep, dan Rumus
+
+## Tujuan
+- Mengukur muatan tetes minyak dan menunjukkan kuantisasi muatan: `q = n e`.
+- Menghubungkan data praktikum dengan gaya gravitasi efektif, gaya gesek Stokes, gaya listrik, dan gaya apung.
+
+## Variabel Penting
+- `U`: tegangan antar pelat.
+- `d`: jarak antar pelat kapasitor.
+- `eta`: viskositas udara yang dipakai pada perhitungan (`eta0` atau `eta_c`).
+- `rho_oil`, `rho_air`: densitas minyak dan udara.
+- `t1`, `t2`: waktu naik dan turun droplet.
+- `v1 = x/t1`, `v2 = x/t2`.
+- `r0`: jari-jari droplet dari dinamika jatuh.
+- `q0`: muatan droplet tanpa koreksi tambahan pada q.
+- `P`, `T`: tekanan dan suhu (untuk koreksi/parameter medium).
+
+## Jarak Observasi
+Dengan dua mark mikrometer (`topMark`, `bottomMark`):
+
+- `S_lines = |topMark - bottomMark|`
+- `S_mm = S_lines * scaleDivision`
+- `x = (S_mm / 1000) / V_obj`
+
+## Metode Pengukuran
+
+### 1) Floating method
+1. Nyalakan `U` dan atur sampai tetes hampir diam di sekitar mark (indikator stabil: `|v|` kecil selama jendela waktu tertentu).
+2. Matikan `U`, tetes turun.
+3. Ukur `t2` untuk menempuh jarak `x` antara dua mark.
+
+Rumus utama:
+- `v2 = x/t2`
+- `r0 = sqrt((9/2) * (eta * v2) / ((rho_oil - rho_air) * g))`
+- `q0 = 9*pi*(d/U) * sqrt((2*eta^3*v2)/(3*(rho_oil-rho_air)*g))`
+
+### 2) Rising/falling method
+1. Pilih `U`.
+2. Ukur `t1` saat tetes naik dan `t2` saat tetes turun untuk mark yang sama.
+3. Hitung `v1`, `v2`, lalu `r0` dan `q0`.
+
+Rumus utama:
+- `v1 = x/t1`, `v2 = x/t2`
+- `r0 = sqrt((9/2) * (eta * v2) / ((rho_oil - rho_air) * g))`
+- `q0 = 9*pi*(d/U)*(v1+v2)*sqrt((2*eta^3*v2)/(3*(rho_oil-rho_air)*g))`
+
+## Koreksi Cunningham
+Untuk droplet kecil, slip effect membuat model Stokes murni bias.
+
+- `eta_c = eta0 * (1 + b/(rP))^(-1)`
+- `q_c = q * (1 + b/(rP))^(-3/2)`
+
+Catatan unit:
+- `r` dalam meter.
+- `P` diinput dalam hPa lalu dikonversi ke Pa (`P_Pa = P_hPa * 100`) agar `b/(rP)` tak berdimensi sesuai implementasi.
+
+## Polarity
+- `above`: pelat atas positif, pelat bawah negatif.
+- `below`: pelat atas negatif, pelat bawah positif.
+
+Jika `U ON` tetapi droplet masih turun saat Anda mengharapkan naik, balik polarity.

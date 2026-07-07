@@ -1,0 +1,9 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "fisikaseru-placeholder"
+  },
+  "scenes": [{ "nodes": [0] }],
+  "nodes": [{ "mesh": 0 }],
+  "meshes": [{ "primitives": [{ "attributes": {} }] }]
+}

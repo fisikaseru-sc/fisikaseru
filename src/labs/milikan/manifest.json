@@ -1,0 +1,332 @@
+{
+  "id": "milikan",
+  "labId": "milikan",
+  "version": "1.0.0",
+  "slug": "milikan",
+  "title": "Eksperimen Tetes Minyak Millikan",
+  "tags": ["fisika-modern", "muatan-elementer", "kuantisasi", "fluida", "listrik"],
+  "description": "Mengukur muatan tetes minyak dan menaksir muatan elementer e melalui kuantisasi q = n e menggunakan metode floating dan rising/falling.",
+  "assets": {
+    "thumbnail": "/images/labs/milikan/thumbnail.webp",
+    "heroPoster": "/images/labs/milikan/heroPoster.webp",
+    "stepPreviews": {
+      "1": "/images/labs/milikan/stepPreviews/step1.webp",
+      "2": "/images/labs/milikan/stepPreviews/step2.webp",
+      "3": "/images/labs/milikan/stepPreviews/step3.webp",
+      "4": "/images/labs/milikan/stepPreviews/step4.webp",
+      "5": "/images/labs/milikan/stepPreviews/step5.webp"
+    }
+  },
+  "steps": [
+    {
+      "step": 1,
+      "type": "mdx",
+      "title": "Konsep & Rumus",
+      "contentPath": "src/labs/milikan/content/step1.mdx"
+    },
+    {
+      "step": 2,
+      "type": "prelab",
+      "title": "Pre-lab (Variabel & Desain Data)",
+      "contentPath": "src/labs/milikan/content/step2.mdx"
+    },
+    {
+      "step": 3,
+      "type": "simulation",
+      "title": "Eksperimen (Pengukuran t1/t2)",
+      "sim": {
+        "scene": "src/labs/milikan/sim/scene.tsx",
+        "core": "src/labs/milikan/sim/sim-core.ts",
+        "controller": "src/labs/milikan/sim/controller.ts",
+        "instruments": "src/labs/milikan/sim/instruments.ts"
+      }
+    },
+    {
+      "step": 4,
+      "type": "analysis",
+      "title": "Analisis (r0, q0, Cunningham, e)",
+      "contentPath": "src/labs/milikan/content/step4.mdx"
+    },
+    {
+      "step": 5,
+      "type": "report",
+      "title": "Laporan & Export",
+      "contentPath": "src/labs/milikan/content/step5.mdx"
+    }
+  ],
+  "defaultParams": {
+    "d_mm": 3,
+    "V_obj": 2,
+    "g": 9.81,
+    "rhoOil_15": 877,
+    "rhoOil_25": 871,
+    "rhoAir": 1.293,
+    "b": 0.000617
+  },
+  "signPolicy": {
+    "supportsNegative": true,
+    "directionReference": "positiveUp",
+    "polarityMeaning": {
+      "above": "plat atas positif, plat bawah negatif",
+      "below": "plat atas negatif, plat bawah positif"
+    }
+  },
+  "defaults": {
+    "apparatus": {
+      "d_mm": 3,
+      "V_obj": 2,
+      "g_m_s2": 9.81,
+      "scaleDivision_mm_per_line": 0.1
+    },
+    "environment": {
+      "T_C": 25,
+      "P_hPa": 1013.23,
+      "rho_air_kg_m3": 1.293
+    },
+    "oil": {
+      "rho_oil_kg_m3_at_15C": 877,
+      "rho_oil_kg_m3_at_25C": 871
+    },
+    "airViscosity": {
+      "eta0_Pa_s": 0.0000185
+    },
+    "cunningham": {
+      "enabled": true,
+      "b": 0.000617
+    },
+    "simulation": {
+      "method": "rising_falling",
+      "voltage_U_V": 250,
+      "polarity": "above",
+      "sprayCount": 8,
+      "selectedDropletIndex": 0,
+      "noise": {
+        "enabled": true,
+        "timerJitter_s": 0.08,
+        "markPickJitter_lines": 0.4
+      }
+    }
+  },
+  "controls": {
+    "core": [
+      {
+        "id": "voltage_U_V",
+        "label": "Tegangan U",
+        "kind": "slider",
+        "unit": "V",
+        "min": 0,
+        "max": 600,
+        "step": 1,
+        "defaultFrom": "defaults.simulation.voltage_U_V"
+      },
+      {
+        "id": "polarity",
+        "label": "Polarity",
+        "kind": "segmented",
+        "options": [
+          { "value": "above", "label": "Above (+ atas)" },
+          { "value": "below", "label": "Below (+ bawah)" }
+        ],
+        "defaultFrom": "defaults.simulation.polarity"
+      },
+      {
+        "id": "dropletSelect",
+        "label": "Droplet",
+        "kind": "droplet-picker",
+        "defaultFrom": "defaults.simulation.selectedDropletIndex"
+      }
+    ],
+    "advanced": [
+      {
+        "id": "method",
+        "label": "Metode",
+        "kind": "segmented",
+        "options": [
+          { "value": "floating", "label": "Floating" },
+          { "value": "rising_falling", "label": "Rising/Falling" }
+        ],
+        "defaultFrom": "defaults.simulation.method"
+      },
+      {
+        "id": "d_mm",
+        "label": "Jarak plat d",
+        "kind": "number",
+        "unit": "mm",
+        "min": 1,
+        "max": 10,
+        "step": 0.1,
+        "defaultFrom": "defaults.apparatus.d_mm"
+      },
+      {
+        "id": "V_obj",
+        "label": "Pembesaran objektif",
+        "kind": "number",
+        "unit": "x",
+        "min": 1,
+        "max": 10,
+        "step": 0.1,
+        "defaultFrom": "defaults.apparatus.V_obj"
+      },
+      {
+        "id": "scaleDivision_mm_per_line",
+        "label": "Skala mikrometer",
+        "kind": "number",
+        "unit": "mm/line",
+        "min": 0.01,
+        "max": 1,
+        "step": 0.01,
+        "defaultFrom": "defaults.apparatus.scaleDivision_mm_per_line"
+      },
+      {
+        "id": "T_C",
+        "label": "Suhu T",
+        "kind": "number",
+        "unit": "degC",
+        "min": -5,
+        "max": 45,
+        "step": 0.5,
+        "defaultFrom": "defaults.environment.T_C"
+      },
+      {
+        "id": "P_hPa",
+        "label": "Tekanan P",
+        "kind": "number",
+        "unit": "hPa",
+        "min": 800,
+        "max": 1100,
+        "step": 0.1,
+        "defaultFrom": "defaults.environment.P_hPa"
+      },
+      {
+        "id": "eta0_Pa_s",
+        "label": "Viskositas udara eta0",
+        "kind": "number",
+        "unit": "Pa.s",
+        "min": 1e-5,
+        "max": 3e-5,
+        "step": 1e-7,
+        "defaultFrom": "defaults.airViscosity.eta0_Pa_s"
+      },
+      {
+        "id": "rho_air_kg_m3",
+        "label": "Densitas udara rho_air",
+        "kind": "number",
+        "unit": "kg/m^3",
+        "min": 0.8,
+        "max": 1.5,
+        "step": 0.001,
+        "defaultFrom": "defaults.environment.rho_air_kg_m3"
+      },
+      {
+        "id": "rho_oil_kg_m3_at_15C",
+        "label": "rho_oil (15C)",
+        "kind": "number",
+        "unit": "kg/m^3",
+        "min": 700,
+        "max": 1000,
+        "step": 1,
+        "defaultFrom": "defaults.oil.rho_oil_kg_m3_at_15C"
+      },
+      {
+        "id": "rho_oil_kg_m3_at_25C",
+        "label": "rho_oil (25C)",
+        "kind": "number",
+        "unit": "kg/m^3",
+        "min": 700,
+        "max": 1000,
+        "step": 1,
+        "defaultFrom": "defaults.oil.rho_oil_kg_m3_at_25C"
+      },
+      {
+        "id": "cunningham_enabled",
+        "label": "Apply Cunningham",
+        "kind": "switch",
+        "defaultFrom": "defaults.cunningham.enabled"
+      },
+      {
+        "id": "cunningham_b",
+        "label": "Konstanta b",
+        "kind": "number",
+        "unit": "SI",
+        "min": 1e-6,
+        "max": 1e-2,
+        "step": 1e-6,
+        "defaultFrom": "defaults.cunningham.b"
+      }
+    ]
+  },
+  "instrumentsSpec": {
+    "buttons": ["Spray", "Select droplet", "Focus", "Light intensity", "Voltage ON/OFF", "Timer ON/OFF", "Reset timer"],
+    "switches": ["Method", "Polarity", "Apply Cunningham"],
+    "readouts": ["U", "E=U/d", "t1", "t2", "q"],
+    "tableSchema": "milikan_trials"
+  },
+  "readouts": [
+    { "id": "U_V", "label": "U", "unit": "V", "signed": false },
+    { "id": "E_V_m", "label": "E=U/d", "unit": "V/m", "signed": true },
+    { "id": "t1_s", "label": "t1 (naik)", "unit": "s", "signed": false },
+    { "id": "t2_s", "label": "t2 (turun)", "unit": "s", "signed": false },
+    { "id": "q_C", "label": "q (hasil)", "unit": "C", "signed": true }
+  ],
+  "table": {
+    "id": "milikan_trials",
+    "rowId": "trialId",
+    "columns": [
+      { "key": "trialId", "label": "Trial", "type": "string" },
+      { "key": "timestampISO", "label": "Time", "type": "string" },
+      { "key": "method", "label": "Method", "type": "enum", "enum": ["floating", "rising_falling"] },
+      { "key": "dropletId", "label": "Droplet", "type": "string" },
+      { "key": "U_V", "label": "U", "type": "number", "unit": "V", "signed": false },
+      { "key": "polarity", "label": "Polarity", "type": "enum", "enum": ["above", "below"] },
+      { "key": "topMark_lines", "label": "Top mark", "type": "number", "unit": "lines", "signed": true },
+      { "key": "bottomMark_lines", "label": "Bottom mark", "type": "number", "unit": "lines", "signed": true },
+      { "key": "S_lines", "label": "Separation S", "type": "number", "unit": "lines", "signed": false },
+      { "key": "scaleDivision_mm_per_line", "label": "Scale", "type": "number", "unit": "mm/line", "signed": false },
+      { "key": "V_obj", "label": "V_obj", "type": "number", "unit": "x", "signed": false },
+      { "key": "x_m", "label": "x", "type": "number", "unit": "m", "signed": false },
+      { "key": "t1_s", "label": "t1", "type": "number", "unit": "s", "signed": false, "nullable": true },
+      { "key": "t2_s", "label": "t2", "type": "number", "unit": "s", "signed": false },
+      { "key": "T_C", "label": "T", "type": "number", "unit": "degC", "signed": false },
+      { "key": "P_Pa", "label": "P", "type": "number", "unit": "Pa", "signed": false },
+      { "key": "eta0_Pa_s", "label": "eta0", "type": "number", "unit": "Pa.s", "signed": false },
+      { "key": "eta_used_Pa_s", "label": "eta used", "type": "number", "unit": "Pa.s", "signed": false },
+      { "key": "rho_oil_kg_m3", "label": "rho_oil", "type": "number", "unit": "kg/m^3", "signed": false },
+      { "key": "rho_air_kg_m3", "label": "rho_air", "type": "number", "unit": "kg/m^3", "signed": false },
+      { "key": "v1_m_s", "label": "v1", "type": "number", "unit": "m/s", "signed": true, "nullable": true },
+      { "key": "v2_m_s", "label": "v2", "type": "number", "unit": "m/s", "signed": true },
+      { "key": "r0_m", "label": "r0", "type": "number", "unit": "m", "signed": false },
+      { "key": "q0_C", "label": "q0", "type": "number", "unit": "C", "signed": true },
+      { "key": "cunningham_enabled", "label": "Cunningham", "type": "boolean" },
+      { "key": "cunningham_b", "label": "b", "type": "number", "unit": "SI", "signed": false },
+      { "key": "eta_c_Pa_s", "label": "etac", "type": "number", "unit": "Pa.s", "signed": false, "nullable": true },
+      { "key": "q_c_C", "label": "qc", "type": "number", "unit": "C", "signed": true, "nullable": true },
+      { "key": "notes", "label": "Notes", "type": "string", "nullable": true }
+    ]
+  },
+  "gating": {
+    "step1": { "require": [] },
+    "step2": { "require": ["prelab.completed=true"] },
+    "step3": { "require": ["trial.count>=6", "trial.hasValidMarks=true", "trial.hasTimes=true"] },
+    "step4": { "require": ["analysis.qComputed=true", "analysis.eEstimated=true"] },
+    "step5": { "require": ["report.ready=true"] }
+  },
+  "tips": {
+    "rules": [
+      {
+        "id": "tip_flip_polarity",
+        "when": "voltageOn=true AND observedDirection='down' AND desiredDirection='up'",
+        "message": "Tetes tetap turun saat U ON. Coba balik polarity (Above ↔ Below)."
+      },
+      {
+        "id": "tip_choose_slow_drop",
+        "when": "voltageOn=false AND abs(v2_m_s) > 1.0e-3",
+        "message": "Tetes terlalu cepat. Pilih droplet lain yang turun lebih lambat agar timing lebih akurat."
+      },
+      {
+        "id": "tip_marks_separation",
+        "when": "S_lines < 5",
+        "message": "Jarak antara topMark dan bottomMark terlalu kecil. Perbesar separation agar ketidakpastian waktu berkurang."
+      }
+    ]
+  }
+}

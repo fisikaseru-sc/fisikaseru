@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(13, 148, 136, 0.2), transparent 42%),
+    radial-gradient(circle at 90% 10%, rgba(234, 179, 8, 0.16), transparent 35%),
+    var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans), "Space Grotesk", system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+main {
+  width: min(1120px, 92vw);
+  margin: 0 auto;
+}
+
+.panel {
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.kbd {
+  font-family: var(--font-mono), "IBM Plex Mono", monospace;
+  border: 1px solid rgba(15, 23, 42, 0.25);
+  border-bottom-width: 2px;
+  border-radius: 0.4rem;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.82rem;
+}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520">
+  <rect width="900" height="520" fill="#f8fafc"/>
+  <rect x="250" y="120" width="400" height="12" fill="#cbd5e1"/>
+  <rect x="250" y="400" width="400" height="12" fill="#cbd5e1"/>
+  <circle cx="450" cy="255" r="10" fill="#0284c7"/>
+  <line x1="450" y1="255" x2="450" y2="400" stroke="#1e293b" stroke-width="2"/>
+  <line x1="450" y1="255" x2="450" y2="120" stroke="#0ea5e9" stroke-width="2"/>
+  <text x="660" y="124" font-size="18" fill="#334155">Top plate (+/-)</text>
+  <text x="660" y="404" font-size="18" fill="#334155">Bottom plate (-/+)</text>
+  <text x="110" y="263" font-size="18" fill="#334155">Drop</text>
+</svg>
