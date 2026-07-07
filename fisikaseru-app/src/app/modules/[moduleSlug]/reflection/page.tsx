@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { ConfigRegistry } from "@/features/configRegistry";
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
@@ -101,7 +102,7 @@ export default function ReflectionPage() {
 
   const handlePrint = () => window.print();
 
-  const moduleTitle = moduleSlug === "millikan" ? "Tetes Minyak Millikan" : "Bandul Sederhana";
+  const moduleTitle = ConfigRegistry[moduleSlug]?.title || "Eksperimen Baru";
 
   if (!isActive) {
     const titleMap: Record<string, string> = {
@@ -466,17 +467,7 @@ function DialogueSection({ moduleSlug, trials, writtenReflections, setWrittenRef
   writtenReflections: { q1: string; q2: string; q3: string; final: string }; setWrittenReflections: React.Dispatch<React.SetStateAction<{ q1: string; q2: string; q3: string; final: string }>>;
   onBack: () => void; onNext: () => void;
 }) {
-  const questions = useMemo(() => {
-    if (moduleSlug === "millikan") return [
-      { key: "q1", q: "Amati nilai muatan q dari semua trialmu. Apakah nilainya tersebar bebas (seperti 1.3, 2.7, 5.9), atau mengelompok di nilai-nilai tertentu?" },
-      { key: "q2", q: "Nilai-nilai q berkumpul di sekitar 4.8, 6.4, dan 8.0 ×10⁻¹⁹ C. Apa bilangan pembagi terkecil yang menghasilkan sisa paling mendekati nol?" },
-      { key: "q3", q: "Bilangan pembagi terkecil itu ≈ 1.6 ×10⁻¹⁹ C — muatan satu elektron. Mengapa tidak pernah ada muatan bernilai 0.5e atau 1.5e di alam?" },
-    ]; else return [
-      { key: "q1", q: "Perhatikan rumus T = 2π√(L/g). Simbol besaran fisika apa saja yang muncul dalam rumus ini?" },
-      { key: "q2", q: "Simbol 'm' (massa) — bisa kamu temukannya dalam rumus itu? Apa implikasinya?" },
-      { key: "q3", q: "Karena m tidak ada dalam rumus, ketika kamu mengubah massa beban bandul — apa yang terjadi pada T dalam eksperimenmu tadi?" },
-    ];
-  }, [moduleSlug]);
+  const questions = ConfigRegistry[moduleSlug]?.questions || [];
 
   const [chatIndex, setChatIndex]       = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
