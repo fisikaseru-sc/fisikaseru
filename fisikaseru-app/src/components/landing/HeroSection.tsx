@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
@@ -45,19 +46,23 @@ export function HeroSection() {
             <p className="text-lg text-text-muted leading-relaxed mb-8 max-w-xl">
               Bukan sekadar menghafal rumus. FisikaSeru membimbing siswa merekonstruksi
               pemahaman konsep melalui{" "}
-              <strong className="text-text-primary font-medium">eksperimen virtual</strong>,{" "}
+              <strong className="text-text-primary font-medium">eksperimen virtual interaktif</strong> (seperti Tetes Minyak Millikan),{" "}
               <strong className="text-text-primary font-medium">refleksi terbimbing</strong>, dan{" "}
               <strong className="text-text-primary font-medium">AI Tutor Sokratis</strong>.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 mb-12">
-              <Button size="lg">
-                Mulai Eksperimen <ArrowRight className="w-4 h-4" />
-              </Button>
-              <Button variant="outline" size="lg">
-                <Play className="w-4 h-4" />
-                Lihat Demo
-              </Button>
+              <Link href="/modules">
+                <Button size="lg" className="cursor-pointer">
+                  Mulai Eksperimen <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+              <Link href="/modules/millikan/experiment">
+                <Button variant="outline" size="lg" className="cursor-pointer">
+                  <Play className="w-4 h-4" />
+                  Lihat Demo Millikan
+                </Button>
+              </Link>
             </div>
 
             {/* Trust Signals */}
@@ -88,7 +93,7 @@ export function HeroSection() {
                   <div className="w-2.5 h-2.5 rounded-full bg-amber/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-success/60" />
                   <span className="ml-3 text-[11px] text-text-muted font-mono">
-                    fisikaseru.id/lab/bandul
+                    fisikaseru.id/lab/millikan
                   </span>
                 </div>
               </div>
@@ -117,42 +122,87 @@ export function HeroSection() {
                   ))}
                 </div>
 
-                {/* Simulation Area Mock */}
-                <div className="bg-gradient-to-br from-gray-50 to-sky-blue/5 rounded-xl h-48 flex items-center justify-center mb-5 border border-border-default/50 relative overflow-hidden">
-                  {/* Pendulum Visual */}
-                  <div className="flex flex-col items-center">
-                    <div className="w-3 h-3 rounded-full bg-primary-navy/30" />
-                    <motion.div
-                      className="w-0.5 bg-primary-navy/40 origin-top"
-                      style={{ height: 80 }}
-                      animate={{ rotate: [15, -15, 15] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-accent-cobalt shadow-lg" />
-                    </motion.div>
+                {/* Simulation Area Mock: Microscope Reticle Chamber */}
+                <div className="bg-slate-950 rounded-xl h-48 flex items-center justify-center mb-5 border border-slate-800 relative overflow-hidden">
+                  {/* Plates indicators */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[9px] font-mono rounded">
+                    PLAT ELEKTRODE ATAS (+)
                   </div>
-                  {/* Grid overlay */}
-                  <div
-                    className="absolute inset-0 opacity-[0.06]"
-                    style={{
-                      backgroundImage: "linear-gradient(var(--color-primary-navy) 1px, transparent 1px), linear-gradient(90deg, var(--color-primary-navy) 1px, transparent 1px)",
-                      backgroundSize: "30px 30px",
-                    }}
-                  />
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-slate-800 text-slate-400 border border-slate-700 text-[9px] font-mono rounded">
+                    PLAT ELEKTRODE BAWAH (-)
+                  </div>
+
+                  {/* Microscope Eye Piece View (Reticle Circular Circle) */}
+                  <div className="relative w-36 h-36 rounded-full border-2 border-slate-700 bg-slate-900/90 overflow-hidden flex items-center justify-center">
+                    {/* Reticle grid horizontal lines */}
+                    <div className="absolute inset-0 flex flex-col justify-between py-6 pointer-events-none opacity-20">
+                      <div className="h-px bg-white w-full border-dashed" />
+                      <div className="h-px bg-white w-full" />
+                      <div className="h-px bg-white w-full border-dashed" />
+                      <div className="h-px bg-white w-full" />
+                      <div className="h-px bg-white w-full border-dashed" />
+                    </div>
+                    {/* Crosshair vertical line */}
+                    <div className="absolute top-0 bottom-0 left-1/2 w-px bg-slate-700/50" />
+
+                    {/* Droplets - Floating particles with micro-animations */}
+                    <motion.div
+                      className="absolute w-2 h-2 rounded-full bg-amber shadow-[0_0_8px_rgba(245,158,11,0.8)]"
+                      animate={{
+                        y: [-25, 10, -25],
+                        x: [0, 5, 0]
+                      }}
+                      transition={{
+                        duration: 7,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    
+                    {/* Selected Active Droplet with Crosshair target */}
+                    <motion.div
+                      className="absolute w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.9)] flex items-center justify-center"
+                      animate={{
+                        y: [35, -45, 35]
+                      }}
+                      transition={{
+                        duration: 9,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    >
+                      {/* Interactive Cyan Target ring */}
+                      <div className="absolute w-6 h-6 border border-cyan-400/40 rounded-full animate-ping" />
+                      <div className="absolute w-5 h-5 border border-cyan-400 rounded-full" />
+                    </motion.div>
+
+                    <motion.div
+                      className="absolute w-1.5 h-1.5 rounded-full bg-amber-500/60"
+                      animate={{
+                        y: [-45, 45, -45],
+                        x: [-10, -8, -10]
+                      }}
+                      transition={{
+                        duration: 11,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  </div>
                 </div>
 
                 {/* Data Preview */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
-                    { label: "Periode (T)", value: "1.42", unit: "s" },
-                    { label: "Panjang (L)", value: "0.50", unit: "m" },
-                    { label: "Gravitasi (g)", value: "9.81", unit: "m/s²" },
+                    { label: "Tegangan (V)", value: "300", unit: "V" },
+                    { label: "Radius Drop (r)", value: "1.52", unit: "µm" },
+                    { label: "Muatan (q)", value: "4.81", unit: "×10⁻¹⁹ C" },
                   ].map((d) => (
                     <div key={d.label} className="bg-gray-50 rounded-lg p-3 text-center border border-border-default/50">
                       <div className="text-[10px] text-text-muted font-medium mb-1">{d.label}</div>
-                      <div className="font-mono font-bold text-primary-navy text-lg leading-none">
+                      <div className="font-mono font-bold text-primary-navy text-sm leading-none">
                         {d.value}
-                        <span className="text-xs text-text-muted ml-1 font-normal">{d.unit}</span>
+                        <span className="text-[10px] text-text-muted ml-0.5 font-normal">{d.unit}</span>
                       </div>
                     </div>
                   ))}
@@ -174,7 +224,7 @@ export function HeroSection() {
                 <div>
                   <p className="text-xs font-display font-semibold text-primary-navy mb-1">AI Tutor</p>
                   <p className="text-[11px] text-text-muted leading-relaxed">
-                    &ldquo;Perhatikan — apa yang terjadi jika tali diperpanjang?&rdquo;
+                    &ldquo;Mengapa muatan tetesan minyak ini selalu berkelompok di kelipatan $1.6 \times 10^{-19}$ C?&rdquo;
                   </p>
                 </div>
               </div>

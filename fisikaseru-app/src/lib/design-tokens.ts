@@ -1,5 +1,5 @@
 /**
- * FisikaSeru 3.0 — Design Tokens
+ * FisikaSeru — Design Tokens
  * All design tokens as TypeScript constants for programmatic use.
  * CSS variables are defined in globals.css for Tailwind integration.
  */

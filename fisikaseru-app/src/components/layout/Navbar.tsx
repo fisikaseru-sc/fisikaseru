@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -7,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Fitur", href: "#features" },
-  { label: "Modul", href: "#modules" },
-  { label: "Cara Kerja", href: "#how-it-works" },
-  { label: "AI Tutor", href: "#ai-tutor" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Katalog Modul", href: "/modules" },
+  { label: "Fitur", href: "/#features" },
+  { label: "AI Tutor", href: "/#ai-tutor" },
 ];
 
 export function Navbar() {
@@ -34,34 +35,38 @@ export function Navbar() {
     >
       <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 group" aria-label="FisikaSeru Home">
+        <Link href="/" className="flex items-center gap-2.5 group" aria-label="FisikaSeru Home">
           <div className="w-9 h-9 rounded-xl bg-accent-cobalt flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
             <FlaskConical className="w-5 h-5 text-white" />
           </div>
           <span className="font-display font-bold text-lg text-primary-navy tracking-tight">
-            FisikaSeru<span className="text-accent-cobalt ml-0.5 text-sm font-semibold">3.0</span>
+            FisikaSeru
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="px-4 py-2 text-sm font-medium text-text-muted hover:text-primary-navy transition-colors rounded-lg hover:bg-gray-50"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Button variant="ghost" size="sm">Masuk</Button>
-          <Button size="sm">
-            Mulai Gratis <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
+          <Link href="/auth/login">
+            <Button variant="ghost" size="sm">Masuk</Button>
+          </Link>
+          <Link href="/modules">
+            <Button size="sm">
+              Mulai Gratis <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
@@ -86,18 +91,22 @@ export function Navbar() {
           >
             <div className="px-6 py-4 space-y-1">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.href}
                   href={link.href}
                   className="block px-4 py-3 text-sm font-medium text-text-muted hover:text-primary-navy rounded-lg hover:bg-gray-50 transition-colors"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
               <div className="pt-3 flex flex-col gap-2">
-                <Button variant="outline" size="md" className="w-full">Masuk</Button>
-                <Button size="md" className="w-full">Mulai Gratis</Button>
+                <Link href="/auth/login" className="w-full">
+                  <Button variant="outline" size="md" className="w-full">Masuk</Button>
+                </Link>
+                <Link href="/modules" className="w-full">
+                  <Button size="md" className="w-full">Mulai Gratis</Button>
+                </Link>
               </div>
             </div>
           </motion.div>

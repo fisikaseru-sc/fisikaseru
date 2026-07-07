@@ -24,7 +24,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FisikaSeru 3.0 — Platform Eksperimen Fisika Mendalam",
+  title: "FisikaSeru — Platform Eksperimen Fisika Mendalam",
   description:
     "Platform pembelajaran fisika berbasis eksperimen sains mendalam. Rekonstruksi pemahaman konsep melalui simulasi interaktif, refleksi terbimbing, dan AI Tutor Sokratis.",
   keywords: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "FisikaSeru Team" }],
   openGraph: {
-    title: "FisikaSeru 3.0 — Deep Understanding Physics Platform",
+    title: "FisikaSeru — Deep Understanding Physics Platform",
     description:
       "Rekonstruksi pemahaman fisika melalui eksperimen, refleksi, dan reasoning sains terbimbing.",
     type: "website",
@@ -55,8 +55,9 @@ export default function RootLayout({
     <html
       lang="id"
       className={`${sora.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col font-body bg-bg-primary text-text-primary">
+      <body className="min-h-full flex flex-col font-body bg-bg-primary text-text-primary" suppressHydrationWarning>
         {children}
       </body>
     </html>

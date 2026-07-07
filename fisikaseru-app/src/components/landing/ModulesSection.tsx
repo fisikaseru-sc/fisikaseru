@@ -6,70 +6,76 @@ import { Clock, BarChart3, Lock, Star, ArrowRight } from "lucide-react";
 
 const modules = [
   {
-    title: "Bandul Sederhana",
-    category: "Mekanika",
-    difficulty: 2,
-    duration: "25 menit",
-    concept: "Gerak Harmonik Sederhana",
-    desc: "Ukur periode ayunan untuk menentukan percepatan gravitasi bumi.",
-    status: "free" as const,
-    color: "from-accent-cobalt/10 to-sky-blue/5",
-    iconBg: "bg-accent-cobalt",
-  },
-  {
-    title: "Hukum Ohm",
-    category: "Kelistrikan",
-    difficulty: 2,
-    duration: "20 menit",
-    concept: "Resistansi & Arus Listrik",
-    desc: "Variasikan tegangan dan ukur arus untuk menemukan hukum Ohm.",
-    status: "free" as const,
-    color: "from-teal/10 to-emerald-50",
-    iconBg: "bg-teal",
-  },
-  {
+    id: "jatuh-bebas",
     title: "Jatuh Bebas",
     category: "Mekanika",
     difficulty: 1,
     duration: "15 menit",
     concept: "Kinematika Gerak",
-    desc: "Jatuhkan objek dari berbagai ketinggian dan analisis gerak jatuh bebas.",
-    status: "free" as const,
+    desc: "Analisis gerak jatuh bebas dari berbagai ketinggian.",
+    status: "free" as "free" | "pro" | "coming",
     color: "from-violet/10 to-purple-50",
     iconBg: "bg-violet",
   },
   {
-    title: "Tetes Minyak Millikan",
-    category: "Fisika Modern",
-    difficulty: 4,
-    duration: "35 menit",
-    concept: "Kuantisasi Muatan",
-    desc: "Temukan muatan elektron fundamental melalui eksperimen Millikan.",
-    status: "pro" as const,
-    color: "from-amber/10 to-yellow-50",
-    iconBg: "bg-amber",
+    id: "bandul",
+    title: "Bandul Sederhana",
+    category: "Mekanika",
+    difficulty: 2,
+    duration: "25 menit",
+    concept: "Gerak Harmonik Sederhana",
+    desc: "Tentukan percepatan gravitasi bumi melalui periode ayunan bandul.",
+    status: "free" as const,
+    color: "from-accent-cobalt/10 to-sky-blue/5",
+    iconBg: "bg-accent-cobalt",
   },
   {
+    id: "ohm",
+    title: "Hukum Ohm",
+    category: "Kelistrikan",
+    difficulty: 2,
+    duration: "20 menit",
+    concept: "Resistansi & Arus",
+    desc: "Temukan hubungan tegangan, arus, dan hambatan.",
+    status: "free" as const,
+    color: "from-teal/10 to-emerald-50",
+    iconBg: "bg-teal",
+  },
+  {
+    id: "boyle",
     title: "Hukum Boyle",
     category: "Termodinamika",
     difficulty: 2,
     duration: "20 menit",
     concept: "Gas Ideal",
-    desc: "Amati hubungan tekanan dan volume gas pada suhu tetap.",
+    desc: "Hubungan tekanan dan volume gas pada suhu tetap.",
     status: "coming" as const,
     color: "from-rose/10 to-red-50",
     iconBg: "bg-rose",
   },
   {
-    title: "Pemantulan Cahaya",
+    id: "snellius",
+    title: "Pembiasan Cahaya",
     category: "Optika",
     difficulty: 3,
     duration: "25 menit",
     concept: "Hukum Snellius",
-    desc: "Verifikasi hukum pemantulan dan pembiasan cahaya.",
+    desc: "Verifikasi hukum pembiasan cahaya.",
     status: "coming" as const,
     color: "from-sky-blue/10 to-cyan-50",
     iconBg: "bg-sky-blue",
+  },
+  {
+    id: "millikan",
+    title: "Tetes Minyak Millikan",
+    category: "Fisika Modern",
+    difficulty: 4,
+    duration: "35 menit",
+    concept: "Kuantisasi Muatan",
+    desc: "Temukan muatan elektron fundamental.",
+    status: "free" as const,
+    color: "from-amber/10 to-yellow-50",
+    iconBg: "bg-amber",
   },
 ];
 
@@ -98,13 +104,14 @@ export function ModulesSection() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {modules.map((mod, i) => (
-            <motion.div
+            <motion.a
               key={mod.title}
+              href={`/modules/${mod.id}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="science-card group cursor-pointer overflow-hidden"
+              className="science-card group cursor-pointer overflow-hidden block"
             >
               {/* Header gradient */}
               <div className={`h-2 bg-gradient-to-r ${mod.color}`} />
@@ -152,7 +159,7 @@ export function ModulesSection() {
                   <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-accent-cobalt group-hover:translate-x-1 transition-all" />
                 </div>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </div>

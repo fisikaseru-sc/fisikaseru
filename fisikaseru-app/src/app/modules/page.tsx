@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,12 +11,12 @@ import { cn } from "@/lib/utils";
 const categories = ["Semua", "Mekanika", "Kelistrikan", "Fisika Modern", "Termodinamika", "Optika"];
 
 const modules = [
+  { id: "jatuh-bebas", title: "Jatuh Bebas", category: "Mekanika", difficulty: 1, duration: "15 mnt", concept: "Kinematika Gerak", desc: "Analisis gerak jatuh bebas dari berbagai ketinggian.", status: "free", progress: 100 },
   { id: "bandul", title: "Bandul Sederhana", category: "Mekanika", difficulty: 2, duration: "25 mnt", concept: "Gerak Harmonik Sederhana", desc: "Tentukan percepatan gravitasi bumi melalui periode ayunan bandul.", status: "free", progress: 75 },
   { id: "ohm", title: "Hukum Ohm", category: "Kelistrikan", difficulty: 2, duration: "20 mnt", concept: "Resistansi & Arus", desc: "Temukan hubungan tegangan, arus, dan hambatan.", status: "free", progress: 0 },
-  { id: "jatuh-bebas", title: "Jatuh Bebas", category: "Mekanika", difficulty: 1, duration: "15 mnt", concept: "Kinematika Gerak", desc: "Analisis gerak jatuh bebas dari berbagai ketinggian.", status: "free", progress: 100 },
-  { id: "millikan", title: "Tetes Minyak Millikan", category: "Fisika Modern", difficulty: 4, duration: "35 mnt", concept: "Kuantisasi Muatan", desc: "Temukan muatan elektron fundamental.", status: "pro", progress: 0 },
   { id: "boyle", title: "Hukum Boyle", category: "Termodinamika", difficulty: 2, duration: "20 mnt", concept: "Gas Ideal", desc: "Hubungan tekanan dan volume gas pada suhu tetap.", status: "coming", progress: 0 },
   { id: "snellius", title: "Pembiasan Cahaya", category: "Optika", difficulty: 3, duration: "25 mnt", concept: "Hukum Snellius", desc: "Verifikasi hukum pembiasan cahaya.", status: "coming", progress: 0 },
+  { id: "millikan", title: "Tetes Minyak Millikan", category: "Fisika Modern", difficulty: 4, duration: "35 mnt", concept: "Kuantisasi Muatan", desc: "Temukan muatan elektron fundamental.", status: "free", progress: 0 },
 ];
 
 export default function CatalogPage() {
@@ -33,14 +34,16 @@ export default function CatalogPage() {
       {/* Header */}
       <header className="bg-white border-b border-border-default sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-accent-cobalt flex items-center justify-center">
               <FlaskConical className="w-4 h-4 text-white" />
             </div>
             <span className="font-display font-bold text-primary-navy">FisikaSeru</span>
-          </a>
+          </Link>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">Dashboard</Button>
+            <Link href="/dashboard">
+              <Button variant="ghost" size="sm">Dashboard</Button>
+            </Link>
             <Button size="sm">Profil</Button>
           </div>
         </div>
@@ -50,7 +53,7 @@ export default function CatalogPage() {
         {/* Page Header */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex items-center gap-2 text-sm text-text-muted mb-2">
-            <a href="/" className="hover:text-accent-cobalt transition-colors">Beranda</a>
+            <Link href="/" className="hover:text-accent-cobalt transition-colors">Beranda</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-text-primary font-medium">Katalog Modul</span>
           </div>

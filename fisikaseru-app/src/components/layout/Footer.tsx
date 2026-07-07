@@ -34,7 +34,7 @@ export function Footer() {
                 <FlaskConical className="w-5 h-5 text-white" />
               </div>
               <span className="font-display font-bold text-lg text-white">
-                FisikaSeru<span className="text-sky-blue ml-0.5 text-sm">3.0</span>
+                FisikaSeru
               </span>
             </div>
             <p className="text-sm text-white/60 leading-relaxed mb-6 max-w-xs">

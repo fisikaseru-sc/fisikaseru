@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════
-   FisikaSeru 3.0 — Design System Foundation
+   FisikaSeru — Design System Foundation
    ═══════════════════════════════════════════════════════════════ */
 
 @theme {
@@ -34,8 +34,8 @@
   --color-info: #3B82F6;
 
   /* ── Text ──────────────────────────────────────── */
-  --color-text-primary: #1F2937;
-  --color-text-muted: #6B7280;
+  --color-text-primary: #0F172A;
+  --color-text-muted: #475569;
   --color-text-inverse: #FFFFFF;
 
   /* ── Border ────────────────────────────────────── */

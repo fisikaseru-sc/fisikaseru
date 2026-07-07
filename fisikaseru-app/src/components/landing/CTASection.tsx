@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -24,12 +25,16 @@ export function CTASection() {
             langsung di browser.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="xl">
-              Mulai Eksperimen Gratis <ArrowRight className="w-5 h-5" />
-            </Button>
-            <Button variant="outline" size="xl">
-              Lihat Semua Modul
-            </Button>
+            <Link href="/modules">
+              <Button size="xl" className="cursor-pointer">
+                Mulai Eksperimen Gratis <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/modules">
+              <Button variant="outline" size="xl" className="cursor-pointer">
+                Lihat Semua Modul
+              </Button>
+            </Link>
           </div>
         </motion.div>
       </div>
