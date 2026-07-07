@@ -1,82 +1,36 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/fisikaseru-sc/fisikaseru/main/fisikaseru-app/public/hero-bg.png" alt="FisikaSeru Logo" width="120" style="border-radius: 20px" onerror="this.style.display='none'"/>
-  
-  # FisikaSeru 3.0
-  **Mesin Perubahan Mental Model Fisika**
-  
-  [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-  [![Supabase](https://img.shields.io/badge/Supabase-Auth_&_DB-3ECF8E?style=flat&logo=supabase)](https://supabase.com/)
-  [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
-</div>
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-<br />
+## Getting Started
 
-FisikaSeru bukan sekadar platform belajar, simulasi, atau *game*. Ini adalah sebuah **mesin konfrontasi miskonsepsi** yang dirancang khusus untuk mengubah cara seseorang berpikir tentang logika alam semesta. 
+First, run the development server:
 
-Aplikasi ini dibangun menggunakan arsitektur modern untuk menjembatani kesenjangan antara simulasi abstrak dan pemahaman empiris mendalam melalui pendekatan eksperimen laboratorium yang terstruktur (persiapan → pengamatan → pengukuran → regresi matematika → refleksi Sokrates).
-
-## ✨ Fitur Utama
-
-- **🔬 Simulasi 2.5D Presisi Tinggi**  
-  Menggunakan *engine* fisika kustom (*physics engine*) yang realistis dengan tambahan *noise* stokastik (hukum alam yang tidak sempurna) untuk mensimulasikan lingkungan laboratorium sungguhan (Bukan simulasi steril).
-  
-- **🧪 Domain-Driven Module Registry**  
-  Arsitektur yang sangat skalabel. Setiap modul (Millikan, Bandul, Hukum Ohm) diisolasi dengan rapi dalam komponen *Feature* mandiri.
-  
-- **🧠 Socratic Reflection Engine**  
-  Bot tutor terintegrasi yang tidak memberikan jawaban langsung, melainkan memancing logika pengguna dengan metode pertanyaan berlapis *(Socratic questioning)*.
-
-- **📊 Analisis Regresi & Kalkulasi Dinamis**  
-  Pembuatan grafik _scatter_ interaktif yang menghitung regresi linear, nilai koefisien *Cunningham*, serta ketidakpastian eksperimental *(uncertainty)* secara *real-time*.
-
-## 🏗 Arsitektur Proyek
-
-Sistem dipecah menggunakan pola *Feature-Driven Architecture* untuk memastikan tidak ada tumpang tindih (*overlapping*) di masa depan ketika puluhan modul baru ditambahkan:
-
-```text
-src/
-├── app/                  # Routing Next.js (Halaman Wrapper Utama)
-├── features/             # Logika Domain Eksperimen
-│   ├── registry.tsx      # Dynamic Import Registry (Lazy Loading)
-│   ├── millikan/         # Modul Tetes Minyak Millikan
-│   └── bandul/           # Modul Bandul Sederhana
-├── components/           # UI Reusable (Tailwind & Framer Motion)
-└── lib/                  # Utilitas (Supabase Client, Token Desain)
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## 🚀 Instalasi & Menjalankan Lokal
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Pastikan Anda memiliki [Node.js](https://nodejs.org/) (minimal v18) terinstal.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-1. **Clone repository ini**
-   ```bash
-   git clone https://github.com/fisikaseru-sc/fisikaseru.git
-   cd fisikaseru/fisikaseru-app
-   ```
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-2. **Instal dependensi**
-   ```bash
-   npm install
-   ```
+## Learn More
 
-3. **Konfigurasi Supabase (Wajib untuk Login)**
-   - Buat *file* `.env.local` di _root_ proyek (`fisikaseru-app/`).
-   - Masukkan variabel lingkungan Anda:
-     ```env
-     NEXT_PUBLIC_SUPABASE_URL=https://[PROYEK-ANDA].supabase.co
-     NEXT_PUBLIC_SUPABASE_ANON_KEY=[KUNCI-ANON-ANDA]
-     ```
-   - Jalankan *file* migrasi SQL (`supabase/migrations/001_init_schema.sql`) di *dashboard* SQL Editor Supabase Anda.
+To learn more about Next.js, take a look at the following resources:
 
-4. **Jalankan Server Development**
-   ```bash
-   npm run dev
-   ```
-   Buka [http://localhost:3000](http://localhost:3000) di peramban Anda.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 🤝 Berkontribusi
-Jika Anda ingin berkontribusi menambah modul eksperimen baru, silakan baca dokumentasi *Pipeline* di `fisikaseru-full-pipeline.md` dan pastikan Anda mendaftarkan modul baru di `src/features/registry.tsx`.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
-*FisikaSeru — Membangun "Mental Model" yang tahan banting.*
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
