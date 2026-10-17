@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles, HelpCircle, ArrowRight, RefreshCw,
@@ -48,26 +48,31 @@ export function PatternDiscoveryTool({
   // Candidate state
   const [candidateUnit, setCandidateUnit] = useState<number>(initialCandidate);
   const [candidateInputText, setCandidateInputText] = useState<string>(initialCandidate.toFixed(2));
-  const [candidateHistory, setCandidateHistory] = useState<TestedCandidateRecord[]>([]);
-  const [showPreDiscoveryModal, setShowPreDiscoveryModal] = useState<boolean>(false);
-  const [showDetailsTable, setShowDetailsTable] = useState<boolean>(false);
-  const [hasTestedChange, setHasTestedChange] = useState<boolean>(false);
-
-  // Load candidate history from localStorage on mount
-  useEffect(() => {
+  // Load candidate history from localStorage — lazy init (komponen ini
+  // dirender di dalam Analysis/Experiment view yang dynamic ssr:false).
+  // (Pembayaran debt lint: set-state-in-effect.)
+  const [candidateHistory, setCandidateHistory] = useState<TestedCandidateRecord[]>(() => {
     try {
       const saved = localStorage.getItem("fisikaseru:pattern-history:millikan");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) setCandidateHistory(parsed);
+        if (Array.isArray(parsed)) return parsed as TestedCandidateRecord[];
       }
     } catch (_) {}
-  }, []);
+    return [];
+  });
+  const [showPreDiscoveryModal, setShowPreDiscoveryModal] = useState<boolean>(false);
+  const [showDetailsTable, setShowDetailsTable] = useState<boolean>(false);
+  const [hasTestedChange, setHasTestedChange] = useState<boolean>(false);
 
-  // Update input text when candidateUnit changes programmatically
-  useEffect(() => {
+  // Sinkronkan teks input ketika candidateUnit berubah secara programatik
+  // (slider/tombol) — pola "adjust state during render" dari dokumen React,
+  // tanpa effect. (Pembayaran debt lint: set-state-in-effect.)
+  const [prevCandidateUnit, setPrevCandidateUnit] = useState(candidateUnit);
+  if (prevCandidateUnit !== candidateUnit) {
+    setPrevCandidateUnit(candidateUnit);
     setCandidateInputText(candidateUnit.toFixed(2));
-  }, [candidateUnit]);
+  }
 
   // Compute raw ratios and deviations for every droplet
   const ratioResults = useMemo(() => {

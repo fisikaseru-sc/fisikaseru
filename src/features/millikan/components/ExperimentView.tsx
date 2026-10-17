@@ -59,6 +59,16 @@ function millikanVelocities(r_um: number, V: number, n: number, voltageOn: boole
   return { vf, vr, Fg, Fe, isHovering, netForce };
 }
 
+interface SprayParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  decay: number;
+  size: number;
+}
+
 function gaussianNoise(mean: number, std: number) {
   const u1 = Math.random() || 1e-10;
   const u2 = Math.random();
@@ -137,7 +147,10 @@ export default function LabPage() {
   const router   = useRouter();
   const slug     = (params?.moduleSlug as string) || "millikan";
 
-  const [currentStep, setCurrentStep]       = useState(0);
+  const [currentStep, setCurrentStep]       = useState(() => {
+    const savedStep = localStorage.getItem(`fisikaseru:step:${slug}`);
+    return savedStep ? parseInt(savedStep, 10) : 0;
+  });
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [isRunning, setIsRunning]           = useState(false);
   const [showVectors, setShowVectors]       = useState(true);
@@ -149,50 +162,81 @@ export default function LabPage() {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPhysicsInspect, setShowPhysicsInspect] = useState(false);
   const [showEvidenceTable, setShowEvidenceTable] = useState(false);
-  const [currentDroplet, setCurrentDroplet] = useState<DropletSpec>(() => generateDropletIdentity(1));
+  const [currentDroplet, setCurrentDroplet] = useState<DropletSpec>(() => {
+    // Bila siswa kembali dengan data tersimpan, siapkan droplet lanjutan
+    // (setara triggerAtomizer saat restore). Generator seeded = murni,
+    // aman dipanggil saat render pertama.
+    let savedCount = 0;
+    try {
+      const saved = JSON.parse(localStorage.getItem(`fisikaseru:trials:${slug}`) || "[]");
+      if (Array.isArray(saved) && saved.length > 0) savedCount = saved.length;
+    } catch (_) {}
+    return savedCount > 0 ? generateDropletIdentity(savedCount + 1) : generateDropletIdentity(1);
+  });
   const [chargeN, setChargeN]               = useState(currentDroplet.trueN);
   const [ionFlash, setIonFlash]             = useState(false);
   const [measureAlert, setMeasureAlert]     = useState<string | null>(null);
   const [stopwatch, setStopwatch]           = useState(0);
 
-  const [expSteps, setExpSteps] = useState({
-    sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false,
+  interface ExpSteps {
+    sprayed: boolean;
+    viewSwapped: boolean;
+    voltageChanged: boolean;
+    xrayTriggered: boolean;
+  }
+  const [expSteps, setExpSteps] = useState<ExpSteps>(() => {
+    const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
+    if (savedExp) { try { return JSON.parse(savedExp) as ExpSteps; } catch (_) {} }
+    return { sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false };
   });
 
   // Batas pencatatan = target misi (5 droplet) — konsisten dengan badge
   // "Target: x/5" dan gerbang "kumpulkan minimal 5 droplet". (Temuan audit P2.)
   const MAX_TRIALS = 5;
-  const [trials, setTrials]   = useState<any[]>([]);
-  const [sliders, setSliders] = useState({
-    voltage: 300, radius: 1.5,
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
+  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [trials, setTrials] = useState<any[]>(() => {
+    const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
+    if (savedTrials) {
+      try {
+        const p = JSON.parse(savedTrials);
+        if (Array.isArray(p) && p.length > 0) return p;
+      } catch (_) {}
+    }
+    return [];
   });
+  const [sliders, setSliders] = useState(() => ({
+    voltage: 300,
+    // Radius mengikuti droplet restore (setara triggerAtomizer saat muat ulang).
+    radius: currentDroplet.radiusUm,
+  }));
 
   const millikanRef  = useRef<HTMLCanvasElement>(null);
   const dropFracRef  = useRef(0.5);
   const animRef      = useRef<number>(0);
   const lastT        = useRef<number>(0);
-  const sprayRef     = useRef<any[]>([]);
-  const [atomizerActive, setAtomizerActive] = useState(false);
-
-  // ── Load saved progress ──
+  const sprayRef     = useRef<SprayParticle[]>([]);
+  const [atomizerActive, setAtomizerActive] = useState(() => trials.length > 0);
+  // Partikel spray pembuka saat restore (penulisan ref — legal di effect,
+  // bukan setState; tidak memicu render ulang).
   useEffect(() => {
-    const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
-    let hasTrials = false;
-    if (savedTrials) {
-      try {
-        const p = JSON.parse(savedTrials);
-        if (Array.isArray(p) && p.length > 0) { setTrials(p); hasTrials = true; }
-      } catch (_) {}
+    if (trials.length === 0) return;
+    const pts: SprayParticle[] = [];
+    for (let i = 0; i < 60; i++) {
+      pts.push({
+        x: gaussianNoise(0, 1.5), y: 0,
+        vx: gaussianNoise(0, 18), vy: gaussianNoise(80, 22),
+        life: 1.0, decay: Math.random() * 0.5 + 0.4, size: Math.random() * 1.6 + 0.6,
+      });
     }
-    const savedStep = localStorage.getItem(`fisikaseru:step:${slug}`);
-    if (savedStep) setCurrentStep(parseInt(savedStep, 10));
-    else setCurrentStep(0);
-
-    const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
-    if (savedExp) { try { setExpSteps(JSON.parse(savedExp)); } catch (_) {} }
-
-    if (hasTrials) triggerAtomizer();
-  }, [slug]);
+    sprayRef.current = pts;
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- restore sekali saat mount
+  // Pemadaman spray restore via timeout (setState async = legal).
+  useEffect(() => {
+    if (!atomizerActive || trials.length === 0) return;
+    const timeoutId = setTimeout(() => setAtomizerActive(false), 1400);
+    return () => clearTimeout(timeoutId);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- pemadaman spray restore sekali saat mount
 
   const updateStep = (newStep: number) => {
     setCurrentStep(newStep);
@@ -232,7 +276,7 @@ export default function LabPage() {
     setCurrentDroplet(nextDrop);
     setChargeN(nextDrop.trueN);
     setSliders(p => ({ ...p, radius: nextDrop.radiusUm }));
-    const pts: any[] = [];
+    const pts: SprayParticle[] = [];
     for (let i = 0; i < 60; i++) {
       pts.push({
         x: gaussianNoise(0, 1.5), y: 0,
@@ -274,19 +318,6 @@ export default function LabPage() {
       atomizerActive
     );
   }, [isRunning, voltageOn, physics.isHovering, physics.netForce, trials.length, atomizerActive]);
-
-  const draw = useCallback((ts: number) => {
-    const dt = Math.min((ts - lastT.current) / 1000, 0.05);
-    lastT.current = ts;
-    drawMillikan(dt);
-    animRef.current = requestAnimationFrame(draw);
-  }, [isRunning, sliders, showVectors, voltageOn, chargeN, viewMode]);
-
-  useEffect(() => {
-    lastT.current = performance.now();
-    animRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animRef.current);
-  }, [draw]);
 
   const handleSceneStateChange = useCallback((state: MillikanDropletState) => {
     setSceneState(state);
@@ -532,7 +563,9 @@ export default function LabPage() {
     ctx.fill();
 
     // Partikel debu/kabut minyak latar yang out-of-focus (faint blurry specks)
-    const tSec = performance.now() * 0.001;
+    // Waktu dari timestamp rAF (lastT di-update loop animasi) — bukan
+    // performance.now() langsung, agar fungsi draw murni terhadap input.
+    const tSec = lastT.current * 0.001;
     [
       { ox: -R * 0.45, oy: -R * 0.25, r: 2.2, alpha: 0.12, sp: 0.15 },
       { ox: R * 0.35,  oy: R * 0.30,  r: 1.8, alpha: 0.10, sp: -0.1 },
@@ -686,6 +719,24 @@ export default function LabPage() {
     ctx.fillStyle = "rgba(148,163,184,0.5)"; ctx.font = "bold 9px monospace"; ctx.textAlign = "center";
     ctx.fillText("RETICLE OKULAR — SKALA 1.0 mm (DARK-FIELD ILLUMINATION)", cx, H - 12);
   }
+
+  // Loop animasi rAF — diletakkan setelah semua fungsi draw dideklarasikan
+  // agar closure mengakses nilai yang sudah ter-inisialisasi (React Compiler
+  // menggarisbawahi akses variabel sebelum deklarasi bila ditaruh di atas).
+  // Semua state yang dibaca fungsi draw menjadi dependencies.
+  useEffect(() => {
+    let lastTs = 0; // timestamp frame sebelumnya (0 → frame pertama dt=0)
+    const draw = (ts: number) => {
+      const dt = lastTs === 0 ? 0 : Math.min((ts - lastTs) / 1000, 0.05);
+      lastTs = ts;
+      lastT.current = ts;
+      drawMillikan(dt);
+      animRef.current = requestAnimationFrame(draw);
+    };
+    animRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- drawMillikan membaca seluruh state render berikut
+  }, [isRunning, sliders, showVectors, voltageOn, chargeN, viewMode]);
 
   // ── Helper draw functions ──
   function drawArrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, color: string, label: string) {

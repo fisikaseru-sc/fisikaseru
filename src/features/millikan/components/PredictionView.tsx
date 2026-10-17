@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, HelpCircle, ArrowRight, CheckCircle2, ShieldQuestion } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,25 +37,23 @@ const HYPOTHESIS_OPTIONS: { id: PredictionHypothesis; label: string; desc: strin
 ];
 
 export function PredictionView({ slug, onComplete }: PredictionViewProps) {
-  const [selectedHypothesis, setSelectedHypothesis] = useState<PredictionHypothesis | null>(null);
-  const [reasoning, setReasoning] = useState("");
-  const [confidence, setConfidence] = useState(3);
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
-    if (saved) {
-      try {
-        const parsed: StudentPrediction = JSON.parse(saved);
-        setSelectedHypothesis(parsed.hypothesis);
-        setReasoning(parsed.reasoning || "");
-        setConfidence(parsed.confidence || 3);
-        setIsSaved(true);
-      } catch (e) {
-        console.error("Error reading saved prediction:", e);
-      }
+  // Komponen dipakai di dalam ExperimentView (dynamic ssr:false) — lazy init
+  // localStorage aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [savedInit] = useState<StudentPrediction | null>(() => {
+    try {
+      const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
+      return saved ? (JSON.parse(saved) as StudentPrediction) : null;
+    } catch (e) {
+      console.error("Error reading saved prediction:", e);
+      return null;
     }
-  }, [slug]);
+  });
+  const [selectedHypothesis, setSelectedHypothesis] = useState<PredictionHypothesis | null>(
+    savedInit?.hypothesis ?? null
+  );
+  const [reasoning, setReasoning] = useState(savedInit?.reasoning || "");
+  const [confidence, setConfidence] = useState(savedInit?.confidence || 3);
+  const [isSaved, setIsSaved] = useState(Boolean(savedInit));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,16 +202,16 @@ export function CompactPredictionCard({
   slug: string;
   onExpand?: () => void;
 }) {
-  const [prediction, setPrediction] = useState<StudentPrediction | null>(null);
-
-  useEffect(() => {
-    const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
-    if (saved) {
-      try {
-        setPrediction(JSON.parse(saved));
-      } catch (_) {}
+  // Dipakai di dalam ExperimentView (dynamic ssr:false) — lazy init aman.
+  // (Pembayaran debt lint: set-state-in-effect.)
+  const [prediction] = useState<StudentPrediction | null>(() => {
+    try {
+      const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
+      return saved ? (JSON.parse(saved) as StudentPrediction) : null;
+    } catch (_) {
+      return null;
     }
-  }, [slug]);
+  });
 
   const labelMap: Record<PredictionHypothesis, string> = {
     COMPLETELY_RANDOM: "Muatan Acak & Bebas",

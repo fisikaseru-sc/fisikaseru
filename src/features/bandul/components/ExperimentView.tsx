@@ -66,7 +66,10 @@ export default function LabPage() {
   const router   = useRouter();
   const slug     = (params?.moduleSlug as string) || "bandul";
 
-  const [currentStep, setCurrentStep]       = useState(0);
+  const [currentStep, setCurrentStep]       = useState(() => {
+    const savedStep = localStorage.getItem(`fisikaseru:step:${slug}`);
+    return savedStep ? parseInt(savedStep, 10) : 0;
+  });
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [isRunning, setIsRunning]           = useState(false);
   const [showVectors, setShowVectors]       = useState(true);
@@ -75,14 +78,33 @@ export default function LabPage() {
   const [stopwatch, setStopwatch]            = useState(0);
   const [sceneState, setSceneState]          = useState<PendulumState | null>(null);
 
-  const [pretestAnswers, setPretestAnswers]     = useState<Record<number, number>>({});
-  const [pretestSubmitted, setPretestSubmitted] = useState(false);
-  const [expSteps, setExpSteps] = useState({
-    interactionChanged: false,
+  const [pretestAnswers, setPretestAnswers]     = useState<Record<number, number>>(() => {
+    const savedAns = localStorage.getItem(`fisikaseru:pretest:ans:${slug}`);
+    if (savedAns) { try { return JSON.parse(savedAns); } catch (_) {} }
+    return {};
+  });
+  const [pretestSubmitted, setPretestSubmitted] = useState(
+    () => localStorage.getItem(`fisikaseru:pretest:sub:${slug}`) === "true"
+  );
+  const [expSteps, setExpSteps] = useState<{ interactionChanged: boolean }>(() => {
+    const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
+    if (savedExp) { try { return JSON.parse(savedExp); } catch (_) {} }
+    return { interactionChanged: false };
   });
 
   const MAX_TRIALS = 10;
-  const [trials, setTrials]   = useState<any[]>([]);
+  // ── Muat progres tersimpan (lazy init — komponen dynamic ssr:false,
+  // aman dari mismatch hidrasi; pembayaran debt lint set-state-in-effect) ──
+  const [trials, setTrials] = useState<any[]>(() => {
+    const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
+    if (savedTrials) {
+      try {
+        const p = JSON.parse(savedTrials);
+        if (Array.isArray(p) && p.length > 0) return p;
+      } catch (_) {}
+    }
+    return [];
+  });
   const [sliders, setSliders] = useState({
     length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT,
   });
@@ -92,29 +114,6 @@ export default function LabPage() {
   const lastT        = useRef<number>(0);
   const pendAngleRef = useRef(0);
   const pendOmegaRef = useRef(0);
-
-  // ── Load saved progress ──
-  useEffect(() => {
-    const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
-    if (savedTrials) {
-      try {
-        const p = JSON.parse(savedTrials);
-        if (Array.isArray(p) && p.length > 0) setTrials(p);
-      } catch (_) {}
-    }
-    const savedStep = localStorage.getItem(`fisikaseru:step:${slug}`);
-    if (savedStep) setCurrentStep(parseInt(savedStep, 10));
-    else setCurrentStep(0);
-
-    const savedAns = localStorage.getItem(`fisikaseru:pretest:ans:${slug}`);
-    if (savedAns) { try { setPretestAnswers(JSON.parse(savedAns)); } catch (_) {} }
-
-    const savedSub = localStorage.getItem(`fisikaseru:pretest:sub:${slug}`);
-    if (savedSub) setPretestSubmitted(savedSub === "true");
-
-    const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
-    if (savedExp) { try { setExpSteps(JSON.parse(savedExp)); } catch (_) {} }
-  }, [slug]);
 
   const updateStep = (newStep: number) => {
     setCurrentStep(newStep);

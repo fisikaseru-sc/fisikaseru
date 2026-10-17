@@ -178,6 +178,9 @@ function SwingTrail({
   const lastSeq = useRef(-1);
   const scratch = useMemo(() => new THREE.Vector3(), []);
 
+  // useFrame = callback imperatif per-frame three.js (di luar render React);
+  // mutasi buffer geometry di sini adalah pola baku R3F untuk garis jejak.
+  /* eslint-disable react-hooks/immutability -- mutasi buffer three.js di useFrame (pola baku R3F) */
   useFrame(() => {
     if (seqRef.current !== lastSeq.current) {
       lastSeq.current = seqRef.current;
@@ -202,6 +205,7 @@ function SwingTrail({
       geometry.setDrawRange(0, 0);
     }
   });
+  /* eslint-enable react-hooks/immutability */
 
   return <primitive object={lineObject} />;
 }
@@ -417,7 +421,11 @@ export function PendulumScene3D({
     onStep: stepPhysics,
     onReset: resetSim,
   });
-  trailActiveRef.current = clock.running;
+  // Sinkronisasi flag aktif jejak — penulisan ref di effect, bukan saat render
+  // (aturan react-hooks/refs).
+  useEffect(() => {
+    trailActiveRef.current = clock.running;
+  }, [clock.running]);
 
   // Sinkronisasi mode terkontrol dari parent.
   useEffect(() => {

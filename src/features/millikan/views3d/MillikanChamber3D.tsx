@@ -285,7 +285,11 @@ export function MillikanChamber3D({
   });
 
   const fieldActiveRef = useRef(false);
-  fieldActiveRef.current = showFieldLines && voltageOn && voltage > 10;
+  // Sinkronisasi flag visual garis medan — penulisan ref dipindah ke effect
+  // (bukan saat render) sesuai aturan react-hooks/refs.
+  useEffect(() => {
+    fieldActiveRef.current = showFieldLines && voltageOn && voltage > 10;
+  }, [showFieldLines, voltageOn, voltage]);
 
   useEffect(() => {
     if (running === undefined) return;

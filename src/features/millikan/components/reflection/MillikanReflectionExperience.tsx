@@ -130,11 +130,16 @@ export function MillikanReflectionExperience() {
 
   // Load data from localStorage on mount
   useEffect(() => {
+    // Dibaca di effect (bukan lazy init) karena komponen ini di-SSR:
+    // render server harus konsisten dengan render klien pertama untuk
+    // menghindari hydration mismatch; localStorage hanya ada di klien.
+    // (Debt lint set-state-in-effect diterima secara sadar di sini.)
     // 1. Prediction
     try {
       const predRaw = localStorage.getItem("fisikaseru:prediction:millikan");
       if (predRaw) {
         const parsed = JSON.parse(predRaw);
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- pola hydration-safe untuk komponen SSR
         setSavedPrediction(parsed);
         if (parsed.confidence) {
           setConfidenceData((prev) => ({ ...prev, currentConfidence: parsed.confidence }));
@@ -195,6 +200,7 @@ export function MillikanReflectionExperience() {
         candidateHistory: patternHistory.map((h) => ({
           candidate: h.candidate,
           meanDeviation: h.meanDeviation || 0.1,
+          // eslint-disable-next-line react-hooks/purity -- fallback timestamp untuk riwayat lama tanpa testedAt; hanya pembulatan sinyal
           testedAt: h.testedAt || Date.now(),
         })),
         exploredNonIntegerCandidate: patternHistory.some((h) => (h.meanDeviation || 0) > 0.18),
@@ -299,6 +305,7 @@ export function MillikanReflectionExperience() {
         ? "Hai Sobat Sains! Di awal eksperimen, kamu menduga muatan listrik bernilai acak sembarang. Setelah kamu menguji sendiri rasio pembagian dan membuktikan keteraturan kelipatan bulat pada tetesan minyak, bagian bukti mana yang paling membuatmu mengubah pemikiran tersebut?"
         : "Hai Sobat Sains! Kamu telah berhasil meneliti bagaimana muatan listrik pada tetesan minyak selalu merupakan kelipatan bilangan bulat dari satu paket terkecil (e). Menurutmu, mengapa fakta bahwa muatan tidak kontinu seperti air mengalir ini sangat revolusioner bagi model atom fisika modern?";
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- init chat sekali saat bab dibuka; render klien pertama konsisten dengan SSR (chat kosong)
       setChatMessages([{ role: "tutor", text: initialPrompt }]);
     }
   }, [activeChapter, chatMessages.length, savedPrediction]);

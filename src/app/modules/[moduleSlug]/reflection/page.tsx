@@ -77,6 +77,11 @@ export default function ReflectionPage() {
   const [isDemoData, setIsDemoData] = useState(false);
 
   useEffect(() => {
+    // Dibaca di effect (bukan lazy init) karena komponen ini di-SSR:
+    // render server harus konsisten dengan render klien pertama untuk
+    // menghindari hydration mismatch; localStorage hanya ada di klien.
+    // (Debt lint set-state-in-effect diterima secara sadar di sini.)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- pola hydration-safe untuk komponen SSR
     setIsDemoData(false);
     const predRaw = localStorage.getItem(`fisikaseru:prediction:${moduleSlug}`);
     if (predRaw) {

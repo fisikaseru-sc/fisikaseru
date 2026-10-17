@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -107,41 +107,44 @@ export default function AnalysisPage() {
   // ─── State ───────────────────────────────────────────────────────────────────
   const [transform,   setTransform]   = useState<"T vs L" | "T² vs L" | "Log-Log">("T² vs L");
   const [millikanTab, setMillikanTab] = useState<"scatter" | "histogram" | "convergence">("scatter");
-  const [mounted,     setMounted]     = useState(false);
-  const [trials,      setTrials]      = useState<any[]>([]);
-  // True bila data yang ditampilkan adalah data demo (bukan hasil eksperimen siswa).
-  const [isDemoData,  setIsDemoData]  = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
+  // isDemoData kini turunan murni dari init (tidak ada setter).
+  const [isDemoData] = useState(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
         const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) { setTrials(p); setIsDemoData(false); return; }
+        if (Array.isArray(p) && p.length > 0) return false;
       } catch (_) {}
     }
-    // Fallback demo data — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.
-    setIsDemoData(true);
+    return true; // fallback demo — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.
+  });
+  const [trials] = useState<any[]>(() => {
+    const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
+    if (saved) {
+      try {
+        const p = JSON.parse(saved);
+        if (Array.isArray(p) && p.length > 0) return p;
+      } catch (_) {}
+    }
+    // Fallback demo data
     if (isMillikan) {
-      setTrials([
+      return [
         { id: 1, r: 1.50, V: 300, tf: 4.17,  tr: 14.30, q: 4.72, n: 3 },
         { id: 2, r: 1.50, V: 400, tf: 4.17,  tr:  6.82, q: 6.25, n: 4 },
         { id: 3, r: 1.20, V: 350, tf: 6.51,  tr:  8.95, q: 4.61, n: 3 },
         { id: 4, r: 1.80, V: 450, tf: 2.89,  tr:  5.61, q: 7.83, n: 5 },
         { id: 5, r: 1.50, V: 300, tf: 4.17,  tr: 14.30, q: 4.75, n: 3 },
         { id: 6, r: 2.00, V: 500, tf: 2.30,  tr:  4.10, q: 9.44, n: 6 },
-      ]);
-    } else {
-      setTrials([
-        { id: 1, L: 0.20, T: 0.897, T2: 0.804 },
-        { id: 2, L: 0.40, T: 1.268, T2: 1.608 },
-        { id: 3, L: 0.60, T: 1.553, T2: 2.412 },
-        { id: 4, L: 0.80, T: 1.792, T2: 3.211 },
-        { id: 5, L: 1.00, T: 2.006, T2: 4.024 },
-      ]);
+      ];
     }
-  }, [moduleSlug]);
+    return [
+      { id: 1, L: 0.20, T: 0.897, T2: 0.804 },
+      { id: 2, L: 0.40, T: 1.268, T2: 1.608 },
+      { id: 3, L: 0.60, T: 1.553, T2: 2.412 },
+      { id: 4, L: 0.80, T: 1.792, T2: 3.211 },
+      { id: 5, L: 1.00, T: 2.006, T2: 4.024 },
+    ];
+  });
 
   // ─── Bandul calcs ─────────────────────────────────────────────────────────────
   const chartDataBandul = useMemo(() => {
@@ -278,14 +281,6 @@ export default function AnalysisPage() {
         <main className="flex-1 flex items-center justify-center px-6 py-12">
           <p className="text-text-muted text-sm">Analisis untuk topik ini sedang disiapkan.</p>
         </main>
-      </div>
-    );
-  }
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center" suppressHydrationWarning>
-        <div className="w-6 h-6 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" suppressHydrationWarning />
       </div>
     );
   }

@@ -10,7 +10,7 @@
  *  - Tab "Teori": derivasi rumus & penuntun menemukan sudut optimal 45°.
  */
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -105,17 +105,14 @@ function TrialTooltip({
 }
 
 export default function AnalysisView() {
-  const [mounted, setMounted] = useState(false);
-  const [trials, setTrials] = useState<ParabolaTrial[]>([]);
-  const [selectedV0, setSelectedV0] = useState<number | null>(null);
-
-  useEffect(() => {
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
+  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [trials] = useState<ParabolaTrial[]>(() => loadTrials());
+  // Default: v₀ dari percobaan terakhir.
+  const [selectedV0, setSelectedV0] = useState<number | null>(() => {
     const loaded = loadTrials();
-    setTrials(loaded);
-    // Default: v₀ dari percobaan terakhir.
-    if (loaded.length > 0) setSelectedV0(loaded[loaded.length - 1].v0);
-    setMounted(true);
-  }, []);
+    return loaded.length > 0 ? loaded[loaded.length - 1].v0 : null;
+  });
 
   // v₀ berbeda yang ada di data (untuk pemilihan kurva teoretis).
   const distinctV0 = useMemo(() => Array.from(new Set(trials.map((t) => t.v0))).sort((a, b) => a - b), [trials]);
@@ -169,14 +166,6 @@ export default function AnalysisView() {
     }
     return pairs;
   }, [selectedTrials]);
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center" suppressHydrationWarning>
-        <div className="w-6 h-6 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" />
-      </div>
-    );
-  }
 
   const moduleTitle = PARABOLA_CONFIG.meta.title;
 

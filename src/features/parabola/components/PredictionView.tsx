@@ -8,7 +8,7 @@
  * (`parabola-prediction`) dan dikonfrontasikan lagi di ReflectionView.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronLeft, Lightbulb, Sparkles } from "lucide-react";
@@ -24,26 +24,23 @@ import { STORAGE_KEYS, type ParabolaPrediction } from "../types";
 const STEPS = ["Prediksi", "Eksperimen", "Analisis", "Refleksi"];
 
 export default function PredictionView() {
-  const [angle, setAngle] = useState(45);
-  const [reasoning, setReasoning] = useState("");
-  const [confidence, setConfidence] = useState(3);
-  const [saved, setSaved] = useState<ParabolaPrediction | null>(null);
-
-  useEffect(() => {
-    const raw = window.localStorage.getItem(STORAGE_KEYS.prediction);
-    if (!raw) return;
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
+  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [savedInit] = useState(() => {
     try {
+      const raw = window.localStorage.getItem(STORAGE_KEYS.prediction);
+      if (!raw) return null;
       const parsed = JSON.parse(raw) as ParabolaPrediction;
-      if (typeof parsed.angle === "number") {
-        setSaved(parsed);
-        setAngle(parsed.angle);
-        setReasoning(parsed.reasoning ?? "");
-        setConfidence(parsed.confidence ?? 3);
-      }
+      return typeof parsed.angle === "number" ? parsed : null;
     } catch {
       // abaikan data korup — biarkan siswa mengisi ulang
+      return null;
     }
-  }, []);
+  });
+  const [angle, setAngle] = useState(savedInit?.angle ?? 45);
+  const [reasoning, setReasoning] = useState(savedInit?.reasoning ?? "");
+  const [confidence, setConfidence] = useState(savedInit?.confidence ?? 3);
+  const [saved, setSaved] = useState<ParabolaPrediction | null>(savedInit);
 
   const handleSubmit = () => {
     const prediction: ParabolaPrediction = {

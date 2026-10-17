@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -89,43 +89,32 @@ export default function AnalysisPage() {
 
   // ─── State ───────────────────────────────────────────────────────────────────
   const [transform,   setTransform]   = useState<"T vs L" | "T² vs L" | "Log-Log">("T² vs L");
-  const [mounted,     setMounted]     = useState(false);
-  const [isDiscovered, setIsDiscovered] = useState(false);
+  const [isDiscovered, setIsDiscovered] = useState(
+    () => localStorage.getItem(`fisikaseru:discovered:${moduleSlug}`) === "true"
+  );
   const [showGuideModal, setShowGuideModal] = useState(false);
-  const [trials,      setTrials]      = useState<any[]>([]);
-  const [activeStage, setActiveStage] = useState<AnalysisStage>(1);
-
-  useEffect(() => {
-    setMounted(true);
-    const savedDiscovery = localStorage.getItem(`fisikaseru:discovered:${moduleSlug}`);
-    if (savedDiscovery === "true") {
-      setIsDiscovered(true);
-      setActiveStage(4);
-    }
-
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
+  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [trials, setTrials] = useState<any[]>(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
         const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) {
-          setTrials(p);
-          return;
-        }
+        if (Array.isArray(p) && p.length > 0) return p;
       } catch (_) {}
     }
     // Fallback demo data
-    if (isMillikan) {
-      setTrials(DEMO_MILLIKAN_TRIALS);
-    } else {
-      setTrials([
-        { id: 1, L: 0.20, T: 0.897, T2: 0.804 },
-        { id: 2, L: 0.40, T: 1.268, T2: 1.608 },
-        { id: 3, L: 0.60, T: 1.553, T2: 2.412 },
-        { id: 4, L: 0.80, T: 1.792, T2: 3.211 },
-        { id: 5, L: 1.00, T: 2.006, T2: 4.024 },
-      ]);
-    }
-  }, [moduleSlug, isMillikan]);
+    return isMillikan ? DEMO_MILLIKAN_TRIALS : [
+      { id: 1, L: 0.20, T: 0.897, T2: 0.804 },
+      { id: 2, L: 0.40, T: 1.268, T2: 1.608 },
+      { id: 3, L: 0.60, T: 1.553, T2: 2.412 },
+      { id: 4, L: 0.80, T: 1.792, T2: 3.211 },
+      { id: 5, L: 1.00, T: 2.006, T2: 4.024 },
+    ];
+  });
+  const [activeStage, setActiveStage] = useState<AnalysisStage>(() =>
+    localStorage.getItem(`fisikaseru:discovered:${moduleSlug}`) === "true" ? 4 : 1
+  );
 
   // ─── Bandul calcs ─────────────────────────────────────────────────────────────
   const chartDataBandul = useMemo(() => {
@@ -202,14 +191,6 @@ export default function AnalysisPage() {
         <main className="flex-1 flex items-center justify-center px-6 py-12">
           <p className="text-text-muted text-sm">Analisis untuk topik ini sedang disiapkan.</p>
         </main>
-      </div>
-    );
-  }
-
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex items-center justify-center" suppressHydrationWarning>
-        <div className="w-6 h-6 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" suppressHydrationWarning />
       </div>
     );
   }

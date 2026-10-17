@@ -10,7 +10,7 @@
  * tuntas di `parabola-completed`.
  */
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -51,41 +51,50 @@ const slideIn = {
 };
 
 export default function ReflectionView() {
-  const [prediction, setPrediction] = useState<ParabolaPrediction | null>(null);
-  const [trials, setTrials] = useState<ParabolaTrial[]>([]);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [moonGuess, setMoonGuess] = useState("");
-  const [moonRevealed, setMoonRevealed] = useState(false);
-  const [completed, setCompleted] = useState<ParabolaCompletion | null>(null);
-  const [justSaved, setJustSaved] = useState(false);
-
   // ── Muat state tersimpan ──
-  useEffect(() => {
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
+  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [prediction] = useState<ParabolaPrediction | null>(() => {
     try {
       const rawPrediksi = window.localStorage.getItem(STORAGE_KEYS.prediction);
       if (rawPrediksi) {
         const parsed = JSON.parse(rawPrediksi) as ParabolaPrediction;
-        if (typeof parsed.angle === "number") setPrediction(parsed);
+        if (typeof parsed.angle === "number") return parsed;
       }
     } catch {
       // prediksi korup — biarkan null
     }
-
-    setTrials(loadTrials());
-
+    return null;
+  });
+  const [trials] = useState<ParabolaTrial[]>(() => loadTrials());
+  const [answers, setAnswers] = useState<Record<string, string>>(() => {
     try {
       const rawSelesai = window.localStorage.getItem(STORAGE_KEYS.completed);
       if (rawSelesai) {
         const parsed = JSON.parse(rawSelesai) as ParabolaCompletion;
-        if (parsed && typeof parsed.completedAt === "string") {
-          setCompleted(parsed);
-          setAnswers(parsed.answers ?? {});
-        }
+        if (parsed && typeof parsed.completedAt === "string") return parsed.answers ?? {};
       }
     } catch {
       // penanda tuntas korup — abaikan
     }
-  }, []);
+    return {};
+  });
+  const [moonGuess, setMoonGuess] = useState("");
+  const [moonRevealed, setMoonRevealed] = useState(false);
+  const [completed, setCompleted] = useState<ParabolaCompletion | null>(() => {
+    try {
+      const rawSelesai = window.localStorage.getItem(STORAGE_KEYS.completed);
+      if (rawSelesai) {
+        const parsed = JSON.parse(rawSelesai) as ParabolaCompletion;
+        if (parsed && typeof parsed.completedAt === "string") return parsed;
+      }
+    } catch {
+      // penanda tuntas korup — abaikan
+    }
+    return null;
+  });
+  // Jawaban refleksi tersimpan mengikuti penanda tuntas (jika ada).
+  const [justSaved, setJustSaved] = useState(false);
 
   const best = useMemo(() => bestTrial(trials), [trials]);
 

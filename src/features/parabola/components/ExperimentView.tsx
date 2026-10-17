@@ -35,7 +35,6 @@ import { SimulationControls } from "@/components/viz/three";
 import { GRAVITY_PRESETS, PARABOLA_CONFIG } from "../config";
 import { GaussianNoise, maxHeight, timeOfFlight, range as theoreticalRange } from "../simulation/projectile";
 import {
-  STORAGE_KEYS as _STORAGE_KEYS,
   loadTrials,
   saveTrials,
   type ParabolaTrial,
@@ -112,22 +111,18 @@ export default function ExperimentView() {
   });
 
   // ── Data percobaan ──
-  const [trials, setTrials] = useState<ParabolaTrial[]>([]);
+  // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
+  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  const [trials, setTrials] = useState<ParabolaTrial[]>(() => loadTrials());
   const [hint, setHint] = useState<string | null>(null);
   const noiseRef = useRef<GaussianNoise | null>(null);
 
-  useEffect(() => {
-    setTrials(loadTrials());
-    noiseRef.current = new GaussianNoise();
-  }, []);
-
-  // Auto-pause setelah proyektil berhenti (bounce-and-stop selesai).
-  useEffect(() => {
-    if (sceneState.rested && running) setRunning(false);
-  }, [sceneState.rested, running]);
-
+  // Auto-pause setelah proyektil berhenti (bounce-and-stop selesai):
+  // ditangani di sumber kejadiannya (callback state dari scene), bukan di
+  // effect yang bereaksi terhadap state — mencegah render berantai.
   const handleStateChange = useCallback((state: ProjectileSceneState) => {
     setSceneState(state);
+    if (state.rested) setRunning(false);
   }, []);
 
   const handlePlayPause = () => {
