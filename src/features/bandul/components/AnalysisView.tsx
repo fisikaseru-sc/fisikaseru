@@ -122,12 +122,16 @@ export default function AnalysisPage() {
   const [transform,   setTransform]   = useState<"T vs L" | "T² vs L" | "Log-Log">("T² vs L");
   const [millikanTab, setMillikanTab] = useState<"scatter" | "histogram" | "convergence">("scatter");
   // isDemoData kini turunan murni dari init (tidak ada setter).
+  // Harus memakai KRITERIA YANG SAMA dengan init trials (type guard), agar
+  // banner "data contoh" muncul tepat ketika fallback demo dipakai —
+  // termasuk saat data tersimpan korup/malformed (temuan E2E Batch 2).
   const [isDemoData] = useState(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
-        const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) return false;
+        const p: unknown = JSON.parse(saved);
+        if (Array.isArray(p) && p.length > 0 &&
+          (p.every(isMillikanRecord) || p.every(isBandulRecord))) return false;
       } catch (_) {}
     }
     return true; // fallback demo — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.

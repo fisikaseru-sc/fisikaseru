@@ -10,7 +10,8 @@
     "test:socratic": "tsc src/features/millikan/learning/*.ts src/features/millikan/intelligence/*.ts src/features/millikan/types.ts --outDir .test-dist --module commonjs --target es2020 --moduleResolution node --skipLibCheck && node .test-dist/learning/socraticEngine.test.js",
     "test:outcomes": "tsc src/features/millikan/learning/outcomes/*.ts src/features/millikan/learning/outcomes/__tests__/*.ts src/features/millikan/types.ts --outDir .test-dist --module commonjs --target es2020 --moduleResolution node --skipLibCheck --esModuleInterop && node .test-dist/learning/outcomes/__tests__/runAllOutcomesTests.js",
     "test:physics": "tsc src/tests/physicsOracle.test.ts src/features/parabola/simulation/*.ts --outDir .test-dist/physics --module commonjs --target es2020 --moduleResolution node --skipLibCheck && node .test-dist/physics/tests/physicsOracle.test.js",
-    "test:isolation": "tsc src/tests/sourceIsolation.test.ts --outDir .test-dist/isolation --module commonjs --target es2020 --moduleResolution node --skipLibCheck --esModuleInterop && node .test-dist/isolation/tests/sourceIsolation.test.js"
+    "test:isolation": "tsc src/tests/sourceIsolation.test.ts --outDir .test-dist/isolation --module commonjs --target es2020 --moduleResolution node --skipLibCheck --esModuleInterop && node .test-dist/isolation/tests/sourceIsolation.test.js",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -47,14 +48,15 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "shadcn": "^4.22.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "shadcn": "^4.22.0"
+    "typescript": "^5"
   }
 }
