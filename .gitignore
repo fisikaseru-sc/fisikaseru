@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .test-dist/
+
+# Local-only source documents & extracted copyrighted content.
+# PDF buku (Erlangga/BS/Mikrajuddin) tidak boleh masuk Git — sumber
+# bersama hidup di PHYSICS_SOURCE_ROOT (di luar repo). Folder ini hanya
+# untuk material lokal bila kelak diperlukan.
+docs/sources/

@@ -517,7 +517,9 @@ export function ProjectileScene3D({
   });
 
   const trailActiveRef = useRef(false);
-  trailActiveRef.current = clock.running;
+  useEffect(() => {
+    trailActiveRef.current = clock.running;
+  }, [clock.running]);
 
   // Sinkronisasi mode terkontrol dari parent.
   useEffect(() => {

@@ -12,7 +12,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Test files are compiled to CommonJS via `tsc` and run with plain `node`
+    // (see package.json scripts test:*); `require()` is intentional there.
+    "src/tests/**",
+    "src/features/millikan/learning/socraticEngine.test.ts",
+    "src/features/millikan/learning/outcomes/__tests__/**",
   ]),
+  // Compiled test output (never linted).
+  globalIgnores([".test-dist/**"]),
 ]);
 
 export default eslintConfig;

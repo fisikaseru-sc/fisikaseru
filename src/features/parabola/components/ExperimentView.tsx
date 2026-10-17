@@ -35,7 +35,7 @@ import { SimulationControls } from "@/components/viz/three";
 import { GRAVITY_PRESETS, PARABOLA_CONFIG } from "../config";
 import { GaussianNoise, maxHeight, timeOfFlight, range as theoreticalRange } from "../simulation/projectile";
 import {
-  STORAGE_KEYS,
+  STORAGE_KEYS as _STORAGE_KEYS,
   loadTrials,
   saveTrials,
   type ParabolaTrial,
@@ -60,12 +60,39 @@ const SIGMA = PARABOLA_CONFIG.constants.SIGMA_PENGUKURAN;
 
 const [V0_VAR, SUDUT_VAR, G_VAR, H0_VAR] = PARABOLA_CONFIG.simulation.independent;
 
+/** Kunci persistensi parameter peluncur (agar tidak hilang saat refresh). */
+const PARAMS_KEY = "parabola-params";
+
+/** Baca parameter tersimpan dengan validasi rentang terhadap config. */
+function loadSavedParams(): { v0: number; angleDeg: number; g: number; h0: number } | null {
+  try {
+    const raw = localStorage.getItem(PARAMS_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw);
+    const clamp = (val: unknown, v: { min: number; max: number; step: number; defaultValue: number }) => {
+      if (typeof val !== "number" || !isFinite(val)) return v.defaultValue;
+      // Bulatkan ke kelipatan step terdekat, lalu jepit ke rentang.
+      const snapped = Math.round((val - v.min) / v.step) * v.step + v.min;
+      return Math.min(v.max, Math.max(v.min, Number(snapped.toFixed(4))));
+    };
+    return {
+      v0: clamp(p.v0, V0_VAR),
+      angleDeg: clamp(p.angleDeg, SUDUT_VAR),
+      g: clamp(p.g, G_VAR),
+      h0: clamp(p.h0, H0_VAR),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default function ExperimentView() {
-  // ── Variabel simulasi ──
-  const [v0, setV0] = useState(V0_VAR.defaultValue);
-  const [angleDeg, setAngleDeg] = useState(SUDUT_VAR.defaultValue);
-  const [g, setG] = useState(G_VAR.defaultValue);
-  const [h0, setH0] = useState(H0_VAR.defaultValue);
+  // ── Variabel simulasi (dipulihkan dari localStorage bila ada) ──
+  const saved = useMemo(() => loadSavedParams(), []);
+  const [v0, setV0] = useState(saved?.v0 ?? V0_VAR.defaultValue);
+  const [angleDeg, setAngleDeg] = useState(saved?.angleDeg ?? SUDUT_VAR.defaultValue);
+  const [g, setG] = useState(saved?.g ?? G_VAR.defaultValue);
+  const [h0, setH0] = useState(saved?.h0 ?? H0_VAR.defaultValue);
 
   // ── Kontrol simulasi ──
   const [running, setRunning] = useState(false);
@@ -117,6 +144,15 @@ export default function ExperimentView() {
     setRunning(false);
     setResetKey((k) => k + 1);
   };
+
+  // Persist parameter peluncur agar bertahan refresh (O-4).
+  useEffect(() => {
+    try {
+      localStorage.setItem(PARAMS_KEY, JSON.stringify({ v0, angleDeg, g, h0 }));
+    } catch {
+      // localStorage penuh/nonaktif — abaikan, simulasi tetap berjalan.
+    }
+  }, [v0, angleDeg, g, h0]);
 
   const canRecord =
     sceneState.landed && sceneState.rangeX !== null && trials.length < MAX_TRIALS;
@@ -263,6 +299,14 @@ export default function ExperimentView() {
         <aside className="lg:w-[340px] flex-shrink-0 bg-white border-t lg:border-t-0 lg:border-l border-border-default flex flex-col overflow-hidden">
           <ScrollArea className="flex-1">
             <div className="p-4 space-y-5">
+              {/* Catatan model ideal */}
+              <p className="text-[11px] leading-relaxed text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-2">
+                <strong>Model ideal:</strong> simulasi mengabaikan hambatan
+                udara — hasil akan sedikit berbeda dari lemparan nyata di
+                udara. Rumus rentang buku teks (R = v₀²·sin 2θ / g) hanya
+                berlaku untuk peluncuran dari tanah (h₀ = 0).
+              </p>
+
               {/* Variabel */}
               <section className="space-y-4">
                 <h2 className="font-display font-bold text-xs text-primary-navy flex items-center gap-1.5">
