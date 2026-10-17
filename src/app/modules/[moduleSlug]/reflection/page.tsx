@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FlaskConical, ChevronLeft, ChevronRight, Sparkles, Lightbulb,
   ArrowRight, MessageCircle, CheckCircle2, Wrench, Lock, Send,
-  Download, Home, Bot, User
+  Download, Home, Bot, User, AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +49,13 @@ function cunninghamFactor(r_um: number): number { return 1 + C_A * C_LAMBDA / (r
 
 const LAB_STEPS = ["Persiapan", "Pengamatan", "Pengukuran", "Analisis", "Refleksi"];
 
+// Refleksi parabola dirender via wrapper terpisah agar `dynamic()` tidak
+// dipanggil di dalam render (aturan react-hooks: no components during render).
+const ParabolaReflectionView = dynamic(
+  () => import("@/features/parabola/components/ReflectionView"),
+  { ssr: false, loading: () => <ParabolaReflectionSkeleton /> }
+);
+
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function ReflectionPage() {
   const params     = useParams();
@@ -66,8 +73,11 @@ export default function ReflectionPage() {
     submittedAt?: string;
   } | null>(null);
   const [writtenReflections, setWrittenReflections] = useState({ q1: "", q2: "", q3: "", final: "" });
+  // True bila trials yang ditampilkan adalah data demo (bukan hasil eksperimen siswa).
+  const [isDemoData, setIsDemoData] = useState(false);
 
   useEffect(() => {
+    setIsDemoData(false);
     const predRaw = localStorage.getItem(`fisikaseru:prediction:${moduleSlug}`);
     if (predRaw) {
       try {
@@ -82,6 +92,8 @@ export default function ReflectionPage() {
         if (Array.isArray(p) && p.length > 0) { setTrials(p); return; }
       } catch (_) {}
     }
+    // Fallback demo — DITANDAI agar siswa/guru tidak mengira ini hasil eksperimen sendiri.
+    setIsDemoData(true);
     if (moduleSlug === "millikan") {
       setTrials([
         { id: 1, r: 1.50, V: 300, tf: 4.17, tr: 14.30, q: 4.72, n: 3 },
@@ -162,10 +174,6 @@ export default function ReflectionPage() {
   }
 
   if (moduleSlug === "parabola") {
-    const ParabolaReflectionView = dynamic(
-      () => import("@/features/parabola/components/ReflectionView"),
-      { ssr: false, loading: () => <ParabolaReflectionSkeleton /> }
-    );
     return (
       <div className="min-h-screen bg-bg-primary font-body">
         <ParabolaReflectionView />
@@ -305,6 +313,15 @@ export default function ReflectionPage() {
           {/* STEP 1: CONFRONTATION */}
           {step === "confront" && (
             <motion.div key="confront" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}>
+              {isDemoData && (
+                <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div className="text-xs text-amber-800 leading-relaxed">
+                    <b>Data di bawah adalah data contoh, bukan hasil eksperimenmu.</b> Jalankan eksperimen dan rekam data dulu
+                    agar refleksi memakai datamu sendiri.
+                  </div>
+                </div>
+              )}
               <div className="text-center mb-7">
                 <Badge variant="warning" size="lg" className="mb-3">
                   <Lightbulb className="w-3.5 h-3.5" /> Momen Konfrontasi
@@ -345,8 +362,10 @@ export default function ReflectionPage() {
                       ) : (
                         '"Muatan listrik pada tetesan minyak bisa bernilai berapa saja — kontinu dan bebas, tidak ada aturan kelipatan."'
                       )
+                    ) : savedPrediction ? (
+                      `"${savedPrediction.hypothesis ?? savedPrediction.reasoning ?? "Dugaan awalmu tersimpan di modul eksperimen."}"`
                     ) : (
-                      '"Massa beban mempengaruhi periode ayunan bandul — semakin berat, semakin lambat."'
+                      '"(Prediksimu tidak terekam — kamu melewati atau belum mengisi bagian prediksi.)"'
                     )}
                   </p>
 
@@ -409,11 +428,18 @@ export default function ReflectionPage() {
                           Dugaan awalmu tepat! Bukti eksperimen menunjukkan kuantisasi diskret.
                         </span>
                       </>
-                    ) : (
+                    ) : moduleSlug === "millikan" || savedPrediction ? (
                       <>
                         <Badge variant="danger" size="sm">Terkoreksi Data</Badge>
                         <span className="text-xs text-text-muted">
                           Intuisi awalmu berhasil diluruskan oleh data empiris laboratorium.
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Badge variant="primary" size="sm">Tanpa Prediksi Terekam</Badge>
+                        <span className="text-xs text-text-muted">
+                          Kamu tidak mengisi prediksi awal — bandingkan sendiri pemahamanmu sebelum dan sesudah eksperimen.
                         </span>
                       </>
                     )}

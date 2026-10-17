@@ -50,7 +50,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PARABOLA_CONFIG } from "../config";
-import { OPTIMAL_ANGLE_DEG, theoreticalRange } from "../simulation/projectile";
+import { OPTIMAL_ANGLE_DEG, theoreticalRange, velocityComponents } from "../simulation/projectile";
+
+/**
+ * Sudut optimal teoretis untuk kondisi umum (h0 ≥ 0):
+ *   θ_opt = arctan( v0 / √(v0² + 2·g·h0) )
+ * Untuk h0 = 0 fungsi ini menghasilkan tepat 45°.
+ * Dipakai agar vonis "sudut optimal" tidak salah saat siswa bereksperimen
+ * dengan ketinggian awal > 0 (temuan audit: vonis 45° hardcode menghukum
+ * data yang sebenarnya benar).
+ */
+function optimalAngleFor(v0: number, g: number, h0: number): number {
+  if (g <= 0 || v0 <= 0) return OPTIMAL_ANGLE_DEG;
+  return (Math.atan2(v0, Math.sqrt(v0 * v0 + 2 * g * Math.max(h0, 0))) * 180) / Math.PI;
+}
 import { bestTrial, loadTrials, type ParabolaTrial } from "../types";
 
 const STEPS = ["Prediksi", "Eksperimen", "Analisis", "Refleksi"];
@@ -134,6 +147,14 @@ export default function AnalysisView() {
   // Sudut terbaik dari data (v₀ terpilih) & global.
   const bestAtV0 = bestTrial(selectedTrials);
   const bestOverall = bestTrial(trials);
+
+  // Sudut optimal teoretis untuk kondisi trial terbaik pada v₀ terpilih
+  // (memperhitungkan h0 — bukan 45° hardcode).
+  const optimalAngleTheoretical = useMemo(() => {
+    const ref = selectedTrials[selectedTrials.length - 1];
+    if (!ref || selectedV0 === null) return OPTIMAL_ANGLE_DEG;
+    return optimalAngleFor(ref.v0, ref.g, ref.h0);
+  }, [selectedTrials, selectedV0]);
 
   // Deteksi pasangan sudut komplemen (θ + θ' ≈ 90°, range mirip).
   const complementaryPairs = useMemo(() => {
@@ -503,19 +524,26 @@ export default function AnalysisView() {
                       <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
                         Prediksi teori
                       </span>
-                      <span className="font-mono text-xl font-bold text-amber-600">{OPTIMAL_ANGLE_DEG}°</span>
+                      <span className="font-mono text-xl font-bold text-amber-600">
+                        {optimalAngleTheoretical.toFixed(0)}°
+                        {optimalAngleTheoretical < 44.5 && (
+                          <span className="text-[9px] font-normal text-text-muted block">
+                            (h₀ &gt; 0: optimal &lt; 45°)
+                          </span>
+                        )}
+                      </span>
                     </div>
                     <div className="bg-white rounded-xl p-3 border border-border-default/60">
                       <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
                         Status
                       </span>
-                      {bestAtV0 && Math.abs(bestAtV0.angle - OPTIMAL_ANGLE_DEG) <= 3 ? (
+                      {bestAtV0 && Math.abs(bestAtV0.angle - optimalAngleTheoretical) <= 3 ? (
                         <Badge variant="success" className="mt-1">
                           <CheckCircle2 className="w-3 h-3" /> Cocok!
                         </Badge>
                       ) : (
                         <span className="text-xs text-text-muted">
-                          Tambah data di sekitar 40–50° untuk mengonfirmasi
+                          Tambah data di sekitar {(optimalAngleTheoretical - 5).toFixed(0)}–{(optimalAngleTheoretical + 5).toFixed(0)}° untuk mengonfirmasi
                         </span>
                       )}
                     </div>

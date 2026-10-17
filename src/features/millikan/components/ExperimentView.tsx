@@ -159,7 +159,9 @@ export default function LabPage() {
     sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false,
   });
 
-  const MAX_TRIALS = 10;
+  // Batas pencatatan = target misi (5 droplet) — konsisten dengan badge
+  // "Target: x/5" dan gerbang "kumpulkan minimal 5 droplet". (Temuan audit P2.)
+  const MAX_TRIALS = 5;
   const [trials, setTrials]   = useState<any[]>([]);
   const [sliders, setSliders] = useState({
     voltage: 300, radius: 1.5,
@@ -198,6 +200,10 @@ export default function LabPage() {
   };
 
   const handleResetLab = () => {
+    // Konfirmasi — reset menghapus SEMUA data droplet tanpa undo.
+    if (trials.length > 0 && !window.confirm(
+      `Hapus semua ${trials.length} data droplet? Tindakan ini tidak bisa dibatalkan.`
+    )) return;
     setTrials([]);
     localStorage.removeItem(`fisikaseru:trials:${slug}`);
     updateStep(0);
@@ -439,8 +445,13 @@ export default function LabPage() {
       ctx.restore();
     }
 
-    const { vf, vr } = physics;
-    const physVel = isRunning ? (voltageOn ? vr : -vf) : 0;
+    // Fisika: saat medan ON tetapi lemah (Fe < Fg) tetesan harus TETAP TURUN,
+    // bukan membeku diam. vr hanya kecepatan naik; gerak turun memakai -vf
+    // (diredam 0.4 untuk keterbacaan visual, konsisten dengan tampilan okular).
+    const { vf, vr, isHovering, netForce } = physics;
+    const physVel = isRunning
+      ? (voltageOn ? (isHovering ? 0 : netForce > 0 ? vr : -vf * 0.4) : -vf)
+      : 0;
     const fracPerSec = physVel * (1 / 1e-3) * 0.001;
     dropFracRef.current -= fracPerSec * dt;
     if (dropFracRef.current < 0.02) dropFracRef.current = 0.98;

@@ -89,11 +89,16 @@ export default function ReflectionView() {
 
   const best = useMemo(() => bestTrial(trials), [trials]);
 
-  // v₀ untuk tantangan Bulan: dari percobaan terbaik siswa, atau default konfigurasi.
+  // v₀ untuk tantangan Bulan: dari percobaan terbaik pada gravitasi Bumi saja
+  // (preset Bulan/Mars/Jupiter ada di lab — memakai v0 lintas-g membuat narasi
+  // "di Bumi, merianmu…" salah konteks). Temuan audit P2.
   const v0Tantangan = useMemo(() => {
     const varV0 = PARABOLA_CONFIG.simulation.independent.find((v) => v.key === "v0");
-    return best?.v0 ?? varV0?.defaultValue ?? 25;
-  }, [best]);
+    const bumiTrials = trials.filter(
+      (t) => Math.abs(t.g - PARABOLA_CONFIG.constants.G_BUMI) < 0.05
+    );
+    return bestTrial(bumiTrials)?.v0 ?? varV0?.defaultValue ?? 25;
+  }, [trials]);
 
   const jarakBumi = useMemo(
     () => theoreticalRange(v0Tantangan, 45, PARABOLA_CONFIG.constants.G_BUMI),
@@ -383,9 +388,9 @@ export default function ReflectionView() {
                 </p>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
                   Karena R = v₀²·sin(2θ)/g, jarak berbanding <i>terbalik</i> dengan gravitasi.
-                  Gravitasi Bulan {PARABOLA_CONFIG.constants.G_BUMI / PARABOLA_CONFIG.constants.G_BULAN}× lebih lemah,
-                  maka jaraknya melonjak {PARABOLA_CONFIG.constants.G_BUMI / PARABOLA_CONFIG.constants.G_BULAN}× lipat —
-                  itulah mengapa astronaut Apollo bisa melompat jauh di permukaan Bulan.
+                  Gravitasi Bulan {(PARABOLA_CONFIG.constants.G_BUMI / PARABOLA_CONFIG.constants.G_BULAN).toFixed(1)}× lebih lemah,
+                  maka jaraknya melonjak {(PARABOLA_CONFIG.constants.G_BUMI / PARABOLA_CONFIG.constants.G_BULAN).toFixed(1)}× lipat —
+                  itulah mengapa astronaut Apollo bisa melompat tinggi di permukaan Bulan.
                 </p>
               </motion.div>
             )}

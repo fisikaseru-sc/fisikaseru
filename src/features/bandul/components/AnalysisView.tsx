@@ -104,26 +104,13 @@ export default function AnalysisPage() {
   const isBandul   = moduleSlug === "bandul";
   const isActive   = isMillikan || isBandul;
 
-  if (!isActive) {
-    return (
-      <div className="min-h-screen bg-bg-primary flex flex-col justify-between font-body">
-        <header className="h-14 bg-white border-b border-border-default flex items-center px-6 sticky top-0 z-30 justify-between">
-          <Link href="/modules" className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors">
-            <ChevronLeft className="w-4 h-4" /><span className="text-sm font-display font-medium">Katalog</span>
-          </Link>
-        </header>
-        <main className="flex-1 flex items-center justify-center px-6 py-12">
-          <p className="text-text-muted text-sm">Analisis untuk topik ini sedang disiapkan.</p>
-        </main>
-      </div>
-    );
-  }
-
   // ─── State ───────────────────────────────────────────────────────────────────
   const [transform,   setTransform]   = useState<"T vs L" | "T² vs L" | "Log-Log">("T² vs L");
   const [millikanTab, setMillikanTab] = useState<"scatter" | "histogram" | "convergence">("scatter");
   const [mounted,     setMounted]     = useState(false);
   const [trials,      setTrials]      = useState<any[]>([]);
+  // True bila data yang ditampilkan adalah data demo (bukan hasil eksperimen siswa).
+  const [isDemoData,  setIsDemoData]  = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -131,10 +118,11 @@ export default function AnalysisPage() {
     if (saved) {
       try {
         const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) { setTrials(p); return; }
+        if (Array.isArray(p) && p.length > 0) { setTrials(p); setIsDemoData(false); return; }
       } catch (_) {}
     }
-    // Fallback demo data
+    // Fallback demo data — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.
+    setIsDemoData(true);
     if (isMillikan) {
       setTrials([
         { id: 1, r: 1.50, V: 300, tf: 4.17,  tr: 14.30, q: 4.72, n: 3 },
@@ -167,6 +155,14 @@ export default function AnalysisPage() {
 
   const regressionBandul = useMemo(() => linearRegression(chartDataBandul), [chartDataBandul]);
 
+  // g referensi kontekstual: trial yang disimpan mulai mencatat g gravitasi lab.
+  // Jika siswa merekam di Bulan/Jupiter, galat harus dihitung terhadap g lab itu,
+  // bukan selalu 9.80665 (temuan audit P1: preset non-Bumi menghasilkan galat raksasa).
+  const gRef = useMemo(() => {
+    const gs = trials.map((d) => (typeof d.g === "number" ? d.g : NaN)).filter((v) => !isNaN(v));
+    return gs.length > 0 ? gs[gs.length - 1] : 9.80665;
+  }, [trials]);
+
   const calculatedG = useMemo(() => {
     if (regressionBandul.slope === 0) return 0;
     return (4 * Math.PI ** 2) / regressionBandul.slope;
@@ -185,7 +181,7 @@ export default function AnalysisPage() {
     ];
   }, [regressionBandul, maxChartX, chartDataBandul]);
 
-  const gError = useMemo(() => calculatedG > 0 ? Math.abs((calculatedG - 9.80665) / 9.80665 * 100) : 0, [calculatedG]);
+  const gError = useMemo(() => calculatedG > 0 ? Math.abs((calculatedG - gRef) / gRef * 100) : 0, [calculatedG, gRef]);
 
   // ─── Millikan calcs ───────────────────────────────────────────────────────────
   const trialsAug = useMemo(() => trials.map(t => {
@@ -270,6 +266,22 @@ export default function AnalysisPage() {
     return result;
   }, [trialsAug]);
 
+  // Guard non-aktif DIPINDAH ke sini (setelah semua hook) — mematuhi Rules of Hooks.
+  if (!isActive) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex flex-col justify-between font-body">
+        <header className="h-14 bg-white border-b border-border-default flex items-center px-6 sticky top-0 z-30 justify-between">
+          <Link href="/modules" className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors">
+            <ChevronLeft className="w-4 h-4" /><span className="text-sm font-display font-medium">Katalog</span>
+          </Link>
+        </header>
+        <main className="flex-1 flex items-center justify-center px-6 py-12">
+          <p className="text-text-muted text-sm">Analisis untuk topik ini sedang disiapkan.</p>
+        </main>
+      </div>
+    );
+  }
+
   if (!mounted) {
     return (
       <div className="min-h-screen bg-bg-primary flex items-center justify-center" suppressHydrationWarning>
@@ -327,6 +339,19 @@ export default function AnalysisPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6">
+
+        {/* ─── Peringatan data demo ─── */}
+        {isDemoData && (
+          <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-amber-800 leading-relaxed">
+              <b>Ini adalah data contoh, bukan hasil eksperimenmu.</b> Grafik dan angka di bawah hanya
+              ilustrasi. Jalankan eksperimen dan rekam data dulu di{" "}
+              <Link href={`/modules/${moduleSlug}/experiment`} className="underline font-semibold">Lab</Link>{" "}
+              agar analisis memakai datamu sendiri.
+            </div>
+          </div>
+        )}
 
         {/* ─── Insight Banner ─── */}
         <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
@@ -874,7 +899,7 @@ export default function AnalysisPage() {
                   gError < 5 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
                   <div className="flex items-center gap-1.5 font-semibold mb-0.5">
                     {gError < 2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-                    Referensi: 9.8067 m/s²
+                    Referensi: {gRef.toFixed(4)} m/s²{Math.abs(gRef - 9.80665) > 0.05 ? " (lab non-Bumi)" : ""}
                   </div>
                   <p>Galat: <b>{gError.toFixed(3)}%</b> · R² = <b>{regressionBandul.r2.toFixed(4)}</b></p>
                 </div>

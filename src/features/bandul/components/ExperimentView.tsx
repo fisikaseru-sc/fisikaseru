@@ -122,6 +122,10 @@ export default function LabPage() {
   };
 
   const handleResetLab = () => {
+    // Konfirmasi — reset menghapus SEMUA data percobaan & pretest tanpa undo.
+    if (trials.length > 0 && !window.confirm(
+      `Hapus semua ${trials.length} data percobaan dan jawaban pretest? Tindakan ini tidak bisa dibatalkan.`
+    )) return;
     setTrials([]);
     localStorage.removeItem(`fisikaseru:trials:${slug}`);
     updateStep(0);
@@ -263,8 +267,10 @@ export default function LabPage() {
       drawArrow(ctx, bobX, bobY, bobX - ft * fS * Math.sin(pendAngleRef.current), bobY - ft * fS * Math.cos(pendAngleRef.current), "#3B82F6", "T");
     }
 
-    // Period readout
-    const T_theory = 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity);
+    // Period readout — memakai koreksi amplitudo yang sama dengan recordTrial()
+    // (T = T₀·(1+θ₀²/16)), agar angka di layar = angka yang direkam di tabel.
+    const theta0Rd = (sliders.angle * Math.PI) / 180;
+    const T_theory = 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + (theta0Rd * theta0Rd) / 16);
     ctx.fillStyle = "rgba(15,23,42,0.82)";
     roundRect(ctx, W - 132, H - 52, 124, 44, 8); ctx.fill();
     ctx.fillStyle = "#94a3b8"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
@@ -323,7 +329,7 @@ export default function LabPage() {
     const T0 = 2 * Math.PI * Math.sqrt(L / sliders.gravity);
     const T_true = T0 * (1 + (theta0 * theta0) / 16);
     const T_obs = gaussianNoise(T_true, T_true * 0.015);
-    const newTrial = { id: trials.length + 1, L, T: T_obs, T2: T_obs ** 2 };
+    const newTrial = { id: trials.length + 1, L, T: T_obs, T2: T_obs ** 2, g: sliders.gravity };
     const updated = [...trials, newTrial]; setTrials(updated); localStorage.setItem(key, JSON.stringify(updated));
   }
 
@@ -425,6 +431,7 @@ export default function LabPage() {
               mass={sliders.mass}
               initialAngleDeg={sliders.angle}
               gravity={sliders.gravity}
+              damping={0.012}
               running={isRunning}
               onStateChange={handleSceneStateChange}
             />
@@ -437,7 +444,7 @@ export default function LabPage() {
               <div className="flex justify-between gap-3">
                 <span className="text-text-muted">T teoritis</span>
                 <span className="font-bold text-primary-navy">
-                  {(2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity)).toFixed(3)} s
+                  {(2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)).toFixed(3)} s
                 </span>
               </div>
               <div className="flex justify-between gap-3">
@@ -461,8 +468,9 @@ export default function LabPage() {
               </button>
               <button
                 onClick={() => { setIsRunning(false); setStopwatch(0); setResetCount(c => c + 1); }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all">
-                <RotateCcw className="w-3.5 h-3.5" /> Reset
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all"
+                title="Mengembalikan bandul ke posisi awal — data percobaan tetap aman">
+                <RotateCcw className="w-3.5 h-3.5" /> Reset Simulasi
               </button>
               <button onClick={recordTrial} disabled={trials.length >= MAX_TRIALS}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-success/10 hover:bg-success/20 text-success border border-success/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
@@ -633,7 +641,7 @@ export default function LabPage() {
                       Mulai Pengukuran <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
                     {!observationDone && (
-                      <p className="text-[10px] text-text-muted text-center mt-2">Selesaikan semua checklist dulu.</p>
+                      <p className="text-[10px] text-text-muted text-center mt-2">Jalankan simulasi atau ubah salah satu variabel dulu.</p>
                     )}
                   </div>
                 </div>
@@ -673,8 +681,9 @@ export default function LabPage() {
                       <Badge variant="primary" size="sm">{trials.length}/{MAX_TRIALS}</Badge>
                       {trials.length > 0 && (
                         <button onClick={handleResetLab}
-                          className="text-[9px] text-danger font-semibold px-1.5 py-0.5 rounded border border-danger/30 hover:bg-danger/5 cursor-pointer transition-colors">
-                          Reset
+                          className="text-[9px] text-danger font-semibold px-1.5 py-0.5 rounded border border-danger/30 hover:bg-danger/5 cursor-pointer transition-colors"
+                          title="Menghapus SEMUA data percobaan dan pretest (ada konfirmasi)">
+                          Hapus Semua Data
                         </button>
                       )}
                     </div>
