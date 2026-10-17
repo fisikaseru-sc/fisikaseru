@@ -3,22 +3,27 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, Shield, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const features = [
   {
     icon: Zap,
     title: "Simulasi Fisika Realistis",
-    desc: "Engine fisika berbasis Rapier WASM dengan akurasi <0.1% dan noise Gaussian untuk data realistis.",
+    desc: "Engine fisika dengan akurasi tinggi dan noise Gaussian untuk data realistis.",
+    badge: "Presisi",
   },
   {
     icon: Shield,
     title: "Gratis & Terbuka",
     desc: "Seluruh pengalaman inti gratis selamanya. PRO hanya untuk laporan DOCX dan flashcard premium.",
+    badge: "Gratis",
   },
   {
     icon: Globe,
     title: "Untuk Indonesia",
     desc: "Konten Bahasa Indonesia, kurikulum relevan, dan server di Asia Tenggara untuk performa optimal.",
+    badge: "Lokal",
   },
 ];
 
@@ -53,13 +58,23 @@ export function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.4 }}
-              className="science-card p-6"
             >
-              <div className="w-12 h-12 rounded-xl bg-accent-cobalt/10 flex items-center justify-center mb-4">
-                <feat.icon className="w-5 h-5 text-accent-cobalt" />
-              </div>
-              <h3 className="font-display font-semibold text-primary-navy mb-2">{feat.title}</h3>
-              <p className="text-sm text-text-muted leading-relaxed">{feat.desc}</p>
+              <Card className="h-full transition-shadow hover:shadow-card-hover">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-xl bg-accent-cobalt/10 flex items-center justify-center mb-4">
+                    <feat.icon className="w-5 h-5 text-accent-cobalt" aria-hidden="true" />
+                  </div>
+                  <CardTitle className="font-display font-semibold text-primary-navy">
+                    {feat.title}
+                  </CardTitle>
+                  <CardDescription className="text-sm text-text-muted leading-relaxed">
+                    {feat.desc}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Badge variant="teal" size="sm">{feat.badge}</Badge>
+                </CardContent>
+              </Card>
             </motion.div>
           ))}
         </div>

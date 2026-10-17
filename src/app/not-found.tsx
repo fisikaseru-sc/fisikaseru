@@ -3,25 +3,31 @@ import Link from "next/link";
 
 import React from "react";
 import { motion } from "framer-motion";
-import { FlaskConical, ArrowLeft, Home, BookOpen, Atom } from "lucide-react";
+import { FlaskConical, Home, BookOpen, Apple } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-bg-primary flex flex-col justify-between relative overflow-hidden">
       {/* Background glow effects */}
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-accent-cobalt/5 filter blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal/5 filter blur-[100px] pointer-events-none" />
+      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-accent-cobalt/5 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-teal/5 blur-[100px] pointer-events-none" />
 
       {/* Header */}
-      <header className="h-16 bg-white border-b border-border-default flex items-center px-6 sticky top-0 z-30 justify-between">
-        <Link href="/" className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors">
-          <ArrowLeft className="w-4 h-4" />
-          <span className="text-sm font-display font-medium">Kembali</span>
+      <header className="h-16 bg-white/80 backdrop-blur-md border-b border-border-default flex items-center px-6 sticky top-0 z-30 justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors rounded-lg px-2 py-1 focus-visible:outline-2 focus-visible:outline-accent-cobalt"
+          aria-label="Kembali ke beranda"
+        >
+          <FlaskConical className="w-4 h-4" aria-hidden="true" />
+          <span className="text-sm font-display font-medium">Beranda</span>
         </Link>
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-accent-cobalt flex items-center justify-center">
-            <FlaskConical className="w-4 h-4 text-white" />
+            <FlaskConical className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
           <span className="font-display font-bold text-primary-navy text-sm">FisikaSeru</span>
         </div>
@@ -33,84 +39,86 @@ export default function NotFound() {
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="max-w-md w-full bg-white rounded-2xl border border-border-default shadow-depth p-8 text-center glass-panel relative overflow-hidden"
+          className="max-w-md w-full relative"
         >
-          {/* Top colored indicator bar */}
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-accent-cobalt via-sky-blue to-teal" />
+          <Card className="glass-panel relative overflow-hidden shadow-depth">
+            {/* Top colored indicator bar */}
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-accent-cobalt via-sky-blue to-teal" />
 
-          {/* Interactive Floating Atom Icon */}
-          <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-            <motion.div
-              className="absolute inset-0 rounded-full bg-accent-cobalt/5 border border-accent-cobalt/10"
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-            />
-            
-            {/* Spinning orbital electron rings */}
-            <motion.div
-              className="absolute w-20 h-8 border border-teal/30 rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-            />
-            <motion.div
-              className="absolute w-20 h-8 border border-sky-blue/30 rounded-full"
-              animate={{ rotate: -360 }}
-              transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
-              style={{ transform: "rotate(60deg)" }}
-            />
-            <motion.div
-              className="absolute w-20 h-8 border border-accent-cobalt/30 rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 7, ease: "linear" }}
-              style={{ transform: "rotate(-60deg)" }}
-            />
+            <CardHeader className="pt-8 text-center">
+              {/* Falling apple animation — Newton's 404 */}
+              <div
+                className="relative h-40 mx-auto mb-2"
+                role="img"
+                aria-label="Animasi apel jatuh mengenai kepala di bawah pohon — mengingatkan pada penemuan gravitasi oleh Newton"
+              >
+                {/* Tree branch */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-40 h-1.5 rounded-full bg-primary-navy/70" />
+                {/* Apple with bounce physics */}
+                <motion.div
+                  className="absolute left-1/2 -translate-x-1/2 top-4"
+                  animate={{ y: [0, 88, 88, 0, 0] }}
+                  transition={{
+                    duration: 3.2,
+                    repeat: Infinity,
+                    times: [0, 0.35, 0.55, 0.75, 1],
+                    ease: ["easeIn", "easeOut", "easeIn", "easeOut"],
+                  }}
+                >
+                  <Apple className="w-8 h-8 text-rose" aria-hidden="true" />
+                </motion.div>
+                {/* Impact ripple */}
+                <motion.div
+                  className="absolute left-1/2 -translate-x-1/2 top-[92px] w-16 h-3 rounded-full border-2 border-amber/40"
+                  animate={{ scaleX: [0.2, 1.4, 0.2], opacity: [0, 0.8, 0] }}
+                  transition={{ duration: 3.2, repeat: Infinity, times: [0.3, 0.45, 0.7] }}
+                />
+                {/* Ground line */}
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-48 border-t-2 border-dashed border-border-strong" />
+                {/* Pendulum swinging beside */}
+                <motion.div
+                  className="absolute bottom-8 right-4 origin-top"
+                  style={{ width: 2, height: 56 }}
+                  animate={{ rotate: [25, -25, 25] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  aria-hidden="true"
+                >
+                  <div className="w-0.5 h-full mx-auto bg-slate-400" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-accent-cobalt" />
+                </motion.div>
+                {/* Formula hint */}
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] font-mono text-text-muted">
+                  g ≈ 9.8 m/s² — halaman ini tetap tunduk pada gravitasi
+                </span>
+              </div>
 
-            {/* Core Nucleus */}
-            <motion.div
-              className="w-10 h-10 rounded-full bg-gradient-to-br from-accent-cobalt to-sky-blue flex items-center justify-center text-white"
-              animate={{ y: [0, -4, 0] }}
-              transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-            >
-              <Atom className="w-5 h-5 animate-pulse-soft" />
-            </motion.div>
-          </div>
+              <div className="flex justify-center gap-2 mb-3">
+                <Badge variant="warning" size="sm">Error 404</Badge>
+                <Badge variant="teal" size="sm">Eksperimen Ganda</Badge>
+              </div>
 
-          {/* Badge */}
-          <div className="flex justify-center gap-2 mb-4">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-teal/5 text-teal border border-teal/10">
-              Fase Kalibrasi
-            </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-slate-100 text-slate-600 border border-slate-200">
-              Coming Soon
-            </span>
-          </div>
+              <CardTitle className="font-display text-2xl font-bold text-primary-navy text-center">
+                Halaman Tidak Ditemukan 🍎
+              </CardTitle>
+              <CardDescription className="text-sm text-text-muted leading-relaxed text-center">
+                Sobat Sains, seperti apel Newton yang jatuh — halaman yang Anda cari
+                telah jatuh ke dimensi lain. Mari kembali ke lajur eksperimen yang ada.
+              </CardDescription>
+            </CardHeader>
 
-          {/* Heading */}
-          <h2 className="font-display text-2xl font-bold text-primary-navy mb-3">
-            Halaman Sedang Dirakit 🛠️
-          </h2>
-
-          {/* Description */}
-          <p className="text-sm text-text-muted leading-relaxed mb-8 font-body">
-            Sobat Sains, instrumen dan modul pembelajaran untuk topik ini sedang dirancang dan dikalibrasi oleh tim pengembang <b>FisikaSeru</b>. Kami sedang menyusun visualisasi interaktif dan kurikulum fisika terbaik agar Anda dapat benar-benar memahaminya.
-          </p>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-3">
-            <Link href="/" className="w-full">
-              <Button className="w-full h-11 text-sm font-semibold cursor-pointer gap-2">
-                <Home className="w-4 h-4" /> Beranda FisikaSeru
-              </Button>
-            </Link>
-            <Link href="/modules" className="w-full">
-              <Button variant="outline" className="w-full h-11 text-sm font-semibold cursor-pointer gap-2 border-border-strong hover:bg-bg-primary">
-                <BookOpen className="w-4 h-4" /> Buka Katalog Modul
-              </Button>
-            </Link>
-            <p className="text-[10px] text-text-muted font-mono mt-2">
-              Ada ide seru untuk modul ini? Hubungi kami di ide@fisikaseru.id
-            </p>
-          </div>
+            <CardFooter className="flex flex-col gap-3 bg-transparent border-t-0">
+              <Link href="/" className="w-full">
+                <Button className="w-full h-11 text-sm font-semibold cursor-pointer gap-2">
+                  <Home className="w-4 h-4" aria-hidden="true" /> Beranda FisikaSeru
+                </Button>
+              </Link>
+              <Link href="/modules" className="w-full">
+                <Button variant="outline" className="w-full h-11 text-sm font-semibold cursor-pointer gap-2 border-border-strong hover:bg-bg-primary">
+                  <BookOpen className="w-4 h-4" aria-hidden="true" /> Buka Katalog Modul
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
         </motion.div>
       </main>
 

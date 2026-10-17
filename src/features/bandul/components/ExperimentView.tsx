@@ -1,54 +1,57 @@
 "use client";
+
+/**
+ * ExperimentView — laboratorium modul Bandul Sederhana.
+ *
+ * Simulasi 2D (kanvas) atau 3D (PendulumScene3D, dynamic ssr:false) yang
+ * dapat ditukar lewat toggle "2D / 3D" (default 2D sebagai fallback aman).
+ * Fisika: pendulum nonlinier termalu (θ'' = -(g/L)·sin θ − b·θ').
+ * "Rekam" menyimpan {L, T, T²} ke localStorage `fisikaseru:trials:bandul`
+ * dengan derau pengukuran gaussian ±1.5%; T dihitung dari amplitudo awal
+ * aktual memakai pendekatan integral eliptik T = T₀·(1 + θ₀²/16).
+ */
+
 import Link from "next/link";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  FlaskConical, ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Save,
-  Eye, EyeOff, Radio, Zap, Wrench, Lock, Settings, BarChart2,
-  Microscope, LayoutGrid, AlertCircle, CheckCircle2, ArrowRight,
-  BookOpen, Sparkles, CircleDot
+  ChevronLeft, ChevronRight, Play, Pause, RotateCcw, Save,
+  Eye, EyeOff, Settings, BarChart2, AlertCircle, CheckCircle2,
+  ArrowRight, BookOpen, Sparkles, CircleDot
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import type { PendulumState } from "../views3d/PendulumScene3D";
+
+const PendulumScene3D = dynamic(() => import("../views3d/PendulumScene3D"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full w-full flex items-center justify-center bg-slate-950">
+      <span className="text-xs text-slate-400 font-mono">Memuat scene 3D…</span>
+    </div>
+  ),
+});
 
 // ============================================================
-// PHYSICAL CONSTANTS (Millikan Oil Drop)
+// CONSTANTS
 // ============================================================
-const ETA       = 1.81e-5;
-const RHO_OIL   = 886;
-const RHO_AIR   = 1.20;
-const G         = 9.80665;
-const E_CHARGE  = 1.602e-19;
-const PLATE_D   = 0.005;
-const STOKES_6PI = 6 * Math.PI;
+const G_DEFAULT = 9.80665; // gravitasi bumi (m/s²)
 
 const LAB_STEPS = ["Persiapan", "Pengamatan", "Pengukuran", "Analisis", "Refleksi"];
 
-const MODULE_TITLE: Record<string, string> = {
-  millikan: "Tetes Minyak Millikan",
-  bandul:   "Bandul Sederhana",
-  ohm:      "Hukum Ohm",
-  "jatuh-bebas": "Jatuh Bebas",
-  boyle:    "Hukum Boyle",
-  snellius: "Pembiasan Cahaya",
-};
+const GRAVITY_PRESETS = [
+  { label: "Bulan", g: 1.62 },
+  { label: "Bumi", g: 9.81 },
+  { label: "Jupiter", g: 24.79 },
+];
 
 // ============================================================
-// PHYSICS ENGINE
+// PHYSICS HELPERS
 // ============================================================
-function millikanVelocities(r_um: number, V: number, n: number, voltageOn: boolean) {
-  const r = r_um * 1e-6;
-  const dRho = RHO_OIL - RHO_AIR;
-  const Fg = (4 / 3) * Math.PI * r ** 3 * dRho * G;
-  const vf = Fg / (STOKES_6PI * ETA * r);
-  const Fe = voltageOn ? (n * E_CHARGE * V) / PLATE_D : 0;
-  const vr = voltageOn ? (Fe - Fg) / (STOKES_6PI * ETA * r) : 0;
-  return { vf, vr, Fg, Fe };
-}
-
 function gaussianNoise(mean: number, std: number) {
   const u1 = Math.random() || 1e-10;
   const u2 = Math.random();
@@ -61,53 +64,42 @@ function gaussianNoise(mean: number, std: number) {
 export default function LabPage() {
   const params   = useParams();
   const router   = useRouter();
-  const slug     = (params?.moduleSlug as string) || "millikan";
-
-  const isMillikan = slug === "millikan";
-  const isBandul   = slug === "bandul";
-  const isActive   = isMillikan || isBandul;
+  const slug     = (params?.moduleSlug as string) || "bandul";
 
   const [currentStep, setCurrentStep]       = useState(0);
   const [panelCollapsed, setPanelCollapsed] = useState(false);
   const [isRunning, setIsRunning]           = useState(false);
   const [showVectors, setShowVectors]       = useState(true);
-  const [viewMode, setViewMode]             = useState<"chamber" | "eyepiece">("chamber");
-  const [voltageOn, setVoltageOn]           = useState(true);
-  const [chargeN, setChargeN]               = useState(4);
-  const [ionFlash, setIonFlash]             = useState(false);
-  const [stopwatch, setStopwatch]           = useState(0);
+  const [visualMode, setVisualMode]          = useState<"2d" | "3d">("2d");
+  const [resetCount, setResetCount]          = useState(0);
+  const [stopwatch, setStopwatch]            = useState(0);
+  const [sceneState, setSceneState]          = useState<PendulumState | null>(null);
 
   const [pretestAnswers, setPretestAnswers]     = useState<Record<number, number>>({});
   const [pretestSubmitted, setPretestSubmitted] = useState(false);
   const [expSteps, setExpSteps] = useState({
-    sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false,
+    interactionChanged: false,
   });
 
   const MAX_TRIALS = 10;
   const [trials, setTrials]   = useState<any[]>([]);
   const [sliders, setSliders] = useState({
-    voltage: 300, radius: 1.5, length: 0.75, mass: 0.1, angle: 10,
+    length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT,
   });
 
-  const millikanRef  = useRef<HTMLCanvasElement>(null);
   const bandulRef    = useRef<HTMLCanvasElement>(null);
-  const dropFracRef  = useRef(0.5);
-  const dropYEye     = useRef(0);
   const animRef      = useRef<number>(0);
   const lastT        = useRef<number>(0);
   const pendAngleRef = useRef(0);
   const pendOmegaRef = useRef(0);
-  const sprayRef     = useRef<any[]>([]);
-  const [atomizerActive, setAtomizerActive] = useState(false);
 
   // ── Load saved progress ──
   useEffect(() => {
     const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
-    let hasTrials = false;
     if (savedTrials) {
       try {
         const p = JSON.parse(savedTrials);
-        if (Array.isArray(p) && p.length > 0) { setTrials(p); hasTrials = true; }
+        if (Array.isArray(p) && p.length > 0) setTrials(p);
       } catch (_) {}
     }
     const savedStep = localStorage.getItem(`fisikaseru:step:${slug}`);
@@ -122,8 +114,6 @@ export default function LabPage() {
 
     const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
     if (savedExp) { try { setExpSteps(JSON.parse(savedExp)); } catch (_) {} }
-
-    if (hasTrials && isMillikan) triggerAtomizer();
   }, [slug]);
 
   const updateStep = (newStep: number) => {
@@ -139,7 +129,7 @@ export default function LabPage() {
     localStorage.removeItem(`fisikaseru:pretest:ans:${slug}`);
     setPretestSubmitted(false);
     localStorage.removeItem(`fisikaseru:pretest:sub:${slug}`);
-    const clearedExp = { sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false };
+    const clearedExp = { interactionChanged: false };
     setExpSteps(clearedExp);
     localStorage.removeItem(`fisikaseru:exp:${slug}`);
   };
@@ -163,34 +153,6 @@ export default function LabPage() {
     });
   };
 
-  const handleSetViewMode = (mode: "chamber" | "eyepiece") => {
-    setViewMode(mode);
-    updateExpStep("viewSwapped", true);
-  };
-
-  function triggerAtomizer() {
-    updateExpStep("sprayed", true);
-    setAtomizerActive(true);
-    const pts: any[] = [];
-    for (let i = 0; i < 60; i++) {
-      pts.push({
-        x: gaussianNoise(0, 1.5), y: 0,
-        vx: gaussianNoise(0, 18), vy: gaussianNoise(80, 22),
-        life: 1.0, decay: Math.random() * 0.5 + 0.4, size: Math.random() * 1.6 + 0.6,
-      });
-    }
-    sprayRef.current = pts;
-    setTimeout(() => setAtomizerActive(false), 1400);
-  }
-
-  function triggerIonization() {
-    updateExpStep("xrayTriggered", true);
-    setIonFlash(true);
-    const newN = Math.floor(Math.random() * 7) + 1;
-    setChargeN(newN);
-    setTimeout(() => setIonFlash(false), 600);
-  }
-
   useEffect(() => {
     let id: any;
     if (isRunning) {
@@ -200,289 +162,12 @@ export default function LabPage() {
     return () => clearInterval(id);
   }, [isRunning]);
 
-  const physics = millikanVelocities(sliders.radius, sliders.voltage, chargeN, voltageOn);
-
-  const draw = useCallback((ts: number) => {
-    const dt = Math.min((ts - lastT.current) / 1000, 0.05);
-    lastT.current = ts;
-    if (isMillikan) drawMillikan(dt);
-    else if (isBandul) drawBandul(dt);
-    animRef.current = requestAnimationFrame(draw);
-  }, [isRunning, sliders, showVectors, isMillikan, isBandul, voltageOn, chargeN, viewMode]);
-
-  useEffect(() => {
-    lastT.current = performance.now();
-    animRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animRef.current);
-  }, [draw]);
+  const handleSceneStateChange = useCallback((state: PendulumState) => {
+    setSceneState(state);
+  }, []);
 
   // ================================================================
-  // MILLIKAN CANVAS
-  // ================================================================
-  function drawMillikan(dt: number) {
-    const canvas = millikanRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    if (canvas.width !== rect.width * dpr) { canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; }
-    ctx.save(); ctx.scale(dpr, dpr);
-    const W = rect.width; const H = rect.height;
-    if (viewMode === "chamber") drawChamberView(ctx, W, H, dt);
-    else drawEyepieceView(ctx, W, H, dt);
-    ctx.restore();
-  }
-
-  function drawChamberView(ctx: CanvasRenderingContext2D, W: number, H: number, dt: number) {
-    const cx = W / 2; const cy = H / 2;
-    const bg = ctx.createLinearGradient(0, 0, 0, H);
-    bg.addColorStop(0, "#0a0e1a"); bg.addColorStop(1, "#0d1220");
-    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-    ctx.strokeStyle = "rgba(59,130,246,0.04)"; ctx.lineWidth = 0.5;
-    for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-    for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-
-    const chW = Math.min(160, W * 0.38); const chH = Math.min(240, H * 0.68);
-    const chX = cx - chW / 2; const chY = cy - chH / 2;
-    const plateThick = 8; const plateW = chW - 10; const plateX = cx - plateW / 2;
-    const topPlateY = chY + chH * 0.18; const botPlateY = chY + chH * 0.82 - plateThick;
-    const innerTop = topPlateY + plateThick; const innerBot = botPlateY;
-    const gapH = innerBot - innerTop;
-
-    const glowR = ctx.createRadialGradient(cx, cy, chW * 0.1, cx, cy, chW * 0.7);
-    glowR.addColorStop(0, "rgba(30,58,138,0.15)"); glowR.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = glowR; ctx.fillRect(chX - 20, chY - 20, chW + 40, chH + 40);
-
-    const glassG = ctx.createLinearGradient(chX, cy, chX + chW, cy);
-    glassG.addColorStop(0,    "rgba(15,23,42,0.97)");
-    glassG.addColorStop(0.06, "rgba(30,41,59,0.95)");
-    glassG.addColorStop(0.15, "rgba(51,65,85,0.4)");
-    glassG.addColorStop(0.5,  "rgba(15,23,42,0.7)");
-    glassG.addColorStop(0.85, "rgba(51,65,85,0.4)");
-    glassG.addColorStop(0.94, "rgba(30,41,59,0.95)");
-    glassG.addColorStop(1,    "rgba(15,23,42,0.97)");
-    ctx.fillStyle = glassG; roundRect(ctx, chX, chY, chW, chH, 6); ctx.fill();
-
-    ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(chX + 8, chY + 6); ctx.lineTo(chX + 8, chY + chH - 6); ctx.stroke();
-    ctx.strokeStyle = "rgba(100,116,139,0.6)"; ctx.lineWidth = 1.5;
-    roundRect(ctx, chX, chY, chW, chH, 6); ctx.stroke();
-
-    const capH = 12;
-    drawSteelCap(ctx, chX - 6, chY - capH, chW + 12, capH, "top");
-    drawSteelCap(ctx, chX - 6, chY + chH, chW + 12, capH, "bottom");
-
-    if (voltageOn && sliders.voltage > 10) {
-      ctx.save();
-      const topGlow = ctx.createRadialGradient(cx, topPlateY, 0, cx, topPlateY, plateW * 0.6);
-      topGlow.addColorStop(0, "rgba(239,68,68,0.12)"); topGlow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = topGlow; ctx.fillRect(plateX - 20, topPlateY - 15, plateW + 40, 30);
-      const botGlow = ctx.createRadialGradient(cx, botPlateY + plateThick, 0, cx, botPlateY + plateThick, plateW * 0.6);
-      botGlow.addColorStop(0, "rgba(59,130,246,0.12)"); botGlow.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = botGlow; ctx.fillRect(plateX - 20, botPlateY - 5, plateW + 40, 30);
-      ctx.restore();
-    }
-
-    drawBrassPlate(ctx, plateX, topPlateY, plateW, plateThick, voltageOn ? "#ef4444" : "#64748b");
-    drawBrassPlate(ctx, plateX, botPlateY, plateW, plateThick, voltageOn ? "#3b82f6" : "#64748b");
-
-    ctx.font = "bold 9px monospace"; ctx.textAlign = "left";
-    if (voltageOn) {
-      ctx.fillStyle = "#fca5a5"; ctx.fillText("+", plateX - 14, topPlateY + 7);
-      ctx.fillStyle = "#93c5fd"; ctx.fillText("−", plateX - 13, botPlateY + 7);
-    }
-
-    ctx.fillStyle = "#0a0e1a"; ctx.fillRect(cx - 2.5, topPlateY, 5, plateThick);
-
-    if (voltageOn && sliders.voltage > 10) {
-      ctx.save(); ctx.setLineDash([3, 5]);
-      ctx.strokeStyle = "rgba(253,224,71,0.3)"; ctx.lineWidth = 0.8;
-      const xOff = [-40, -20, 0, 20, 40];
-      xOff.forEach(ox => {
-        ctx.beginPath(); ctx.moveTo(cx + ox, innerTop); ctx.lineTo(cx + ox, innerBot); ctx.stroke();
-        const ay = innerTop + gapH * 0.55;
-        ctx.beginPath(); ctx.moveTo(cx + ox - 2.5, ay - 3); ctx.lineTo(cx + ox, ay); ctx.lineTo(cx + ox + 2.5, ay - 3);
-        ctx.fillStyle = "rgba(253,224,71,0.35)"; ctx.fill();
-      });
-      ctx.restore();
-    }
-
-    const lampX = chX - 44; const lampY = cy;
-    const lampG = ctx.createLinearGradient(lampX - 4, lampY - 14, lampX + 36, lampY + 14);
-    lampG.addColorStop(0, "#1e293b"); lampG.addColorStop(0.5, "#334155"); lampG.addColorStop(1, "#1e293b");
-    ctx.fillStyle = lampG; roundRect(ctx, lampX - 4, lampY - 14, 40, 28, 4); ctx.fill();
-    ctx.strokeStyle = "#475569"; ctx.lineWidth = 1; roundRect(ctx, lampX - 4, lampY - 14, 40, 28, 4); ctx.stroke();
-    ctx.beginPath(); ctx.arc(lampX + 32, lampY, 5, 0, Math.PI * 2); ctx.fillStyle = "#fef08a"; ctx.fill();
-    const coneG = ctx.createLinearGradient(chX, lampY, cx, lampY);
-    coneG.addColorStop(0, "rgba(253,224,71,0.18)"); coneG.addColorStop(1, "rgba(253,224,71,0)");
-    ctx.fillStyle = coneG; ctx.beginPath();
-    ctx.moveTo(chX, lampY - 6); ctx.lineTo(cx, lampY - gapH * 0.35); ctx.lineTo(cx, lampY + gapH * 0.35); ctx.lineTo(chX, lampY + 6);
-    ctx.closePath(); ctx.fill();
-
-    const scopeX = chX + chW + 4;
-    const scopeG = ctx.createLinearGradient(scopeX, lampY - 12, scopeX + 46, lampY + 12);
-    scopeG.addColorStop(0, "#1e293b"); scopeG.addColorStop(0.5, "#334155"); scopeG.addColorStop(1, "#1e293b");
-    ctx.fillStyle = scopeG; roundRect(ctx, scopeX, lampY - 12, 46, 24, 4); ctx.fill();
-    ctx.strokeStyle = "#475569"; ctx.lineWidth = 1; roundRect(ctx, scopeX, lampY - 12, 46, 24, 4); ctx.stroke();
-    ctx.fillStyle = "#334155"; roundRect(ctx, scopeX, lampY - 8, 5, 16, 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(scopeX + 40, lampY, 4, 0, Math.PI * 2); ctx.fillStyle = "rgba(34,211,238,0.4)"; ctx.fill();
-    ctx.fillStyle = "rgba(148,163,184,0.6)"; ctx.font = "6px monospace"; ctx.textAlign = "center";
-    ctx.fillText("MIKROSKOP", scopeX + 23, lampY + 20);
-
-    ctx.save();
-    const xrX = chX - 22; const xrY = chY + chH * 0.78;
-    ctx.translate(xrX, xrY); ctx.rotate(-Math.PI / 5.5);
-    const xrG = ctx.createLinearGradient(-10, -16, 10, 16);
-    xrG.addColorStop(0, "#0f172a"); xrG.addColorStop(0.5, "#1e293b"); xrG.addColorStop(1, "#0f172a");
-    ctx.fillStyle = xrG; roundRect(ctx, -10, -16, 20, 32, 3); ctx.fill();
-    ctx.strokeStyle = "#475569"; ctx.lineWidth = 0.8; roundRect(ctx, -10, -16, 20, 32, 3); ctx.stroke();
-    ctx.beginPath(); ctx.arc(0, -10, 5, 0, Math.PI * 2); ctx.fillStyle = "#06b6d4"; ctx.fill();
-    if (ionFlash) {
-      ctx.strokeStyle = "rgba(6,182,212,0.7)"; ctx.lineWidth = 1.5; ctx.shadowColor = "#06b6d4"; ctx.shadowBlur = 12;
-      for (let r = 18; r < 90; r += 20) { ctx.beginPath(); ctx.arc(0, -10, r, -0.5, 0.5); ctx.stroke(); }
-      ctx.shadowBlur = 0;
-    }
-    ctx.restore();
-    ctx.fillStyle = "rgba(6,182,212,0.55)"; ctx.font = "6px monospace"; ctx.textAlign = "center";
-    ctx.fillText("X-RAY", xrX - 4, xrY + 22);
-
-    ctx.fillStyle = "#475569"; roundRect(ctx, cx - 5, chY - capH - 24, 10, 24, 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(cx, chY - capH - 30, 10, 0, Math.PI * 2);
-    const bulbG = ctx.createRadialGradient(cx - 3, chY - capH - 33, 2, cx, chY - capH - 30, 10);
-    bulbG.addColorStop(0, "#f87171"); bulbG.addColorStop(1, "#b91c1c");
-    ctx.fillStyle = bulbG; ctx.fill();
-
-    if (sprayRef.current.length > 0) {
-      const nozzleX = cx; const nozzleY = chY - capH - 6;
-      ctx.save();
-      sprayRef.current.forEach(p => {
-        p.vx *= Math.pow(0.1, dt); p.vy *= Math.pow(0.15, dt); p.vy += G * 5 * dt;
-        p.x += p.vx * dt; p.y += p.vy * dt; p.life -= p.decay * dt;
-        if (p.life > 0) {
-          ctx.beginPath(); ctx.arc(nozzleX + p.x, nozzleY + p.y, p.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(253,224,71,${p.life * 0.9})`; ctx.fill();
-        }
-      });
-      sprayRef.current = sprayRef.current.filter(p => p.life > 0);
-      ctx.restore();
-    }
-
-    const { vf, vr } = physics;
-    const physVel = isRunning ? (voltageOn ? vr : -vf) : 0;
-    const fracPerSec = physVel * (1 / 1e-3) * 0.001;
-    dropFracRef.current -= fracPerSec * dt;
-    if (dropFracRef.current < 0.02) dropFracRef.current = 0.98;
-    if (dropFracRef.current > 0.98) dropFracRef.current = 0.02;
-
-    const dropY = innerTop + dropFracRef.current * gapH;
-    const dropR = 3.5 + sliders.radius * 1.2;
-
-    const dropGlow = ctx.createRadialGradient(cx, dropY, 0, cx, dropY, dropR * 4);
-    dropGlow.addColorStop(0, "rgba(253,224,71,0.25)"); dropGlow.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = dropGlow; ctx.beginPath(); ctx.arc(cx, dropY, dropR * 4, 0, Math.PI * 2); ctx.fill();
-
-    ctx.beginPath(); ctx.arc(cx, dropY, dropR, 0, Math.PI * 2);
-    const dG = ctx.createRadialGradient(cx - dropR * 0.35, dropY - dropR * 0.35, dropR * 0.1, cx, dropY, dropR);
-    dG.addColorStop(0, "#fef9c3"); dG.addColorStop(0.3, "#fde047"); dG.addColorStop(0.7, "#ca8a04"); dG.addColorStop(1, "#78350f");
-    ctx.fillStyle = dG; ctx.fill();
-    ctx.beginPath(); ctx.arc(cx - dropR * 0.3, dropY - dropR * 0.3, dropR * 0.28, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.75)"; ctx.fill();
-
-    ctx.strokeStyle = "rgba(34,211,238,0.85)"; ctx.lineWidth = 0.8;
-    ctx.beginPath(); ctx.arc(cx, dropY, dropR + 5, 0, Math.PI * 2); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(cx - dropR - 9, dropY); ctx.lineTo(cx - dropR - 3, dropY);
-    ctx.moveTo(cx + dropR + 3, dropY); ctx.lineTo(cx + dropR + 9, dropY);
-    ctx.moveTo(cx, dropY - dropR - 9); ctx.lineTo(cx, dropY - dropR - 3);
-    ctx.moveTo(cx, dropY + dropR + 3); ctx.lineTo(cx, dropY + dropR + 9); ctx.stroke();
-
-    if (showVectors) {
-      const vScale = 1.8e14;
-      const { Fg, Fe } = physics;
-      drawArrow(ctx, cx - 18, dropY, cx - 18, dropY + Fg * vScale, "#ef4444", "Weff");
-      if (voltageOn && Fe > 1e-16) drawArrow(ctx, cx + 18, dropY, cx + 18, dropY - Fe * vScale, "#22d3ee", "Fe");
-      if (isRunning && Math.abs(physVel) > 1e-8) {
-        const Fd = STOKES_6PI * ETA * (sliders.radius * 1e-6) * physVel;
-        drawArrow(ctx, cx, dropY, cx, dropY + Fd * vScale, "#a3e635", "Fd");
-      }
-    }
-
-    if (voltageOn) {
-      ctx.save(); ctx.fillStyle = "rgba(15,23,42,0.75)"; roundRect(ctx, chX + 3, chY + 3, 68, 18, 3); ctx.fill();
-      ctx.fillStyle = "#fde047"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
-      ctx.fillText(`V = ${sliders.voltage} V`, chX + 7, chY + 14); ctx.restore();
-    }
-    ctx.fillStyle = "rgba(15,23,42,0.75)"; roundRect(ctx, chX + chW - 52, chY + 3, 49, 18, 3); ctx.fill();
-    ctx.fillStyle = "#22d3ee"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
-    ctx.fillText(`q = ${chargeN}e`, chX + chW - 48, chY + 14);
-  }
-
-  function drawEyepieceView(ctx: CanvasRenderingContext2D, W: number, H: number, dt: number) {
-    const cx = W / 2; const cy = H / 2;
-    const R  = Math.min(W, H) * 0.42;
-    ctx.fillStyle = "#050810"; ctx.fillRect(0, 0, W, H);
-    const vigG = ctx.createRadialGradient(cx, cy, R * 0.7, cx, cy, R * 1.25);
-    vigG.addColorStop(0, "rgba(0,0,0,0)"); vigG.addColorStop(1, "rgba(0,0,0,0.95)");
-    ctx.fillStyle = vigG; ctx.fillRect(0, 0, W, H);
-    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
-    const eyeBg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-    eyeBg.addColorStop(0, "#04060f"); eyeBg.addColorStop(0.85, "#02040a"); eyeBg.addColorStop(1, "#000000");
-    ctx.fillStyle = eyeBg; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
-    ctx.strokeStyle = "rgba(148,163,184,0.12)"; ctx.lineWidth = 0.5;
-    for (let y = cy - R; y <= cy + R; y += R * 0.125) { ctx.beginPath(); ctx.moveTo(cx - R, y); ctx.lineTo(cx + R, y); ctx.stroke(); }
-    for (let x = cx - R; x <= cx + R; x += R * 0.125) { ctx.beginPath(); ctx.moveTo(x, cy - R); ctx.lineTo(x, cy + R); ctx.stroke(); }
-    ctx.strokeStyle = "rgba(148,163,184,0.45)"; ctx.lineWidth = 0.8;
-    ctx.beginPath(); ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
-    const scaleTop = cy - R * 0.5; const scaleBot = cy + R * 0.5;
-    ctx.strokeStyle = "rgba(34,211,238,0.65)"; ctx.lineWidth = 1.2;
-    ctx.beginPath(); ctx.moveTo(cx - R * 0.12, scaleTop); ctx.lineTo(cx + R * 0.12, scaleTop);
-    ctx.moveTo(cx - R * 0.12, scaleBot); ctx.lineTo(cx + R * 0.12, scaleBot); ctx.stroke();
-    ctx.fillStyle = "rgba(34,211,238,0.75)"; ctx.font = `bold ${Math.round(R * 0.07)}px monospace`; ctx.textAlign = "left";
-    ctx.fillText("0.0 mm", cx + R * 0.14, scaleTop + 4); ctx.fillText("1.0 mm", cx + R * 0.14, scaleBot + 4);
-    for (let i = 0; i <= 10; i++) {
-      const ty = scaleTop + (i / 10) * (scaleBot - scaleTop);
-      const tw = i === 0 || i === 10 ? R * 0.12 : (i % 5 === 0 ? R * 0.08 : R * 0.05);
-      ctx.strokeStyle = i % 5 === 0 ? "rgba(34,211,238,0.5)" : "rgba(148,163,184,0.3)"; ctx.lineWidth = i % 5 === 0 ? 1 : 0.5;
-      ctx.beginPath(); ctx.moveTo(cx - tw, ty); ctx.lineTo(cx + tw, ty); ctx.stroke();
-    }
-    const { vf, vr } = physics;
-    const physVel = isRunning ? (voltageOn ? vr : -vf) : 0;
-    const fracPerSec = physVel * (1 / 1e-3) * 0.001;
-    dropFracRef.current -= fracPerSec * dt;
-    if (dropFracRef.current < 0.02) dropFracRef.current = 0.98;
-    if (dropFracRef.current > 0.98) dropFracRef.current = 0.02;
-    const eyeDropY = scaleTop + dropFracRef.current * (scaleBot - scaleTop);
-    const dropR = Math.max(4, 3 + sliders.radius * 1.5);
-    if (isRunning && Math.abs(physVel) > 1e-7) {
-      const trailLen = Math.min(30, Math.abs(physVel) * 5000);
-      const trailDir = physVel > 0 ? 1 : -1;
-      const trailG = ctx.createLinearGradient(cx, eyeDropY, cx, eyeDropY + trailLen * trailDir);
-      trailG.addColorStop(0, "rgba(253,224,71,0.3)"); trailG.addColorStop(1, "rgba(253,224,71,0)");
-      ctx.fillStyle = trailG; ctx.fillRect(cx - 1.5, eyeDropY, 3, trailLen * trailDir);
-    }
-    const dG2 = ctx.createRadialGradient(cx - dropR * 0.3, eyeDropY - dropR * 0.3, dropR * 0.1, cx, eyeDropY, dropR);
-    dG2.addColorStop(0, "#fffde7"); dG2.addColorStop(0.25, "#fde047"); dG2.addColorStop(0.6, "#d97706"); dG2.addColorStop(1, "#7c2d12");
-    ctx.beginPath(); ctx.arc(cx, eyeDropY, dropR, 0, Math.PI * 2); ctx.fillStyle = dG2; ctx.fill();
-    ctx.beginPath(); ctx.arc(cx - dropR * 0.3, eyeDropY - dropR * 0.3, dropR * 0.25, 0, Math.PI * 2); ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fill();
-    ctx.strokeStyle = "rgba(34,211,238,0.7)"; ctx.lineWidth = 0.8; ctx.setLineDash([3, 4]);
-    ctx.beginPath(); ctx.arc(cx, eyeDropY, dropR + 5, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-    const distMM = ((eyeDropY - scaleBot) / (scaleTop - scaleBot) * 1).toFixed(2);
-    ctx.fillStyle = "rgba(10,14,26,0.8)"; roundRect(ctx, cx + R * 0.28, eyeDropY - 11, 58, 16, 3); ctx.fill();
-    ctx.fillStyle = "#22d3ee"; ctx.font = `bold ${Math.round(R * 0.07)}px monospace`; ctx.textAlign = "left";
-    ctx.fillText(`d = ${distMM} mm`, cx + R * 0.30, eyeDropY + 2);
-    ctx.restore();
-    ctx.save();
-    const rimG = ctx.createRadialGradient(cx, cy, R, cx, cy, R + 12);
-    rimG.addColorStop(0, "#334155"); rimG.addColorStop(0.5, "#475569"); rimG.addColorStop(1, "#1e293b");
-    ctx.strokeStyle = rimG; ctx.lineWidth = 12; ctx.beginPath(); ctx.arc(cx, cy, R + 6, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-    ctx.strokeStyle = "rgba(100,116,139,0.4)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke();
-  }
-
-  // ================================================================
-  // PENDULUM CANVAS
+  // PENDULUM CANVAS (2D)
   // ================================================================
   function drawBandul(dt: number) {
     const canvas = bandulRef.current;
@@ -496,7 +181,7 @@ export default function LabPage() {
     const W = rect.width; const H = rect.height;
 
     if (isRunning) {
-      const acc = -(G / sliders.length) * Math.sin(pendAngleRef.current) - 0.012 * pendOmegaRef.current;
+      const acc = -(sliders.gravity / sliders.length) * Math.sin(pendAngleRef.current) - 0.012 * pendOmegaRef.current;
       pendOmegaRef.current += acc * dt;
       pendAngleRef.current += pendOmegaRef.current * dt;
     } else {
@@ -572,14 +257,14 @@ export default function LabPage() {
 
     // Force vectors
     if (showVectors) {
-      const fS = 45; const fg = sliders.mass * G;
+      const fS = 45; const fg = sliders.mass * sliders.gravity;
       drawArrow(ctx, bobX, bobY, bobX, bobY + fg * fS, "#10B981", "W");
-      const ft = sliders.mass * G * Math.cos(pendAngleRef.current) + sliders.mass * sliders.length * pendOmegaRef.current ** 2;
+      const ft = sliders.mass * sliders.gravity * Math.cos(pendAngleRef.current) + sliders.mass * sliders.length * pendOmegaRef.current ** 2;
       drawArrow(ctx, bobX, bobY, bobX - ft * fS * Math.sin(pendAngleRef.current), bobY - ft * fS * Math.cos(pendAngleRef.current), "#3B82F6", "T");
     }
 
     // Period readout
-    const T_theory = 2 * Math.PI * Math.sqrt(sliders.length / G);
+    const T_theory = 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity);
     ctx.fillStyle = "rgba(15,23,42,0.82)";
     roundRect(ctx, W - 132, H - 52, 124, 44, 8); ctx.fill();
     ctx.fillStyle = "#94a3b8"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
@@ -605,22 +290,6 @@ export default function LabPage() {
     ctx.fillText(label, x2 + 5 * Math.cos(angle + 0.4), y2 + 5 * Math.sin(angle + 0.4));
   }
 
-  function drawBrassPlate(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, tintColor: string) {
-    const g = ctx.createLinearGradient(x, y, x + w, y);
-    g.addColorStop(0, "#78350f"); g.addColorStop(0.12, "#d97706"); g.addColorStop(0.5, "#fef3c7"); g.addColorStop(0.88, "#d97706"); g.addColorStop(1, "#78350f");
-    ctx.fillStyle = g; roundRect(ctx, x, y, w, h, 2); ctx.fill();
-    ctx.fillStyle = tintColor + "28"; roundRect(ctx, x, y, w, h, 2); ctx.fill();
-    ctx.strokeStyle = "rgba(254,243,199,0.5)"; ctx.lineWidth = 0.8; roundRect(ctx, x, y, w, h, 2); ctx.stroke();
-  }
-
-  function drawSteelCap(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, pos: "top" | "bottom") {
-    const g = ctx.createLinearGradient(x, y, x, y + h);
-    if (pos === "top") { g.addColorStop(0, "#64748b"); g.addColorStop(1, "#334155"); }
-    else { g.addColorStop(0, "#334155"); g.addColorStop(1, "#64748b"); }
-    ctx.fillStyle = g; roundRect(ctx, x, y, w, h, 3); ctx.fill();
-    ctx.strokeStyle = "#475569"; ctx.lineWidth = 0.8; roundRect(ctx, x, y, w, h, 3); ctx.stroke();
-  }
-
   function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
     ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
     ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r);
@@ -629,86 +298,42 @@ export default function LabPage() {
     ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
   }
 
+  // ── Animation loop (2D canvas) ──
+  useEffect(() => {
+    if (visualMode !== "2d") return;
+    lastT.current = performance.now();
+    function loop(ts: number) {
+      const dt = Math.min((ts - lastT.current) / 1000, 0.05);
+      lastT.current = ts;
+      drawBandul(dt);
+      animRef.current = requestAnimationFrame(loop);
+    }
+    animRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [isRunning, sliders, showVectors, visualMode]);
+
   // ── Record Trial ──
   function recordTrial() {
     if (trials.length >= MAX_TRIALS) return;
     const key = `fisikaseru:trials:${slug}`;
-    if (isMillikan) {
-      const r = sliders.radius; const V = sliders.voltage;
-      const { vf, vr } = millikanVelocities(r, V, chargeN, voltageOn);
-      const tf_true = 1e-3 / vf; const tr_true = vr > 1e-7 ? 1e-3 / vr : 9999;
-      const tf_obs = gaussianNoise(tf_true, tf_true * 0.015);
-      const tr_obs = tr_true < 200 ? gaussianNoise(tr_true, tr_true * 0.015) : tr_true;
-      const vf_obs = 1e-3 / tf_obs; const vr_obs = tr_true < 200 ? 1e-3 / tr_obs : 0;
-      const q_calc = (STOKES_6PI * ETA * (r * 1e-6) * (vf_obs + vr_obs) * PLATE_D) / V;
-      const q19 = q_calc * 1e19;
-      const newTrial = { id: trials.length + 1, r, V, tf: tf_obs, tr: tr_obs, q: q19, n: Math.round(q_calc / E_CHARGE) };
-      const updated = [...trials, newTrial]; setTrials(updated); localStorage.setItem(key, JSON.stringify(updated));
-    } else {
-      const L = sliders.length; const T_true = 2 * Math.PI * Math.sqrt(L / G);
-      const T_obs = gaussianNoise(T_true, T_true * 0.015);
-      const newTrial = { id: trials.length + 1, L, T: T_obs, T2: T_obs ** 2 };
-      const updated = [...trials, newTrial]; setTrials(updated); localStorage.setItem(key, JSON.stringify(updated));
-    }
+    const L = sliders.length;
+    const theta0 = (sliders.angle * Math.PI) / 180;
+    // Koreksi amplitudo (pendekatan integral eliptik): T = T₀ · (1 + θ₀²/16),
+    // agar data tercatat konsisten dengan gerak nonlinier di kanvas/3D.
+    const T0 = 2 * Math.PI * Math.sqrt(L / sliders.gravity);
+    const T_true = T0 * (1 + (theta0 * theta0) / 16);
+    const T_obs = gaussianNoise(T_true, T_true * 0.015);
+    const newTrial = { id: trials.length + 1, L, T: T_obs, T2: T_obs ** 2 };
+    const updated = [...trials, newTrial]; setTrials(updated); localStorage.setItem(key, JSON.stringify(updated));
   }
 
-  // ── Non-active module ──
-  if (!isActive) {
-    const title = MODULE_TITLE[slug] || "Eksperimen Baru";
-    return (
-      <div className="min-h-screen bg-bg-primary flex flex-col font-body">
-        <header className="h-14 bg-white border-b border-border-default flex items-center justify-between px-6 sticky top-0 z-30">
-          <Link href="/modules" className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors">
-            <ChevronLeft className="w-4 h-4" /><span className="text-sm font-display font-medium">Katalog</span>
-          </Link>
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-accent-cobalt flex items-center justify-center"><FlaskConical className="w-3.5 h-3.5 text-white" /></div>
-            <span className="font-display font-bold text-sm text-primary-navy">FisikaSeru</span>
-          </Link>
-        </header>
-        <main className="flex-1 flex items-center justify-center p-6">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
-            className="max-w-sm w-full bg-white rounded-2xl border border-border-default shadow-depth p-8 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-accent-cobalt to-sky-blue" />
-            <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 3.5 }}
-              className="w-[72px] h-[72px] rounded-2xl bg-accent-cobalt/5 border border-accent-cobalt/10 flex items-center justify-center mx-auto mb-5 text-accent-cobalt">
-              <Wrench className="w-8 h-8" />
-            </motion.div>
-            <div className="flex justify-center gap-2 mb-3">
-              <Badge variant="outline" className="text-[10px] font-mono"><Lock className="w-2.5 h-2.5 mr-1" /> Segera Hadir</Badge>
-            </div>
-            <h2 className="font-display text-xl font-bold text-primary-navy mb-2">{title}</h2>
-            <p className="text-xs text-text-muted leading-relaxed mb-6">Simulasi untuk topik ini sedang dikembangkan.</p>
-            <Link href="/modules" className="block"><Button className="w-full cursor-pointer"><ChevronLeft className="w-4 h-4 mr-1" /> Kembali ke Katalog</Button></Link>
-          </motion.div>
-        </main>
-      </div>
-    );
-  }
-
-  const moduleTitle = isMillikan ? "Tetes Minyak Millikan" : "Bandul Sederhana";
+  const moduleTitle = "Bandul Sederhana";
 
   // Determine observation completion
-  const observationDone = isMillikan
-    ? (expSteps.sprayed && expSteps.viewSwapped && expSteps.voltageChanged && expSteps.xrayTriggered)
-    : (isRunning || expSteps.voltageChanged);
+  const observationDone = isRunning || expSteps.interactionChanged;
 
   return (
     <div className="h-screen bg-bg-primary flex flex-col relative font-body overflow-hidden">
-
-      {/* ── X-Ray flash overlay ── */}
-      <AnimatePresence>
-        {ionFlash && (
-          <motion.div className="absolute inset-0 z-50 pointer-events-none flex items-center justify-center"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0 bg-cyan-400/10 backdrop-blur-[1px]" />
-            <div className="bg-slate-900 border border-cyan-500/60 px-5 py-3 rounded-xl flex items-center gap-3 shadow-depth">
-              <Zap className="w-4 h-4 text-cyan-400 animate-bounce" />
-              <span className="font-mono text-cyan-400 text-xs font-semibold tracking-wider">Sinar-X Aktif — Muatan → {chargeN}e</span>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── TOP HEADER ── */}
       <header className="h-12 bg-white border-b border-border-default flex items-center justify-between px-4 flex-shrink-0 z-30">
@@ -724,9 +349,7 @@ export default function LabPage() {
         {/* Step progress (center) */}
         <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {LAB_STEPS.map((step, i) => {
-            const isDone = (i < 3 && i < currentStep) || (i === 3) || (i === 4);
             const isCurrent = (i < 3 && i === currentStep);
-            const isLocked = (i < 3 && i > currentStep + 1);
             return (
               <React.Fragment key={step}>
                 <button
@@ -757,11 +380,13 @@ export default function LabPage() {
         {/* Right tools */}
         <div className="flex items-center gap-2">
           <button onClick={() => setShowVectors(!showVectors)}
+            aria-label="Tampilkan vektor gaya" aria-pressed={showVectors}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             {showVectors ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">Vektor</span>
           </button>
-          <Link href="/dashboard" className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
+          <Link href="/dashboard" aria-label="Dashboard"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             <BarChart2 className="w-3.5 h-3.5" /><span className="hidden sm:inline">Dashboard</span>
           </Link>
         </div>
@@ -771,37 +396,71 @@ export default function LabPage() {
       <div className="flex-1 flex overflow-hidden min-h-0">
 
         {/* ── CANVAS AREA ── */}
-        <main className="flex-1 flex flex-col relative min-w-0 overflow-hidden" style={{ background: isMillikan ? "#050810" : "#f0f4f8" }}>
+        <main className="flex-1 flex flex-col relative min-w-0 overflow-hidden" style={{ background: "#f0f4f8" }}>
 
-          {/* Millikan view switcher */}
-          {isMillikan && (
-            <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-slate-900/90 backdrop-blur-sm p-1 rounded-xl border border-slate-700/60 shadow-depth">
-              {[{ id: "chamber", icon: <LayoutGrid className="w-3 h-3" />, label: "Chamber" },
-                { id: "eyepiece", icon: <Microscope className="w-3 h-3" />, label: "Okular" }].map(v => (
-                <button key={v.id} onClick={() => handleSetViewMode(v.id as any)}
-                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-semibold transition-all cursor-pointer",
-                    viewMode === v.id ? "bg-accent-cobalt text-white" : "text-slate-400 hover:text-white hover:bg-slate-800")}>
-                  {v.icon}{v.label}
-                </button>
-              ))}
-            </div>
+          {/* Visual mode switcher (2D / 3D) */}
+          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-sm p-1 rounded-xl border border-border-default shadow-depth">
+            {(["2d", "3d"] as const).map(mode => (
+              <button key={mode} onClick={() => setVisualMode(mode)}
+                aria-pressed={visualMode === mode}
+                className={cn("px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
+                  visualMode === mode ? "bg-accent-cobalt text-white" : "text-text-muted hover:text-primary-navy hover:bg-gray-100")}>
+                {mode.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Canvas (2D) / Scene (3D) */}
+          {visualMode === "2d" ? (
+            <canvas
+              ref={bandulRef}
+              role="img"
+              aria-label="Simulasi interaktif bandul sederhana: beban di ujung tali berosolasi di bawah rel, dengan vektor gaya berat dan tegangan tali"
+              className="w-full h-full block"
+            />
+          ) : (
+            <PendulumScene3D
+              key={resetCount}
+              length={sliders.length}
+              mass={sliders.mass}
+              initialAngleDeg={sliders.angle}
+              gravity={sliders.gravity}
+              running={isRunning}
+              onStateChange={handleSceneStateChange}
+            />
           )}
 
-          {/* Canvas */}
-          <canvas ref={isMillikan ? millikanRef : bandulRef} className="w-full h-full block" />
+          {/* Live period readout (3D) */}
+          {visualMode === "3d" && (
+            <div className="absolute top-3 right-3 z-20 bg-white/95 backdrop-blur-sm rounded-xl p-3 border border-border-default shadow-depth space-y-1 text-[10px] font-mono min-w-[150px]">
+              <div className="text-text-muted uppercase tracking-wider font-bold text-[8px] mb-1">Pengukuran Periode</div>
+              <div className="flex justify-between gap-3">
+                <span className="text-text-muted">T teoritis</span>
+                <span className="font-bold text-primary-navy">
+                  {(2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity)).toFixed(3)} s
+                </span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-text-muted">T terukur</span>
+                <span className="font-bold text-accent-cobalt">
+                  {sceneState?.periodEstimate != null ? `${sceneState.periodEstimate.toFixed(3)} s` : "—"}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* ── Simulation Controls (floating bottom) ── */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
             <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-depth border border-border-default/80">
               <button
-                onClick={() => { setIsRunning(!isRunning); if (!isRunning && isMillikan) triggerAtomizer(); }}
+                onClick={() => setIsRunning(!isRunning)}
                 className={cn("flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all",
                   isRunning ? "bg-amber-500 hover:bg-amber-600 text-white" : "bg-accent-cobalt hover:bg-accent-cobalt-light text-white")}>
                 {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 {isRunning ? "Pause" : "Mulai"}
               </button>
               <button
-                onClick={() => { setIsRunning(false); setStopwatch(0); dropFracRef.current = 0.5; if (isMillikan) triggerAtomizer(); }}
+                onClick={() => { setIsRunning(false); setStopwatch(0); setResetCount(c => c + 1); }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all">
                 <RotateCcw className="w-3.5 h-3.5" /> Reset
               </button>
@@ -816,46 +475,7 @@ export default function LabPage() {
                 </div>
               </div>
             </div>
-
-            {/* Millikan-specific controls */}
-            {isMillikan && (
-              <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2.5 shadow-depth border border-border-default/80">
-                <button onClick={() => { setVoltageOn(!voltageOn); updateExpStep("voltageChanged", true); }}
-                  className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer transition-all",
-                    voltageOn ? "bg-amber-100 border border-amber-300 text-amber-700" : "bg-gray-100 border border-gray-200 text-gray-500")}>
-                  <Zap className={cn("w-3 h-3", voltageOn && "animate-pulse")} />
-                  {voltageOn ? `${sliders.voltage}V` : "Mati"}
-                </button>
-                <button onClick={triggerIonization}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold cursor-pointer bg-cyan-900/30 border border-cyan-600/40 text-cyan-400 hover:bg-cyan-800/40 transition-all">
-                  <Radio className="w-3 h-3" /> X-Ray
-                </button>
-              </div>
-            )}
           </div>
-
-          {/* Live physics HUD (Millikan) */}
-          {isMillikan && (
-            <div className="absolute top-3 right-3 z-20 bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 border border-slate-700/60 shadow-depth space-y-1.5 text-[9px] font-mono min-w-[152px]">
-              <div className="text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-1.5">Fisika Real-Time</div>
-              {[
-                { label: "r", value: `${sliders.radius.toFixed(2)} µm`, color: "text-yellow-400" },
-                { label: "vf", value: `${(physics.vf * 1000).toFixed(3)} mm/s`, color: "text-red-400" },
-                { label: "vr", value: physics.vr > 1e-8 ? `${(physics.vr * 1000).toFixed(3)} mm/s` : "—", color: physics.vr > 1e-8 ? "text-cyan-400" : "text-slate-500" },
-                { label: "Fg", value: `${(physics.Fg * 1e14).toFixed(2)}×10⁻¹⁴N`, color: "text-orange-400" },
-                { label: "Fe", value: voltageOn ? `${(physics.Fe * 1e14).toFixed(2)}×10⁻¹⁴N` : "—", color: voltageOn ? "text-blue-400" : "text-slate-500" },
-              ].map(({ label, value, color }) => (
-                <div key={label} className="flex justify-between gap-3">
-                  <span className="text-slate-400">{label}</span>
-                  <span className={cn("font-bold", color)}>{value}</span>
-                </div>
-              ))}
-              <div className="border-t border-slate-700 pt-1.5 flex justify-between">
-                <span className="text-slate-400">q</span>
-                <span className="text-green-400 font-bold">{chargeN}e</span>
-              </div>
-            </div>
-          )}
         </main>
 
         {/* ── RIGHT PANEL ── */}
@@ -900,29 +520,7 @@ export default function LabPage() {
 
                     {/* Questions */}
                     <div className="space-y-4">
-                      {(slug === "millikan" ? [
-                        {
-                          id: 1,
-                          q: "Apa yang terjadi pada tetesan minyak bermuatan negatif jika medan listrik ke atas diperkuat?",
-                          opts: ["Bergerak naik lebih cepat (gaya listrik ke atas meningkat)", "Bergerak jatuh lebih cepat", "Kecepatan tidak berubah"],
-                          ans: 0,
-                          exp: "Medan ke atas menarik muatan negatif ke atas (Fe = qE). Memperkuat medan mempercepat gerak naik droplet."
-                        },
-                        {
-                          id: 2,
-                          q: "Jika muatan listrik bersifat kontinu (bisa bernilai berapa saja), grafik sebaran q akan terlihat...",
-                          opts: ["Mengelompok di kelipatan diskret tertentu (1.6e, 3.2e, ...)", "Terdistribusi menyebar merata tanpa pola tangga", "Hanya satu nilai identik di semua trial"],
-                          ans: 1,
-                          exp: "Muatan kontinu = bisa bernilai berapa saja tanpa pola. Muatan terkuantisasi akan mengelompok hanya di kelipatan bulat dari e."
-                        },
-                        {
-                          id: 3,
-                          q: "Mengapa sinar X-Ray ditembakkan ke dalam kamar kapasitor?",
-                          opts: ["Mengukur radius tetes secara optik", "Mengionisasi udara sehingga droplet menangkap elektron bebas", "Memanaskan pelat tembaga"],
-                          ans: 1,
-                          exp: "Sinar-X mengionisasi molekul udara. Droplet minyak menangkap elektron bebas tersebut, mengubah muatan netto-nya."
-                        }
-                      ] : [
+                      {[
                         {
                           id: 1,
                           q: "Faktor apa yang mempengaruhi periode ayunan bandul (T)?",
@@ -937,7 +535,7 @@ export default function LabPage() {
                           ans: 1,
                           exp: "T ∝ √L, sehingga L → 4L berarti T → √4 × T = 2T. Periode menjadi 2× lebih panjang."
                         }
-                      ]).map((q) => {
+                      ].map((q) => {
                         const selected = pretestAnswers[q.id];
                         const isCorrect = selected === q.ans;
                         return (
@@ -979,7 +577,7 @@ export default function LabPage() {
                   <div className="p-4 border-t border-border-default flex-shrink-0 bg-white space-y-2">
                     {!pretestSubmitted ? (
                       <Button onClick={handlePretestSubmit}
-                        disabled={Object.keys(pretestAnswers).length < (slug === "millikan" ? 3 : 2)}
+                        disabled={Object.keys(pretestAnswers).length < 2}
                         className="w-full cursor-pointer text-xs">
                         Lihat Jawaban
                       </Button>
@@ -1008,20 +606,9 @@ export default function LabPage() {
                     </div>
 
                     <div className="space-y-2">
-                      {isMillikan ? (
-                        <>
-                          <ChecklistItem label="Semprotkan minyak" desc="Klik 'Mulai' untuk menyemprotkan kabut minyak ke chamber." checked={expSteps.sprayed} />
-                          <ChecklistItem label="Ganti ke tampilan Okular" desc="Klik 'Okular' di kiri atas kanvas — lihat droplet dari perspektif mikroskop." checked={expSteps.viewSwapped} />
-                          <ChecklistItem label="Ubah tegangan / matikan medan" desc="Klik tombol tegangan di bawah. Perhatikan arah gerak droplet berubah." checked={expSteps.voltageChanged} />
-                          <ChecklistItem label="Tembakkan X-Ray" desc="Klik 'X-Ray' dan lihat angka muatan berubah — ini ionisasi!" checked={expSteps.xrayTriggered} />
-                        </>
-                      ) : (
-                        <>
-                          <ChecklistItem label="Mulai ayunan bandul" desc="Klik 'Mulai' untuk mengaktifkan gerak bandul." checked={isRunning} />
-                          <ChecklistItem label="Ubah panjang tali" desc="Pergi ke tab Pengukuran, ubah slider L, dan perhatikan perubahan kecepatan ayunan." checked={expSteps.voltageChanged} />
-                          <ChecklistItem label="Amati vektor gaya" desc="Toggle 'Vektor' di kanan atas untuk melihat gaya berat dan tegangan tali." checked={showVectors} />
-                        </>
-                      )}
+                      <ChecklistItem label="Mulai ayunan bandul" desc="Klik 'Mulai' untuk mengaktifkan gerak bandul." checked={isRunning} />
+                      <ChecklistItem label="Ubah panjang tali" desc="Pergi ke tab Pengukuran, ubah slider L, dan perhatikan perubahan kecepatan ayunan." checked={expSteps.interactionChanged} />
+                      <ChecklistItem label="Amati vektor gaya" desc="Toggle 'Vektor' di kanan atas untuk melihat gaya berat dan tegangan tali." checked={showVectors} />
                     </div>
 
                     {/* Progress indicator */}
@@ -1029,28 +616,19 @@ export default function LabPage() {
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-[10px] font-semibold text-text-muted">Progress</span>
                         <span className="text-[10px] font-mono font-bold text-accent-cobalt">
-                          {isMillikan
-                            ? `${Object.values(expSteps).filter(Boolean).length}/4`
-                            : `${[isRunning, expSteps.voltageChanged, showVectors].filter(Boolean).length}/3`
-                          }
+                          {[isRunning, expSteps.interactionChanged, showVectors].filter(Boolean).length}/3
                         </span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-1.5">
                         <motion.div className="bg-accent-cobalt h-1.5 rounded-full" initial={{ width: 0 }}
-                          animate={{ width: isMillikan
-                            ? `${Object.values(expSteps).filter(Boolean).length / 4 * 100}%`
-                            : `${[isRunning, expSteps.voltageChanged, showVectors].filter(Boolean).length / 3 * 100}%`
-                          }} />
+                          animate={{ width: `${[isRunning, expSteps.interactionChanged, showVectors].filter(Boolean).length / 3 * 100}%` }} />
                       </div>
                     </div>
                   </div>
 
                   <div className="p-4 border-t border-border-default flex-shrink-0 bg-white">
                     <Button onClick={() => updateStep(2)}
-                      disabled={isMillikan
-                        ? !observationDone
-                        : !(isRunning || expSteps.voltageChanged)
-                      }
+                      disabled={!(isRunning || expSteps.interactionChanged)}
                       className="w-full cursor-pointer text-xs flex items-center justify-center gap-1.5">
                       Mulai Pengukuran <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
@@ -1066,33 +644,26 @@ export default function LabPage() {
                 <>
                   {/* Sliders */}
                   <div className="p-4 border-b border-border-default flex-shrink-0 space-y-4">
-                    {isMillikan ? (
-                      <>
-                        <SliderField label="Tegangan (V)" unit="V" min={50} max={600} step={10}
-                          value={sliders.voltage} onChange={v => { setSliders(p => ({ ...p, voltage: v })); updateExpStep("voltageChanged", true); }} />
-                        <SliderField label="Radius Droplet (r)" unit="µm" min={1.0} max={2.5} step={0.1}
-                          value={sliders.radius} onChange={v => setSliders(p => ({ ...p, radius: v }))} decimals={2} />
-                        <div className="flex gap-2">
-                          <Button size="sm" onClick={triggerIonization}
-                            className="flex-1 bg-cyan-700 hover:bg-cyan-600 text-white text-[10px] cursor-pointer py-1.5 h-auto">
-                            <Radio className="w-3 h-3 mr-1" /> Ionisasi
-                          </Button>
-                          <div className="bg-slate-50 border border-border-default/60 rounded-lg px-3 py-1.5 flex-1 text-center">
-                            <span className="text-[8px] text-text-muted font-mono block uppercase">Muatan</span>
-                            <span className="font-mono text-xs font-bold text-slate-800">q = {chargeN}e</span>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <SliderField label="Panjang Tali (L)" unit="m" min={0.2} max={1.0} step={0.05}
-                          value={sliders.length} onChange={v => { setSliders(p => ({ ...p, length: v })); updateExpStep("voltageChanged", true); }} decimals={2} />
-                        <SliderField label="Massa Beban (m)" unit="g" min={0.05} max={0.5} step={0.05}
-                          value={sliders.mass} onChange={v => setSliders(p => ({ ...p, mass: v }))} displayFn={v => (v * 1000).toFixed(0)} />
-                        <SliderField label="Sudut Awal (θ₀)" unit="°" min={5} max={30} step={1}
-                          value={sliders.angle} onChange={v => setSliders(p => ({ ...p, angle: v }))} />
-                      </>
-                    )}
+                    <SliderField label="Panjang Tali (L)" unit="m" min={0.2} max={1.0} step={0.05}
+                      value={sliders.length} onChange={v => { setSliders(p => ({ ...p, length: v })); updateExpStep("interactionChanged", true); }} decimals={2} />
+                    <SliderField label="Massa Beban (m)" unit="g" min={0.05} max={0.5} step={0.05}
+                      value={sliders.mass} onChange={v => setSliders(p => ({ ...p, mass: v }))} displayFn={v => (v * 1000).toFixed(0)} />
+                    <SliderField label="Sudut Awal (θ₀)" unit="°" min={5} max={30} step={1}
+                      value={sliders.angle} onChange={v => setSliders(p => ({ ...p, angle: v }))} />
+                    <SliderField label="Gravitasi (g)" unit="m/s²" min={1.62} max={24.79} step={0.01}
+                      value={sliders.gravity} onChange={v => setSliders(p => ({ ...p, gravity: v }))} decimals={2} />
+                    <div className="flex gap-1.5">
+                      {GRAVITY_PRESETS.map(preset => (
+                        <button key={preset.label} type="button"
+                          onClick={() => setSliders(prev => ({ ...prev, gravity: preset.g }))}
+                          className={cn("flex-1 px-2 py-1 rounded-lg text-[9px] font-semibold border transition-all cursor-pointer",
+                            Math.abs(sliders.gravity - preset.g) < 0.005
+                              ? "bg-accent-cobalt/10 border-accent-cobalt text-accent-cobalt"
+                              : "bg-white border-border-default text-text-muted hover:border-accent-cobalt/30")}>
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Data table */}
@@ -1111,77 +682,30 @@ export default function LabPage() {
 
                   <div className="flex-1 overflow-y-auto p-3 min-h-0">
                     <div className="rounded-xl border border-border-default overflow-hidden">
-                      {isMillikan ? (
-                        <table className="w-full text-[9px]">
-                          <thead>
-                            <tr className="bg-gray-50 border-b border-border-default">
-                              {["#", "V", "tf (s)", "tr (s)", "q (10⁻¹⁹C)"].map(h => (
-                                <th key={h} className="px-2 py-2 text-left font-display font-semibold text-text-muted">{h}</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {trials.length === 0 ? (
-                              <tr><td colSpan={5} className="px-3 py-6 text-center text-[10px] text-text-muted italic">
-                                Jalankan simulasi dan klik Rekam.
-                              </td></tr>
-                            ) : trials.map(t => (
-                              <tr key={t.id} className="border-b border-border-default/50 hover:bg-accent-cobalt/[0.02] transition-colors">
-                                <td className="px-2 py-1.5 font-mono text-text-muted">{t.id}</td>
-                                <td className="px-2 py-1.5 font-mono">{t.V}</td>
-                                <td className="px-2 py-1.5 font-mono">{t.tf.toFixed(2)}</td>
-                                <td className="px-2 py-1.5 font-mono">{t.tr < 200 ? t.tr.toFixed(2) : "∞"}</td>
-                                <td className="px-2 py-1.5 font-mono font-semibold text-accent-cobalt">{t.q.toFixed(3)}</td>
-                              </tr>
+                      <table className="w-full text-xs">
+                        <thead>
+                          <tr className="bg-gray-50 border-b border-border-default">
+                            {["#", "L (m)", "T (s)", "T² (s²)"].map(h => (
+                              <th key={h} className="px-2 py-2 text-left font-display font-semibold text-text-muted">{h}</th>
                             ))}
-                          </tbody>
-                        </table>
-                      ) : (
-                        <table className="w-full text-xs">
-                          <thead>
-                            <tr className="bg-gray-50 border-b border-border-default">
-                              {["#", "L (m)", "T (s)", "T² (s²)"].map(h => (
-                                <th key={h} className="px-3 py-2 text-left font-display font-semibold text-text-muted">{h}</th>
-                              ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {trials.length === 0 ? (
+                            <tr><td colSpan={4} className="px-3 py-6 text-center text-[11px] text-text-muted italic">
+                              Jalankan simulasi dan klik Rekam.
+                            </td></tr>
+                          ) : trials.map(t => (
+                            <tr key={t.id} className="border-b border-border-default/50 hover:bg-accent-cobalt/[0.02]">
+                              <td className="px-2 py-2 font-mono text-text-muted">{t.id}</td>
+                              <td className="px-2 py-2 font-mono">{t.L.toFixed(2)}</td>
+                              <td className="px-2 py-2 font-mono">{t.T.toFixed(3)}</td>
+                              <td className="px-2 py-2 font-mono font-semibold text-accent-cobalt">{t.T2.toFixed(3)}</td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {trials.length === 0 ? (
-                              <tr><td colSpan={4} className="px-3 py-6 text-center text-[11px] text-text-muted italic">
-                                Jalankan simulasi dan klik Rekam.
-                              </td></tr>
-                            ) : trials.map(t => (
-                              <tr key={t.id} className="border-b border-border-default/50 hover:bg-accent-cobalt/[0.02]">
-                                <td className="px-3 py-2 font-mono text-text-muted">{t.id}</td>
-                                <td className="px-3 py-2 font-mono">{t.L.toFixed(2)}</td>
-                                <td className="px-3 py-2 font-mono">{t.T.toFixed(3)}</td>
-                                <td className="px-3 py-2 font-mono font-semibold text-accent-cobalt">{t.T2.toFixed(3)}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      )}
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-
-                    {/* Quick stats (Millikan) */}
-                    {isMillikan && trials.length >= 2 && (() => {
-                      const valid = trials.filter(t => t.n > 0 && t.q > 0);
-                      const eEst = valid.length > 0 ? valid.reduce((s: number, t: any) => s + t.q / t.n, 0) / valid.length : 0;
-                      const err = eEst > 0 ? Math.abs((eEst - 1.602) / 1.602 * 100) : 0;
-                      return (
-                        <div className="mt-3 bg-slate-50 rounded-xl p-3 border border-border-default/60 space-y-1">
-                          <div className="text-[8px] font-mono text-text-muted uppercase tracking-wider mb-1.5">Estimasi dari data</div>
-                          <div className="flex justify-between text-[9px]">
-                            <span className="text-text-muted font-mono">Estimasi e</span>
-                            <span className="font-mono font-bold text-accent-cobalt">{eEst.toFixed(3)} ×10⁻¹⁹ C</span>
-                          </div>
-                          <div className="flex justify-between text-[9px]">
-                            <span className="text-text-muted font-mono">Galat vs literatur</span>
-                            <span className={cn("font-mono font-bold", err < 3 ? "text-success" : "text-amber-500")}>{err.toFixed(2)}%</span>
-                          </div>
-                        </div>
-                      );
-                    })()}
                   </div>
 
                   {/* Actions */}

@@ -78,7 +78,7 @@ export function LearningLoopSection() {
           {/* Connecting Line (desktop) */}
           <div className="hidden lg:block absolute top-12 left-[calc(50%-1px)] w-0.5 h-[calc(100%-60px)] bg-gradient-to-b from-accent-cobalt/20 via-teal/20 to-amber/20" />
 
-          <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-1 lg:gap-0">
+          <div className="flex flex-col gap-6 lg:gap-0 lg:grid lg:grid-cols-1">
             {steps.map((step, i) => (
               <motion.div
                 key={step.title}
@@ -96,7 +96,7 @@ export function LearningLoopSection() {
                 />
 
                 <div className={`w-12 h-12 rounded-xl ${step.color} flex items-center justify-center flex-shrink-0`}>
-                  <step.icon className="w-5 h-5" />
+                  <step.icon className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">

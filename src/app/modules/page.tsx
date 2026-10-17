@@ -12,6 +12,7 @@ const categories = ["Semua", "Mekanika", "Kelistrikan", "Fisika Modern", "Termod
 
 const modules = [
   { id: "jatuh-bebas", title: "Jatuh Bebas", category: "Mekanika", difficulty: 1, duration: "15 mnt", concept: "Kinematika Gerak", desc: "Analisis gerak jatuh bebas dari berbagai ketinggian.", status: "free", progress: 100 },
+  { id: "parabola", title: "Gerak Parabola", category: "Mekanika", difficulty: 2, duration: "25 mnt", concept: "Gerak Parabola", desc: "Luncurkan proyektil 3D dengan berbagai sudut dan kecepatan, rekam jarak tempuhnya, dan temukan sendiri sudut optimal 45°.", status: "free", progress: 0 },
   { id: "bandul", title: "Bandul Sederhana", category: "Mekanika", difficulty: 2, duration: "25 mnt", concept: "Gerak Harmonik Sederhana", desc: "Tentukan percepatan gravitasi bumi melalui periode ayunan bandul.", status: "free", progress: 75 },
   { id: "ohm", title: "Hukum Ohm", category: "Kelistrikan", difficulty: 2, duration: "20 mnt", concept: "Resistansi & Arus", desc: "Temukan hubungan tegangan, arus, dan hambatan.", status: "free", progress: 0 },
   { id: "boyle", title: "Hukum Boyle", category: "Termodinamika", difficulty: 2, duration: "20 mnt", concept: "Gas Ideal", desc: "Hubungan tekanan dan volume gas pada suhu tetap.", status: "coming", progress: 0 },

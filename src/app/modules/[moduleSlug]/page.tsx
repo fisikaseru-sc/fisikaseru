@@ -12,11 +12,13 @@ export default function ModulePage() {
   const router = useRouter();
   const moduleSlug = params?.moduleSlug as string;
 
-  const isActive = moduleSlug === "millikan" || moduleSlug === "bandul";
+  const isActive = moduleSlug === "millikan" || moduleSlug === "bandul" || moduleSlug === "parabola";
 
   useEffect(() => {
     if (isActive) {
-      router.replace(`/modules/${moduleSlug}/experiment`);
+      // Parabola dimulai dari langkah PREDICT agar siklus belajar utuh.
+      const dest = moduleSlug === "parabola" ? "predict" : "experiment";
+      router.replace(`/modules/${moduleSlug}/${dest}`);
     }
   }, [isActive, moduleSlug, router]);
 

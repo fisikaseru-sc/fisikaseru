@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ConfigRegistry } from "@/features/configRegistry";
 
 import React, { useState, useEffect, useMemo } from "react";
@@ -13,6 +14,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { MillikanReflectionExperience } from "@/features/millikan/components/reflection/MillikanReflectionExperience";
+
+function ParabolaReflectionSkeleton() {
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="w-8 h-8 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" aria-label="Memuat" />
+    </div>
+  );
+}
 
 // ─── Math helpers ──────────────────────────────────────────────────────────────
 function linearRegression(data: { x: number; y: number }[]) {
@@ -42,16 +52,29 @@ const LAB_STEPS = ["Persiapan", "Pengamatan", "Pengukuran", "Analisis", "Refleks
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export default function ReflectionPage() {
   const params     = useParams();
-  const moduleSlug = (params?.moduleSlug as string) || "bandul";
-  const isActive   = moduleSlug === "millikan" || moduleSlug === "bandul";
+  const moduleSlug: string = (params?.moduleSlug as string) || "bandul";
+  const isActive   = ["millikan", "bandul", "parabola"].includes(moduleSlug);
 
   // ── Not-active fallback will be placed below hooks ──
 
   const [step, setStep] = useState<"confront" | "dialogue" | "reconstruct" | "complete">("confront");
   const [trials, setTrials] = useState<unknown[]>([]);
+  const [savedPrediction, setSavedPrediction] = useState<{
+    hypothesis: string;
+    reasoning: string;
+    confidence: number;
+    submittedAt?: string;
+  } | null>(null);
   const [writtenReflections, setWrittenReflections] = useState({ q1: "", q2: "", q3: "", final: "" });
 
   useEffect(() => {
+    const predRaw = localStorage.getItem(`fisikaseru:prediction:${moduleSlug}`);
+    if (predRaw) {
+      try {
+        setSavedPrediction(JSON.parse(predRaw));
+      } catch (_) {}
+    }
+
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
@@ -93,12 +116,12 @@ export default function ReflectionPage() {
 
   const calculatedE = useMemo(() => {
     const valid = trialsAug.filter(t => t.n > 0 && t.qCorr > 0);
-    if (!valid.length) return 1.602;
+    if (!valid.length) return null;
     return valid.reduce((s, t) => s + t.qCorr / t.n, 0) / valid.length;
   }, [trialsAug]);
 
   const gError = useMemo(() => Math.abs((calculatedG - 9.80665) / 9.80665 * 100), [calculatedG]);
-  const eError = useMemo(() => Math.abs((calculatedE - E_REF) / E_REF * 100), [calculatedE]);
+  const eError = useMemo(() => calculatedE === null ? null : Math.abs((calculatedE - E_REF) / E_REF * 100), [calculatedE]);
 
   const handlePrint = () => window.print();
 
@@ -138,6 +161,62 @@ export default function ReflectionPage() {
     );
   }
 
+  if (moduleSlug === "parabola") {
+    const ParabolaReflectionView = dynamic(
+      () => import("@/features/parabola/components/ReflectionView"),
+      { ssr: false, loading: () => <ParabolaReflectionSkeleton /> }
+    );
+    return (
+      <div className="min-h-screen bg-bg-primary font-body">
+        <ParabolaReflectionView />
+      </div>
+    );
+  }
+
+  if (moduleSlug === "millikan") {
+    return (
+      <div className="min-h-screen bg-bg-primary font-body">
+        {/* Header */}
+        <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30 print:hidden">
+          <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
+            <Link href="/modules" className="hover:text-primary-navy transition-colors">Katalog</Link>
+            <span>/</span>
+            <Link href="/modules/millikan/analysis" className="hover:text-primary-navy transition-colors">Analisis</Link>
+            <span>/</span>
+            <span className="text-text-primary font-semibold">Refleksi</span>
+          </div>
+
+          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-0.5">
+            {LAB_STEPS.map((s, i) => (
+              <React.Fragment key={s}>
+                <div className={cn(
+                  "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold",
+                  i === 4 ? "bg-accent-cobalt text-white" :
+                  i < 4   ? "bg-success/10 text-success" : "text-text-muted bg-gray-50 opacity-40"
+                )}>
+                  {i < 4 ? <CheckCircle2 className="w-3 h-3" /> : <span className="font-mono opacity-70">{i + 1}</span>}
+                  <span className="hidden lg:inline">{s}</span>
+                </div>
+                {i < 4 && <div className={cn("w-3 h-px", i < 3 ? "bg-success/40" : "bg-border-default")} />}
+              </React.Fragment>
+            ))}
+          </div>
+
+          <div className="ml-auto flex items-center gap-2">
+            <Link href="/modules/millikan/analysis"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
+              <ChevronLeft className="w-3.5 h-3.5" /> Analisis
+            </Link>
+          </div>
+        </header>
+
+        <main className="max-w-4xl mx-auto px-4 py-8">
+          <MillikanReflectionExperience />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-bg-primary font-body">
 
@@ -159,7 +238,9 @@ export default function ReflectionPage() {
           <div className="p-3 bg-gray-50 rounded-lg border">
             <p className="font-bold text-[10px] mb-1">Hasil Statistik</p>
             {moduleSlug === "millikan"
-              ? <><p>e hitung: {calculatedE.toFixed(4)} ×10⁻¹⁹ C</p><p>Galat: {eError.toFixed(2)}%</p></>
+              ? calculatedE !== null
+                ? <><p>e hitung: {calculatedE.toFixed(4)} ×10⁻¹⁹ C</p><p>Galat: {(eError ?? 0).toFixed(2)}%</p></>
+                : <p>Belum ada data valid — kumpulkan minimal beberapa percobaan di lab.</p>
               : <><p>g hitung: {calculatedG.toFixed(4)} m/s²</p><p>Galat: {gError.toFixed(2)}%</p><p>R² = {regressionBandul.r2.toFixed(4)}</p></>
             }
           </div>
@@ -237,16 +318,44 @@ export default function ReflectionPage() {
 
                 {/* Misconception (amber) */}
                 <div className="p-5 border-b border-amber-100/80 bg-amber-50/30">
-                  <div className="flex items-center gap-2 mb-2.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    <h3 className="text-xs font-display font-bold text-amber-700 uppercase tracking-widest">Intuisi Awal</h3>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                      <h3 className="text-xs font-display font-bold text-amber-700 uppercase tracking-widest">
+                        {savedPrediction ? "Dugaan Awal Anda" : "Intuisi Awal"}
+                      </h3>
+                    </div>
+                    {savedPrediction && (
+                      <span className="text-[10px] font-mono font-semibold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md">
+                        Keyakinan Awal: {savedPrediction.confidence}/5
+                      </span>
+                    )}
                   </div>
-                  <p className="text-sm text-slate-700 italic leading-relaxed">
-                    {moduleSlug === "millikan"
-                      ? '"Muatan listrik pada tetesan minyak bisa bernilai berapa saja — kontinu dan bebas, tidak ada aturan kelipatan."'
-                      : '"Massa beban mempengaruhi periode ayunan bandul — semakin berat, semakin lambat."'
-                    }
+                  
+                  <p className="text-sm text-slate-700 font-medium leading-relaxed">
+                    {moduleSlug === "millikan" ? (
+                      savedPrediction?.hypothesis === "COMPLETELY_RANDOM" ? (
+                        '"Muatan listrik pada tetesan minyak bisa bernilai berapa saja — kontinu dan bebas tanpa aturan kelipatan."'
+                      ) : savedPrediction?.hypothesis === "ALL_SAME" ? (
+                        '"Semua tetes minyak yang menangkap muatan listrik akan memiliki besar muatan yang sama persis."'
+                      ) : savedPrediction?.hypothesis === "QUANTIZED_PATTERN" ? (
+                        '"Nilai muatan berbeda-beda, tetapi semuanya merupakan kelipatan dari suatu paket satuan dasar terkecil."'
+                      ) : savedPrediction?.hypothesis === "UNSURE" ? (
+                        '"Belum yakin bagaimana sifat muatan listrik terbagi di alam."'
+                      ) : (
+                        '"Muatan listrik pada tetesan minyak bisa bernilai berapa saja — kontinu dan bebas, tidak ada aturan kelipatan."'
+                      )
+                    ) : (
+                      '"Massa beban mempengaruhi periode ayunan bandul — semakin berat, semakin lambat."'
+                    )}
                   </p>
+
+                  {savedPrediction?.reasoning && savedPrediction.reasoning !== "(Tidak ada catatan tambahan)" && (
+                    <div className="mt-2.5 text-xs text-slate-600 italic bg-white/70 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
+                      <span className="font-semibold not-italic text-amber-900 block text-[10px] uppercase font-mono mb-0.5">Penalaran Awalmu:</span>
+                      "{savedPrediction.reasoning}"
+                    </div>
+                  )}
                 </div>
 
                 {/* Separator */}
@@ -271,11 +380,15 @@ export default function ReflectionPage() {
                   {/* Key stats */}
                   <div className="flex gap-3 flex-wrap">
                     {moduleSlug === "millikan" ? (
-                      <>
-                        <StatChip label="e Cunningham" value={`${calculatedE.toFixed(3)} ×10⁻¹⁹ C`} color="cobalt" />
-                        <StatChip label="Galat vs NIST" value={`${eError.toFixed(2)}%`} color={eError < 3 ? "success" : "amber"} />
-                        <StatChip label="Kuantisasi" value="100% Diskret" color="teal" />
-                      </>
+                      calculatedE !== null ? (
+                        <>
+                          <StatChip label="e Cunningham" value={`${calculatedE.toFixed(3)} ×10⁻¹⁹ C`} color="cobalt" />
+                          <StatChip label="Galat vs NIST" value={`${(eError ?? 0).toFixed(2)}%`} color={(eError ?? 99) < 3 ? "success" : "amber"} />
+                          <StatChip label="Kuantisasi" value="100% Diskret" color="teal" />
+                        </>
+                      ) : (
+                        <StatChip label="e Cunningham" value="Belum ada data" color="amber" />
+                      )
                     ) : (
                       <>
                         <StatChip label="g hitung" value={`${calculatedG.toFixed(3)} m/s²`} color="cobalt" />
@@ -286,11 +399,24 @@ export default function ReflectionPage() {
                   </div>
                 </div>
 
-                {/* Match */}
-                <div className="px-5 py-3.5 border-t border-rose/20 bg-rose/[0.025]">
+                {/* Match Status */}
+                <div className="px-5 py-3.5 border-t border-border-default/60 bg-slate-50/50">
                   <div className="flex items-center gap-2">
-                    <Badge variant="danger" size="sm">Berbeda</Badge>
-                    <span className="text-xs text-text-muted">Intuisi awalmu tidak sesuai dengan kebenaran fisis.</span>
+                    {moduleSlug === "millikan" && savedPrediction?.hypothesis === "QUANTIZED_PATTERN" ? (
+                      <>
+                        <Badge variant="success" size="sm">Terkonfirmasi!</Badge>
+                        <span className="text-xs text-success font-medium">
+                          Dugaan awalmu tepat! Bukti eksperimen menunjukkan kuantisasi diskret.
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <Badge variant="danger" size="sm">Terkoreksi Data</Badge>
+                        <span className="text-xs text-text-muted">
+                          Intuisi awalmu berhasil diluruskan oleh data empiris laboratorium.
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -322,6 +448,7 @@ export default function ReflectionPage() {
             <DialogueSection
               moduleSlug={moduleSlug}
               trials={trials}
+              prediction={savedPrediction}
               writtenReflections={writtenReflections}
               setWrittenReflections={setWrittenReflections}
               onBack={() => setStep("confront")}
@@ -397,11 +524,15 @@ export default function ReflectionPage() {
                 <h3 className="font-display font-semibold text-sm text-primary-navy mb-3 text-center">Ringkasan Eksperimen</h3>
                 <div className="space-y-2.5">
                   {moduleSlug === "millikan" ? (
-                    <>
-                      <ResultRow label="e Cunningham" value={`${calculatedE.toFixed(4)} ×10⁻¹⁹ C`} status={eError < 3} />
-                      <ResultRow label="Galat vs NIST" value={`${eError.toFixed(2)}%`} status={eError < 5} />
-                      <ResultRow label="Jumlah trial" value={`${trials.length} percobaan`} status={trials.length >= 4} />
-                    </>
+                    calculatedE !== null ? (
+                      <>
+                        <ResultRow label="e Cunningham" value={`${calculatedE.toFixed(4)} ×10⁻¹⁹ C`} status={(eError ?? 99) < 3} />
+                        <ResultRow label="Galat vs NIST" value={`${(eError ?? 0).toFixed(2)}%`} status={(eError ?? 99) < 5} />
+                        <ResultRow label="Jumlah trial" value={`${trials.length} percobaan`} status={trials.length >= 4} />
+                      </>
+                    ) : (
+                      <ResultRow label="e Cunningham" value="Belum ada data valid" status={false} />
+                    )
                   ) : (
                     <>
                       <ResultRow label="g hitung" value={`${calculatedG.toFixed(4)} m/s²`} status={gError < 3} />
@@ -462,8 +593,8 @@ function ResultRow({ label, value, status }: { label: string; value: string; sta
 }
 
 // ─── Dialogue Section ─────────────────────────────────────────────────────────
-function DialogueSection({ moduleSlug, trials, writtenReflections, setWrittenReflections, onBack, onNext }: {
-  moduleSlug: string; trials: any[];
+function DialogueSection({ moduleSlug, trials, prediction, writtenReflections, setWrittenReflections, onBack, onNext }: {
+  moduleSlug: string; trials: any[]; prediction?: any;
   writtenReflections: { q1: string; q2: string; q3: string; final: string }; setWrittenReflections: React.Dispatch<React.SetStateAction<{ q1: string; q2: string; q3: string; final: string }>>;
   onBack: () => void; onNext: () => void;
 }) {
@@ -495,7 +626,7 @@ function DialogueSection({ moduleSlug, trials, writtenReflections, setWrittenRef
     try {
       const res  = await fetch("/api/ai/socratic", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ moduleSlug, trials, qId: questions[chatIndex].key, userResponse: userText, history: updated }),
+        body: JSON.stringify({ moduleSlug, trials, prediction, qId: questions[chatIndex].key, userResponse: userText, history: updated }),
       });
       const data = await res.json();
       if (data.reply) {

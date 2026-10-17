@@ -58,7 +58,7 @@ export function AITutorSection() {
             </p>
 
             {/* Modes */}
-            <div className="space-y-4">
+            <div className="flex flex-col gap-4">
               {tutorModes.map((mode, i) => (
                 <motion.div
                   key={mode.mode}
@@ -97,7 +97,7 @@ export function AITutorSection() {
           >
             <div className="bg-white rounded-2xl shadow-depth border border-border-default p-6 relative">
               {/* Chat Interface Mock */}
-              <div className="space-y-4">
+              <div className="flex flex-col gap-4">
                 {/* Student message */}
                 <div className="flex justify-end">
                   <div className="bg-accent-cobalt/5 rounded-xl rounded-tr-sm px-4 py-3 max-w-[80%]">

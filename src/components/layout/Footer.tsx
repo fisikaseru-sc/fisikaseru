@@ -60,7 +60,7 @@ export function Footer() {
               <h3 className="font-display font-semibold text-sm text-white mb-4 tracking-wide">
                 {title}
               </h3>
-              <ul className="space-y-2.5">
+              <ul className="flex flex-col gap-2.5">
                 {links.map((link) => (
                   <li key={link.href}>
                     <a

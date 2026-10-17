@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:socratic": "tsc src/features/millikan/learning/*.ts src/features/millikan/intelligence/*.ts src/features/millikan/types.ts --outDir .test-dist --module commonjs --target es2020 --moduleResolution node --skipLibCheck && node .test-dist/learning/socraticEngine.test.js",
+    "test:outcomes": "tsc src/features/millikan/learning/outcomes/*.ts src/features/millikan/learning/outcomes/__tests__/*.ts src/features/millikan/types.ts --outDir .test-dist --module commonjs --target es2020 --moduleResolution node --skipLibCheck --esModuleInterop && node .test-dist/learning/outcomes/__tests__/runAllOutcomesTests.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -18,18 +20,27 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.1",
+    "@types/three": "^0.186.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cn": "^0.5.0",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",
+    "next-themes": "^0.4.6",
+    "radix-ui": "^1.8.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.75.0",
     "recharts": "^3.8.1",
+    "sonner": "^2.0.8",
     "tailwind-merge": "^3.5.0",
+    "three": "^0.186.1",
+    "tw-animate-css": "^1.4.0",
     "zod": "^4.4.3",
     "zustand": "^5.0.13"
   },
@@ -41,6 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "shadcn": "^4.22.0"
   }
 }

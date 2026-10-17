@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { motion, AnimatePresence } from "framer-motion";
 import { 
   FlaskConical, CheckCircle2, ChevronRight, Zap, Info, 
   Play, RefreshCw, Send, Sparkles, BookOpen, Clock, 
@@ -14,6 +13,9 @@ import {
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { 
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, 
@@ -96,18 +98,24 @@ export default function StudentDashboard() {
   // Prevent hydration mismatch (Next.js SSR safety)
   useEffect(() => {
     if (!authChecked) return;
-    setMounted(true);
+    // Read localStorage first, then flip mounted flag inside the async microtask
+    // to avoid a synchronous setState cascade inside the effect body.
     const saved = localStorage.getItem("fisikaseru:trials:millikan");
+    let parsed: TrialData[] = [];
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          setTrials(parsed);
+        const data = JSON.parse(saved);
+        if (Array.isArray(data)) {
+          parsed = data;
         }
       } catch (e) {
         console.error(e);
       }
     }
+    Promise.resolve().then(() => {
+      setTrials(parsed);
+      setMounted(true);
+    });
   }, [authChecked]);
 
   // Auto-scroll chat to bottom
@@ -138,7 +146,8 @@ export default function StudentDashboard() {
   };
 
   const handleLoadSampleData = () => {
-    localStorage.setItem("fisikaseru:trials:millikan", JSON.stringify(SAMPLE_TRIALS));
+    // Muat data sampel hanya ke state UI — tidak menimpa data eksperimen asli
+    // milik siswa di localStorage.
     setTrials(SAMPLE_TRIALS);
   };
 
@@ -167,12 +176,13 @@ export default function StudentDashboard() {
       <div className="min-h-screen bg-bg-primary flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-accent-cobalt flex items-center justify-center shadow-depth mb-1">
-            <FlaskConical className="w-5 h-5 text-white animate-pulse" />
+            <FlaskConical className="w-5 h-5 text-white animate-pulse" aria-hidden="true" />
           </div>
-          <div className="w-6 h-6 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" />
+          <div className="w-6 h-6 rounded-full border-2 border-accent-cobalt border-t-transparent animate-spin" role="status" aria-label="Memuat" />
           <span className="text-xs text-text-muted font-mono">
             {!authChecked ? "Memverifikasi sesi..." : "Memuat Dashboard Laboratorium..."}
           </span>
+          <Skeleton className="h-2 w-40" aria-hidden="true" />
         </div>
       </div>
     );
@@ -227,91 +237,122 @@ export default function StudentDashboard() {
         </header>
 
         {/* Global Progress Bar */}
-        <section className="bg-white rounded-2xl border border-border-default/60 p-5 mb-8 shadow-card relative overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-3">
-            <div>
-              <h2 className="font-display font-bold text-base text-primary-navy">
-                Kemajuan Kurikulum Eksperimen
-              </h2>
-              <p className="text-xs text-text-muted mt-0.5">
-                Selesaikan 6 eksperimen wajib untuk menguasai konsep fisika dasar dan modern.
-              </p>
+        <Card className="mb-8 shadow-card relative overflow-hidden">
+          <CardHeader className="[.border-b]:pb-4">
+            <CardTitle className="font-display font-bold text-base text-primary-navy">
+              Kemajuan Kurikulum Eksperimen
+            </CardTitle>
+            <CardDescription className="text-xs text-text-muted">
+              Selesaikan 6 eksperimen wajib untuk menguasai konsep fisika dasar dan modern.
+            </CardDescription>
+            <CardAction>
+              <div className="text-sm font-semibold text-accent-cobalt font-mono bg-accent-cobalt/5 px-3 py-1 rounded-lg">
+                {progressPercent}% Selesai
+              </div>
+            </CardAction>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <Progress value={progressPercent} className="h-2.5" aria-label={`Kemajuan kurikulum ${progressPercent} persen`} />
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
+              <div className="flex items-center gap-2 text-xs text-success bg-success/5 border border-success/10 px-2 py-1.5 rounded-lg">
+                <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+                <span className="font-medium">Tetes Millikan</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg">
+                <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
+                <span>Bandul Sederhana</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-70">
+                <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
+                <span>Hukum Ohm</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
+                <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400 animate-pulse-soft" />
+                <span>Hukum Boyle</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
+                <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
+                <span>Snellius</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
+                <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
+                <span>Jatuh Bebas</span>
+              </div>
             </div>
-            <div className="text-sm font-semibold text-accent-cobalt font-mono bg-accent-cobalt/5 px-3 py-1 rounded-lg">
-              {progressPercent}% Selesai
-            </div>
-          </div>
-          <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-accent-cobalt to-sky-blue rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mt-4">
-            <div className="flex items-center gap-2 text-xs text-success bg-success/5 border border-success/10 px-2 py-1.5 rounded-lg">
-              <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
-              <span className="font-medium">Tetes Millikan</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg">
-              <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
-              <span>Bandul Sederhana</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-70">
-              <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
-              <span>Hukum Ohm</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
-              <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400 animate-pulse-soft" />
-              <span>Hukum Boyle</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
-              <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
-              <span>Snellius</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-text-muted bg-slate-50 border border-border-default/50 px-2 py-1.5 rounded-lg opacity-50">
-              <div className="w-3.5 h-3.5 rounded-full border border-dashed border-slate-400" />
-              <span>Jatuh Bebas</span>
-            </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
+
+        {/* Empty-state pattern: welcome banner for new users with no recorded data */}
+        {trials.length === 0 && (
+          <Card className="mb-8 border-2 border-dashed border-accent-cobalt/25 bg-accent-cobalt/[0.02] shadow-none">
+            <CardContent className="flex flex-col items-center text-center gap-3 py-2">
+              <div className="w-12 h-12 rounded-full bg-accent-cobalt/10 flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-accent-cobalt" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 className="font-display font-bold text-base text-primary-navy">
+                  Selamat Datang di Lab FisikaSeru! 🔬
+                </h2>
+                <p className="text-xs text-text-muted max-w-md mx-auto mt-1">
+                  Anda belum memiliki data eksperimen. Mulai eksperimen pertama Anda dan
+                  data akan otomatis muncul di dashboard ini.
+                </p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                <Link href="/modules/millikan/experiment">
+                  <Button size="sm" className="cursor-pointer">
+                    <Play className="w-3.5 h-3.5" aria-hidden="true" /> Mulai Eksperimen Pertama
+                  </Button>
+                </Link>
+                <Button size="sm" variant="outline" onClick={handleLoadSampleData} className="cursor-pointer bg-white">
+                  <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" /> Lihat Data Sampel
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Dashboard Main Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
 
           {/* LEFT COLUMN: Active Millikan Focus (3/5 width on desktop) */}
-          <section className="lg:col-span-3 space-y-8">
+          <section className="lg:col-span-3 flex flex-col gap-8">
 
             {/* Millikan Active Focus Box */}
-            <div className="bg-white rounded-3xl border border-border-default/60 shadow-card overflow-hidden relative">
+            <Card className="shadow-card relative">
               {/* Header Accent Line */}
               <div className="h-2 bg-gradient-to-r from-accent-cobalt via-sky-blue to-teal" />
-              
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
+
+              <CardHeader>
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-2.5">
                     <div className="w-10 h-10 rounded-xl bg-accent-cobalt flex items-center justify-center text-white">
-                      <FlaskConical className="w-5 h-5 animate-float-gentle" />
+                      <FlaskConical className="w-5 h-5 animate-float-gentle" aria-hidden="true" />
                     </div>
                     <div>
                       <Badge className="bg-accent-cobalt/5 text-accent-cobalt font-mono border-accent-cobalt/10 text-[9px] mb-0.5">
                         MODUL UTAMA FISIKA MODERN
                       </Badge>
-                      <h2 className="font-display font-extrabold text-lg text-primary-navy">
+                      <CardTitle className="font-display font-extrabold text-lg text-primary-navy">
                         Eksperimen Tetes Minyak Millikan
-                      </h2>
+                      </CardTitle>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-accent-cobalt/20 text-accent-cobalt">
-                    Fokus Belajar
-                  </Badge>
+                  <CardAction>
+                    <Badge variant="outline" className="border-accent-cobalt/20 text-accent-cobalt">
+                      Fokus Belajar
+                    </Badge>
+                  </CardAction>
                 </div>
-
-                <p className="text-xs text-text-muted leading-relaxed mb-6 font-body">
+                <CardDescription className="text-xs text-text-muted leading-relaxed font-body">
                   Modul ini memandu Anda mengulang penemuan Robert Millikan pada tahun 1909 untuk membuktikan bahwa muatan listrik terkecil bersifat terkuantisasi (hanya dalam kelipatan bilangan bulat elektron $e$).
-                </p>
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="flex flex-col gap-6">
 
                 {/* Analytical Stats Grid */}
-                <div className="grid grid-cols-3 gap-3 mb-6">
+                <div className="grid grid-cols-3 gap-3">
                   <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/50 text-center">
                     <span className="text-[9px] text-text-muted font-mono block uppercase">Data Tercatat</span>
                     <span className="font-mono text-lg font-extrabold text-primary-navy mt-1 block">
@@ -338,7 +379,7 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Charge Quantization Scatter Chart */}
-                <div className="border border-border-default/50 rounded-2xl p-4 mb-6 bg-slate-950/5 relative">
+                <div className="border border-border-default/50 rounded-2xl p-4 bg-slate-950/5 relative">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="font-display font-bold text-xs text-slate-800 flex items-center gap-1.5">
@@ -431,7 +472,7 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Forces Diagram Visualizer Panel */}
-                <div className="bg-slate-50 border border-border-default/50 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center mb-6">
+                <div className="bg-slate-50 border border-border-default/50 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 items-center">
                   {/* Visual Drop with Arrows */}
                   <div className="w-[120px] h-[120px] bg-slate-900 border border-slate-800 rounded-xl relative flex items-center justify-center overflow-hidden flex-shrink-0">
                     <div className="absolute inset-0 opacity-10 flex flex-col justify-between p-1 font-mono text-[6px] text-white pointer-events-none">
@@ -467,59 +508,61 @@ export default function StudentDashboard() {
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/modules/millikan/experiment" className="flex-1">
-                    <Button className="w-full h-11 text-sm font-semibold cursor-pointer">
-                      <Play className="w-4 h-4 mr-2" /> Masuk Simulasi Eksperimen
-                    </Button>
-                  </Link>
-                  
-                  <Link href="/modules/millikan/analysis" className="flex-1">
-                    <Button variant="outline" className="w-full h-11 text-sm font-semibold cursor-pointer bg-white border-border-default" disabled={trials.length < 3}>
-                      Lanjut ke Analisis Data <ChevronRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  </Link>
-                </div>
                 {trials.length < 3 && trials.length > 0 && (
                   <p className="text-[10px] text-text-muted text-center mt-2">
                     * Catat minimal 3 droplet di lab untuk mengaktifkan halaman Analisis Data.
                   </p>
                 )}
-              </div>
-            </div>
+              </CardContent>
+
+              <CardFooter className="bg-transparent border-t-0">
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
+                  <Link href="/modules/millikan/experiment" className="flex-1">
+                    <Button className="w-full h-11 text-sm font-semibold cursor-pointer">
+                      <Play className="w-4 h-4" aria-hidden="true" /> Masuk Simulasi Eksperimen
+                    </Button>
+                  </Link>
+
+                  <Link href="/modules/millikan/analysis" className="flex-1">
+                    <Button variant="outline" className="w-full h-11 text-sm font-semibold cursor-pointer bg-white border-border-default" disabled={trials.length < 3}>
+                      Lanjut ke Analisis Data <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardFooter>
+            </Card>
 
           </section>
 
           {/* RIGHT COLUMN: AI Tutor & Other Modules (2/5 width on desktop) */}
-          <section className="lg:col-span-2 space-y-8">
+          <section className="lg:col-span-2 flex flex-col gap-8">
 
             {/* AI Tutor Chat Widget */}
-            <div className="bg-white rounded-3xl border border-border-default/60 shadow-card overflow-hidden flex flex-col h-[480px]">
+            <Card className="shadow-card overflow-hidden h-[480px] py-0 gap-0">
               {/* Header */}
               <div className="bg-slate-900 px-5 py-4 flex items-center justify-between text-white border-b border-slate-800">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-accent-cobalt flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
+                    <Sparkles className="w-4 h-4 text-white" aria-hidden="true" />
                   </div>
                   <div>
                     <h3 className="font-display font-bold text-xs">AI Tutor Sokratis</h3>
                     <div className="text-[9px] text-accent-cobalt-light font-mono flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Pendamping Lab Aktif
+                      <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" aria-hidden="true" /> Pendamping Lab Aktif
                     </div>
                   </div>
                 </div>
-                <HelpCircle className="w-4 h-4 text-slate-400" />
+                <HelpCircle className="w-4 h-4 text-slate-400" aria-hidden="true" />
               </div>
 
               {/* Chat Messages */}
-              <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50/50">
+              <div className="flex-1 p-4 overflow-y-auto flex flex-col gap-3 bg-slate-50/50">
                 {chatMessages.map((msg, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={cn(
                       "flex flex-col max-w-[85%] rounded-2xl p-3 text-xs leading-relaxed",
-                      msg.sender === "ai" 
+                      msg.sender === "ai"
                         ? "bg-white border border-border-default/80 text-text-primary mr-auto rounded-tl-none shadow-sm"
                         : "bg-accent-cobalt text-white ml-auto rounded-tr-none"
                     )}
@@ -563,21 +606,23 @@ export default function StudentDashboard() {
                 />
                 <button 
                   type="submit"
+                  aria-label="Kirim pesan ke AI Tutor"
                   className="w-9 h-9 bg-accent-cobalt hover:bg-accent-cobalt-light text-white rounded-xl flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
                 >
-                  <Send className="w-3.5 h-3.5" />
+                  <Send className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               </form>
-            </div>
+            </Card>
 
             {/* Other Labs / Modules List */}
-            <div className="bg-white rounded-3xl border border-border-default/60 shadow-card p-5">
-              <h3 className="font-display font-bold text-xs text-primary-navy mb-3 flex items-center gap-1.5">
-                <BookOpen className="w-4 h-4 text-text-muted" />
-                Modul Eksperimen Lainnya
-              </h3>
-
-              <div className="space-y-3">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle className="font-display font-bold text-xs text-primary-navy flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-text-muted" aria-hidden="true" />
+                  Modul Eksperimen Lainnya
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-3">
                 {/* Pendulum */}
                 <Link 
                   href="/modules/bandul/experiment" 
@@ -640,8 +685,8 @@ export default function StudentDashboard() {
                     Segera
                   </Badge>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
           </section>
 
