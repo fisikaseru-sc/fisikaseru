@@ -3,6 +3,8 @@
 // Presisi Fisika Standar NIST & Lab Ilmiah
 // ============================================================
 
+import type { MillikanTrialRecord } from "@/features/shared/trialRecords";
+
 export const MILLIKAN_CONSTANTS = {
   ETA: 1.81e-5,          // Viskositas dinamik udara (kg/(m·s)) pada 20°C
   RHO_OIL: 886,          // Massa jenis minyak parafin (kg/m³)
@@ -173,7 +175,7 @@ export function estimateTimingUncertainty(tf: number, tr: number): number {
 export interface MillikanAnalysisResult {
   sufficientData: boolean;
   trialCount: number;
-  sortedTrials: Array<any>;
+  sortedTrials: MillikanTrialAug[];
   calculatedE_stokes: number | null;
   calculatedE_corr: number | null;
   stdDev: number;
@@ -185,12 +187,20 @@ export interface MillikanAnalysisResult {
   evidenceSummary: string;
 }
 
+/** Trial ter-enrich: data mentah + derivasi (cf, qCorr, uncRel, n). */
+export interface MillikanTrialAug extends MillikanTrialRecord {
+  cf: number;
+  qCorr: number;
+  uncRel: number;
+  n: number;
+}
+
 /**
  * SINGLE SOURCE OF TRUTH: Penurunan statistik dan bukti ilmiah Millikan
  * Menghindari duplikasi kalkulasi antara AnalysisView dan ReflectionPage.
  * Tidak pernah menggunakan fallback palsu 1.602 jika data belum cukup.
  */
-export function deriveMillikanAnalysisResult(trials: any[]): MillikanAnalysisResult {
+export function deriveMillikanAnalysisResult(trials: unknown): MillikanAnalysisResult {
   if (!Array.isArray(trials) || trials.length === 0) {
     return {
       sufficientData: false,
@@ -208,14 +218,16 @@ export function deriveMillikanAnalysisResult(trials: any[]): MillikanAnalysisRes
     };
   }
 
-  const sortedTrials = [...trials]
-    .filter((t) => t && typeof t.q === "number" && !isNaN(t.q) && t.q > 0)
+  const sortedTrials: MillikanTrialAug[] = (trials as unknown[])
+    .filter((t): t is MillikanTrialRecord & { cf?: number; qCorr?: number; uncRel?: number; hiddenN?: number } =>
+      typeof t === "object" && t !== null &&
+      typeof (t as MillikanTrialRecord).q === "number" && !isNaN((t as MillikanTrialRecord).q) && (t as MillikanTrialRecord).q > 0)
     .sort((a, b) => a.q - b.q)
     .map((t) => {
       const cf = t.cf || calculateCunninghamFactor(t.r || 1.5);
       const qCorr = t.qCorr || t.q * cf;
       const uncRel = t.uncRel || estimateTimingUncertainty(t.tf || 5, t.tr || 15);
-      const n = t.hiddenN || t.n || Math.max(1, Math.round(t.q / MILLIKAN_CONSTANTS.E_REF));
+      const n = (t as { hiddenN?: number }).hiddenN || t.n || Math.max(1, Math.round(t.q / MILLIKAN_CONSTANTS.E_REF));
       return {
         ...t,
         cf,

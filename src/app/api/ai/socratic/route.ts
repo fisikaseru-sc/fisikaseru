@@ -250,8 +250,8 @@ Format teks langsung:
     const replyText = result.response.text();
 
     return NextResponse.json({ reply: replyText });
-  } catch (err: any) {
+  } catch (err) {
     console.error("Socratic API Error:", err);
-    return NextResponse.json({ error: err.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: err instanceof Error ? err.message : "Internal Server Error" }, { status: 500 });
   }
 }

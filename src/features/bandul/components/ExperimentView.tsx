@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { PendulumState } from "../views3d/PendulumScene3D";
+import { type BandulTrialRecord, isBandulTrial } from "@/features/shared/trialRecords";
 
 const PendulumScene3D = dynamic(() => import("../views3d/PendulumScene3D"), {
   ssr: false,
@@ -95,12 +96,12 @@ export default function LabPage() {
   const MAX_TRIALS = 10;
   // ── Muat progres tersimpan (lazy init — komponen dynamic ssr:false,
   // aman dari mismatch hidrasi; pembayaran debt lint set-state-in-effect) ──
-  const [trials, setTrials] = useState<any[]>(() => {
+  const [trials, setTrials] = useState<BandulTrialRecord[]>(() => {
     const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
     if (savedTrials) {
       try {
-        const p = JSON.parse(savedTrials);
-        if (Array.isArray(p) && p.length > 0) return p;
+        const p: unknown = JSON.parse(savedTrials);
+        if (Array.isArray(p) && p.length > 0 && p.every(isBandulTrial)) return p;
       } catch (_) {}
     }
     return [];
@@ -157,7 +158,7 @@ export default function LabPage() {
   };
 
   useEffect(() => {
-    let id: any;
+    let id: ReturnType<typeof setInterval> | undefined;
     if (isRunning) {
       const t0 = Date.now() - stopwatch * 1000;
       id = setInterval(() => setStopwatch((Date.now() - t0) / 1000), 30);

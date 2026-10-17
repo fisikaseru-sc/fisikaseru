@@ -283,7 +283,7 @@ export function TransformationSection({
               <button
                 key={opt.id}
                 type="button"
-                onClick={() => setSelectedIntuition(opt.id as any)}
+                onClick={() => setSelectedIntuition(opt.id as "pattern" | "related" | "unsure")}
                 className={cn(
                   "p-3 rounded-xl border text-left text-xs transition-all cursor-pointer flex flex-col justify-between min-h-[64px]",
                   isSelected

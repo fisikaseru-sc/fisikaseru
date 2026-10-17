@@ -76,7 +76,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
             ].map(tab => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as "principles" | "visual" | "math" | "methods")}
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-t-lg transition-all cursor-pointer border-b-2",
                   activeTab === tab.id

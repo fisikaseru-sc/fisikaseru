@@ -93,7 +93,10 @@ export function ScientificExplanationSection({
 
   const convergenceData = React.useMemo(() => {
     const valid = trials.filter((t) => t.n > 0 && t.qCorr > 0);
-    const result: any[] = [];
+    const result: {
+      trial: number; stokes: number; corrected: number;
+      s_upper: number; s_lower: number; c_upper: number; c_lower: number;
+    }[] = [];
     let sumE = 0, sumE2 = 0, sumEc = 0, sumEc2 = 0;
     for (let i = 0; i < valid.length; i++) {
       const e = valid[i].q / valid[i].n;
@@ -209,7 +212,7 @@ export function ScientificExplanationSection({
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => setActiveChartTab(tab.id as any)}
+                onClick={() => setActiveChartTab(tab.id as "scatter" | "histogram" | "convergence")}
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                   activeChartTab === tab.id
@@ -260,8 +263,8 @@ export function ScientificExplanationSection({
                         />
                         <Tooltip
                           contentStyle={{ borderRadius: 10, border: "1px solid #E2E8F0", fontSize: 11, fontFamily: "monospace" }}
-                          formatter={(val: any, name: any, item: any) => [
-                            `${typeof val === "number" ? val.toFixed(3) : val} × 10⁻¹⁹ C (${item.payload.n}e)`,
+                          formatter={(val, name, item) => [
+                            `${typeof val === "number" ? val.toFixed(3) : val} × 10⁻¹⁹ C (${(item as { payload: { n: number } }).payload.n}e)`,
                             name === "qCorr" ? "q Terkoreksi" : "q Stokes"
                           ]}
                         />
@@ -335,8 +338,8 @@ export function ScientificExplanationSection({
                         />
                         <Tooltip
                           contentStyle={{ borderRadius: 8, border: "1px solid #E2E8F0", fontSize: 11 }}
-                          formatter={(v: any, _: any, p: any) => {
-                            const zone = binZone(p.payload.bin);
+                          formatter={(v, _, p) => {
+                            const zone = binZone((p as { payload: { bin: number } }).payload.bin);
                             return [`${v} droplet${zone ? ` — tingkat ${zone}e` : ""}`, "Jumlah"];
                           }}
                         />
@@ -350,7 +353,7 @@ export function ScientificExplanationSection({
                             dataKey="count"
                             position="top"
                             style={{ fontSize: 11, fontWeight: 700, fill: "#0f172a" }}
-                            formatter={(v: any) => (v > 0 ? v : "")}
+                            formatter={(v) => (Number(v) > 0 ? v : "")}
                           />
                         </Bar>
                       </ComposedChart>

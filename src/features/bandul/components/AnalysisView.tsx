@@ -50,8 +50,15 @@ function linearRegression(data: { x: number; y: number }[]) {
   return { slope, intercept, r2: 1 - ssRes / ssTot };
 }
 
+// Kontrak data trial + type guard kini tinggal di features/shared/trialRecords.ts
+// (dipakai bersama ExperimentView & AnalysisView kedua modul).
+import { TrialRecord, MillikanTrialRecord, isMillikanTrial as isMillikanRecord, isBandulTrial as isBandulRecord } from "@/features/shared/trialRecords";
+
 // ─── Custom Tooltips ──────────────────────────────────────────────────────────
-function ScatterTooltip({ active, payload }: any) {
+function ScatterTooltip({ active, payload }: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload: MillikanTrialRecord }>;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   const unc = timingUncertainty(d.tf ?? 5, d.tr ?? 15);
@@ -69,20 +76,27 @@ function ScatterTooltip({ active, payload }: any) {
   );
 }
 
-function ConvergenceTooltip({ active, payload, label }: any) {
+function ConvergenceTooltip({ active, payload, label }: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ name?: string; value?: number | string; color?: string }>;
+  label?: string | number;
+}) {
   if (!active || !payload?.length) return null;
-  const filtered = payload.filter((p: any) => p.name && p.name !== "_");
+  const filtered = payload.filter((p) => p.name && p.name !== "_");
   return (
     <div className="bg-white border border-border-default rounded-xl p-3 shadow-depth text-[11px] font-mono space-y-0.5">
       <p className="font-bold text-primary-navy mb-1">Setelah {label} trial</p>
-      {filtered.map((p: any) => (
+      {filtered.map((p) => (
         <p key={p.name} style={{ color: p.color }}>{p.name}: {typeof p.value === "number" ? p.value.toFixed(4) : "--"} ×10⁻¹⁹ C</p>
       ))}
     </div>
   );
 }
 
-function BandulTooltip({ active, payload }: any) {
+function BandulTooltip({ active, payload }: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload: { x?: number; y?: number } }>;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
@@ -118,12 +132,15 @@ export default function AnalysisPage() {
     }
     return true; // fallback demo — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.
   });
-  const [trials] = useState<any[]>(() => {
+  const [trials] = useState<TrialRecord[]>(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
-        const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) return p;
+        const p: unknown = JSON.parse(saved);
+        if (Array.isArray(p) && p.length > 0) {
+          // Validasi bentuk sesuai modul; tolak data korup (fallback demo).
+          if (p.every(isMillikanRecord) || p.every(isBandulRecord)) return p as TrialRecord[];
+        }
       } catch (_) {}
     }
     // Fallback demo data
@@ -147,14 +164,17 @@ export default function AnalysisPage() {
   });
 
   // ─── Bandul calcs ─────────────────────────────────────────────────────────────
+  const bandulTrials = useMemo(() => trials.filter(isBandulRecord), [trials]);
+  const millikanTrials = useMemo(() => trials.filter(isMillikanRecord), [trials]);
+
   const chartDataBandul = useMemo(() => {
     if (!isBandul) return [];
-    return trials.map((d) => ({
+    return bandulTrials.map((d) => ({
       x: d.L,
       y: transform === "T vs L" ? d.T : transform === "T² vs L" ? d.T2 : Math.log(d.T),
       T: d.T, T2: d.T2,
     }));
-  }, [trials, transform, isBandul]);
+  }, [bandulTrials, transform, isBandul]);
 
   const regressionBandul = useMemo(() => linearRegression(chartDataBandul), [chartDataBandul]);
 
@@ -162,9 +182,9 @@ export default function AnalysisPage() {
   // Jika siswa merekam di Bulan/Jupiter, galat harus dihitung terhadap g lab itu,
   // bukan selalu 9.80665 (temuan audit P1: preset non-Bumi menghasilkan galat raksasa).
   const gRef = useMemo(() => {
-    const gs = trials.map((d) => (typeof d.g === "number" ? d.g : NaN)).filter((v) => !isNaN(v));
+    const gs = bandulTrials.map((d) => (typeof d.g === "number" ? d.g : NaN)).filter((v) => !isNaN(v));
     return gs.length > 0 ? gs[gs.length - 1] : 9.80665;
-  }, [trials]);
+  }, [bandulTrials]);
 
   const calculatedG = useMemo(() => {
     if (regressionBandul.slope === 0) return 0;
@@ -187,13 +207,13 @@ export default function AnalysisPage() {
   const gError = useMemo(() => calculatedG > 0 ? Math.abs((calculatedG - gRef) / gRef * 100) : 0, [calculatedG, gRef]);
 
   // ─── Millikan calcs ───────────────────────────────────────────────────────────
-  const trialsAug = useMemo(() => trials.map(t => {
+  const trialsAug = useMemo(() => millikanTrials.map(t => {
     const cf      = cunninghamFactor(t.r ?? 1.5);
     const uncRel  = timingUncertainty(t.tf ?? 5, t.tr ?? 15);
     const qCorr   = t.q * cf;
     const qUncAbs = t.q * uncRel;
     return { ...t, cf, uncRel, qCorr, qUncAbs, qCorrUncAbs: qCorr * uncRel };
-  }), [trials]);
+  }), [millikanTrials]);
 
   const calculatedE_stokes = useMemo(() => {
     const valid = trialsAug.filter(t => t.n > 0 && t.q > 0);
@@ -248,7 +268,10 @@ export default function AnalysisPage() {
 
   const convergenceData = useMemo(() => {
     const valid = trialsAug.filter(t => t.n > 0 && t.q > 0);
-    const result: any[] = [];
+    const result: {
+      trial: number; stokes: number; corrected: number;
+      s_upper: number; s_lower: number; c_upper: number; c_lower: number;
+    }[] = [];
     let sumE = 0, sumE2 = 0, sumEc = 0, sumEc2 = 0;
     for (let i = 0; i < valid.length; i++) {
       const e = valid[i].q / valid[i].n; const ec = valid[i].qCorr / valid[i].n;
@@ -375,7 +398,7 @@ export default function AnalysisPage() {
                   { id: "histogram",   label: "Distribusi Muatan (Raw)",     icon: <BarChart3 className="w-3.5 h-3.5" /> },
                   { id: "convergence", label: "Konvergensi Estimasi e",      icon: <TrendingUp className="w-3.5 h-3.5" /> },
                 ].map(tab => (
-                  <button key={tab.id} onClick={() => setMillikanTab(tab.id as any)}
+                  <button key={tab.id} onClick={() => setMillikanTab(tab.id as "scatter" | "histogram" | "convergence")}
                     className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer",
                       millikanTab === tab.id ? "bg-accent-cobalt text-white" : "bg-white border border-border-default text-text-muted hover:border-accent-cobalt/30")}>
                     {tab.icon}{tab.label}
@@ -442,11 +465,11 @@ export default function AnalysisPage() {
                                 label={{ value: `${b.n}e`, fill: idx % 2 === 0 ? "#0284c7" : "#7c3aed", fontSize: 9, position: "right" }} />
                             ))}
                             <Scatter dataKey="q" fill="#0891B2" r={6} stroke="#fff" strokeWidth={1.5}
-                              name="q (Stokes)" shape={(props: any) => {
+                              name="q (Stokes)" shape={(props) => {
                                 const { cx, cy, payload } = props;
-                                if (!cx || !cy) return <g />;
+                                if (!cx || !cy || !payload) return <g />;
                                 const yScale = 72 / 12;
-                                const errPx = (payload.qUncAbs || 0) * yScale;
+                                const errPx = ((payload as { qUncAbs?: number }).qUncAbs || 0) * yScale;
                                 return (
                                   <g>
                                     <line x1={cx} y1={cy - errPx} x2={cx} y2={cy + errPx} stroke="#0891B2" strokeWidth={1.5} />
@@ -457,7 +480,7 @@ export default function AnalysisPage() {
                                 );
                               }} />
                             <Scatter dataKey="qCorr" fill="#14b8a6" r={5} stroke="#fff" strokeWidth={1.5}
-                              name="q (+ Cunningham)" shape={(props: any) => {
+                              name="q (+ Cunningham)" shape={(props) => {
                                 const { cx, cy } = props;
                                 if (!cx || !cy) return <g />;
                                 const s = 6;
@@ -495,8 +518,8 @@ export default function AnalysisPage() {
                               label={{ value: "Jumlah droplet", angle: -90, position: "insideLeft", offset: -4, style: { fontSize: 11, fill: "#64748B" } }}
                               tick={{ fontSize: 11, fill: "#64748B" }} />
                             <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #E2E8F0", fontSize: 11 }}
-                              formatter={(v: any, _: any, p: any) => {
-                                const zone = binZone(p.payload.bin);
+                              formatter={(v, _, p) => {
+                                const zone = binZone((p as { payload: { bin: number } }).payload.bin);
                                 return [`${v} droplet${zone ? ` — zona ${zone}e` : ""}`, "Frekuensi"];
                               }} />
                             <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={60}>
@@ -506,7 +529,7 @@ export default function AnalysisPage() {
                                 return <Cell key={i} fill={zone ? colors[zone] : "#cbd5e1"} fillOpacity={0.85} />;
                               })}
                               <LabelList dataKey="count" position="top" style={{ fontSize: 11, fontWeight: 700, fill: "#0f172a" }}
-                                formatter={(v: any) => v > 0 ? v : ""} />
+                                formatter={(v) => Number(v) > 0 ? v : ""} />
                             </Bar>
                           </ComposedChart>
                         </ResponsiveContainer>
@@ -786,7 +809,7 @@ export default function AnalysisPage() {
                         label={{ value: transform === "T vs L" ? "T (s)" : transform === "T² vs L" ? "T² (s²)" : "ln(T)", angle: -90, position: "insideLeft", style: { fontSize: 12, fill: "#6B7280" } }}
                         tick={{ fontSize: 11, fill: "#6B7280" }} domain={[0, "auto"]} />
                       <Tooltip content={<BandulTooltip />} />
-                      <Scatter data={chartDataBandul} dataKey="y" fill="#1B4FD8" r={7} stroke="#fff" strokeWidth={2} shape={(props: any) => {
+                      <Scatter data={chartDataBandul} dataKey="y" fill="#1B4FD8" r={7} stroke="#fff" strokeWidth={2} shape={(props) => {
                         const { cx, cy } = props;
                         if (!cx || !cy) return <g />;
                         return <circle cx={cx} cy={cy} r={7} fill="#1B4FD8" stroke="#fff" strokeWidth={2} />;
@@ -867,7 +890,7 @@ export default function AnalysisPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {trials.map((d, i) => (
+                    {bandulTrials.map((d, i) => (
                       <tr key={i} className="border-b border-border-default/50 hover:bg-accent-cobalt/[0.02]">
                         <td className="px-3 py-2 font-mono text-text-muted">{d.id || i+1}</td>
                         <td className="px-3 py-2 font-mono">{d.L.toFixed(2)}</td>

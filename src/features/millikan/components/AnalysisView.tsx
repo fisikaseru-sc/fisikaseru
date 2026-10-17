@@ -23,6 +23,7 @@ import { AnalysisStageProgress, type AnalysisStage } from "./analysis/AnalysisSt
 import { DataReviewSection } from "./analysis/DataReviewSection";
 import { TransformationSection } from "./analysis/TransformationSection";
 import { ScientificExplanationSection } from "./analysis/ScientificExplanationSection";
+import { type MillikanTrialRecord, type TrialRecord, isMillikanTrial, isBandulTrial } from "@/features/shared/trialRecords";
 
 // ─── Physical Constants ───────────────────────────────────────────────────────
 const E_REF    = 1.6022;   // elementary charge ×10⁻¹⁹ C (NIST 2018)
@@ -57,7 +58,10 @@ function linearRegression(data: { x: number; y: number }[]) {
   return { slope, intercept, r2: 1 - ssRes / ssTot };
 }
 
-function BandulTooltip({ active, payload }: any) {
+function BandulTooltip({ active, payload }: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ payload: { x?: number; y?: number } }>;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
@@ -71,7 +75,7 @@ function BandulTooltip({ active, payload }: any) {
 
 const LAB_STEPS = ["Persiapan", "Pengamatan", "Pengukuran", "Analisis", "Refleksi"];
 
-const DEMO_MILLIKAN_TRIALS = [
+const DEMO_MILLIKAN_TRIALS: MillikanTrialRecord[] = [
   { id: 1, dropletLabel: "Tetes A", r: 1.50, V: 300, tf: 4.17, tr: 14.30, q: 4.72, hiddenN: 3, n: 3, method: "dynamic" },
   { id: 2, dropletLabel: "Tetes B", r: 1.50, V: 400, tf: 4.17, tr:  6.82, q: 6.25, hiddenN: 4, n: 4, method: "dynamic" },
   { id: 3, dropletLabel: "Tetes C", r: 1.20, V: 350, tf: 6.51, tr:  8.95, q: 4.61, hiddenN: 3, n: 3, method: "dynamic" },
@@ -95,12 +99,16 @@ export default function AnalysisPage() {
   const [showGuideModal, setShowGuideModal] = useState(false);
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
   // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
-  const [trials, setTrials] = useState<any[]>(() => {
+  const [trials, setTrials] = useState<TrialRecord[]>(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
       try {
-        const p = JSON.parse(saved);
-        if (Array.isArray(p) && p.length > 0) return p;
+        const p: unknown = JSON.parse(saved);
+        if (Array.isArray(p) && p.length > 0 &&
+          (p.every(isMillikanTrial) || p.every((t) =>
+            typeof t === "object" && t !== null && typeof (t as { L?: unknown }).L === "number"))) {
+          return p as TrialRecord[];
+        }
       } catch (_) {}
     }
     // Fallback demo data
@@ -117,14 +125,17 @@ export default function AnalysisPage() {
   );
 
   // ─── Bandul calcs ─────────────────────────────────────────────────────────────
+  const bandulTrials = useMemo(() => trials.filter(isBandulTrial), [trials]);
+  const millikanTrials = useMemo(() => trials.filter(isMillikanTrial), [trials]);
+
   const chartDataBandul = useMemo(() => {
     if (!isBandul) return [];
-    return trials.map((d) => ({
+    return bandulTrials.map((d) => ({
       x: d.L,
       y: transform === "T vs L" ? d.T : transform === "T² vs L" ? d.T2 : Math.log(d.T),
       T: d.T, T2: d.T2,
     }));
-  }, [trials, transform, isBandul]);
+  }, [bandulTrials, transform, isBandul]);
 
   const regressionBandul = useMemo(() => linearRegression(chartDataBandul), [chartDataBandul]);
 
@@ -148,14 +159,14 @@ export default function AnalysisPage() {
   const gError = useMemo(() => calculatedG > 0 ? Math.abs((calculatedG - 9.80665) / 9.80665 * 100) : 0, [calculatedG]);
 
   // ─── Millikan calcs ───────────────────────────────────────────────────────────
-  const trialsAug = useMemo(() => trials.map(t => {
+  const trialsAug = useMemo(() => millikanTrials.map(t => {
     const cf      = cunninghamFactor(t.r ?? 1.5);
     const uncRel  = timingUncertainty(t.tf ?? 5, t.tr ?? 15);
     const qCorr   = t.q * cf;
     const qUncAbs = t.q * uncRel;
     const n       = t.hiddenN || t.n || Math.max(1, Math.round(t.q / E_REF));
     return { ...t, cf, uncRel, qCorr, qUncAbs, qCorrUncAbs: qCorr * uncRel, n };
-  }), [trials]);
+  }), [millikanTrials]);
 
   const calculatedE_stokes = useMemo(() => {
     const valid = trialsAug.filter(t => t.n > 0 && t.q > 0);
@@ -297,7 +308,7 @@ export default function AnalysisPage() {
                 {/* Stage 1: Data Review (Raw Kinematics & Observations) */}
                 {activeStage === 1 && (
                   <DataReviewSection
-                    trials={trials}
+                    trials={millikanTrials}
                     onProceedToTransform={() => setActiveStage(2)}
                   />
                 )}
@@ -504,7 +515,7 @@ export default function AnalysisPage() {
                           label={{ value: transform === "T vs L" ? "T (s)" : transform === "T² vs L" ? "T² (s²)" : "ln(T)", angle: -90, position: "insideLeft", style: { fontSize: 12, fill: "#6B7280" } }}
                           tick={{ fontSize: 11, fill: "#6B7280" }} domain={[0, "auto"]} />
                         <Tooltip content={<BandulTooltip />} />
-                        <Scatter data={chartDataBandul} dataKey="y" fill="#1B4FD8" r={7} stroke="#fff" strokeWidth={2} shape={(props: any) => {
+                        <Scatter data={chartDataBandul} dataKey="y" fill="#1B4FD8" r={7} stroke="#fff" strokeWidth={2} shape={(props) => {
                           const { cx, cy } = props;
                           if (!cx || !cy) return <g />;
                           return <circle cx={cx} cy={cy} r={7} fill="#1B4FD8" stroke="#fff" strokeWidth={2} />;
@@ -584,7 +595,7 @@ export default function AnalysisPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {trials.map((d, i) => (
+                      {bandulTrials.map((d, i) => (
                         <tr key={i} className="border-b border-border-default/50 hover:bg-accent-cobalt/[0.02]">
                           <td className="px-3 py-2 font-mono text-text-muted">{d.id || i+1}</td>
                           <td className="px-3 py-2 font-mono">{d.L.toFixed(2)}</td>

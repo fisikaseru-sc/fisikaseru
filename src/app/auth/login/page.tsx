@@ -40,8 +40,8 @@ export default function LoginPage() {
         },
       });
       if (error) throw error;
-    } catch (err: any) {
-      setErrorMsg(err.message || "Gagal menghubungkan ke Google Auth. Coba lagi.");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Gagal menghubungkan ke Google Auth. Coba lagi.");
       setIsLoading(false);
     }
   };
@@ -58,8 +58,8 @@ export default function LoginPage() {
       });
       if (error) throw error;
       setMagicLinkSent(true);
-    } catch (err: any) {
-      setErrorMsg(err.message || "Gagal mengirimkan Magic Link. Coba lagi.");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Gagal mengirimkan Magic Link. Coba lagi.");
     } finally {
       setIsLoading(false);
     }

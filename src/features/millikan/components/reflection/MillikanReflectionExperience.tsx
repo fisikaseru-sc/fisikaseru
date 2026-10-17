@@ -53,6 +53,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { deriveMillikanAnalysisResult, MILLIKAN_CONSTANTS } from "@/features/millikan/simulation/physics";
 import { StudentPrediction } from "@/features/millikan/types";
+import type { MillikanTrialRecord } from "@/features/shared/trialRecords";
+import type { TestedCandidateRecord } from "../analysis/CandidateHistory";
 import { evaluateMillikanLearningState } from "../../intelligence/evaluator";
 import { MillikanLearningSignals } from "../../intelligence/learningTypes";
 import { trackLearningEvent } from "../../analytics/learningEvents";
@@ -88,9 +90,9 @@ export interface StudentReflectionData {
 
 export function MillikanReflectionExperience() {
   const [activeChapter, setActiveChapter] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [trials, setTrials] = useState<any[]>([]);
+  const [trials, setTrials] = useState<MillikanTrialRecord[]>([]);
   const [savedPrediction, setSavedPrediction] = useState<StudentPrediction | null>(null);
-  const [patternHistory, setPatternHistory] = useState<any[]>([]);
+  const [patternHistory, setPatternHistory] = useState<TestedCandidateRecord[]>([]);
 
   // Reflection and conclusion state (CER framework)
   const [metacognition, setMetacognition] = useState({
@@ -380,8 +382,8 @@ export function MillikanReflectionExperience() {
       } else {
         throw new Error("No response");
       }
-    } catch (err: any) {
-      if (err.name === "AbortError") return;
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
       // Socratic offline fallback without answers
       setChatMessages((prev) => [
         ...prev,
@@ -423,7 +425,7 @@ export function MillikanReflectionExperience() {
           <div className="p-3 border rounded-lg bg-slate-50">
             <h4 className="font-bold text-[11px] mb-1">Dugaan Awal (Sebelum Eksperimen)</h4>
             <p>Hipotesis: <i>{savedPrediction?.hypothesis || "Belum tercatat"}</i></p>
-            <p className="mt-1">Alasan: "{savedPrediction?.reasoning || "—"}"</p>
+            <p className="mt-1">Alasan: &quot;{savedPrediction?.reasoning || "—"}&quot;</p>
             <p className="mt-1">Keyakinan Awal: {savedPrediction?.confidence || 3}/5</p>
           </div>
 
@@ -486,7 +488,7 @@ export function MillikanReflectionExperience() {
               <button
                 key={c.id}
                 type="button"
-                onClick={() => setActiveChapter(c.id as any)}
+                onClick={() => setActiveChapter(c.id as 1 | 2 | 3 | 4 | 5)}
                 className={cn(
                   "p-2.5 rounded-xl text-left transition-all cursor-pointer flex items-center gap-2",
                   isActive
@@ -665,7 +667,7 @@ export function MillikanReflectionExperience() {
                   <span className="not-italic font-bold text-primary-navy block text-[10px] uppercase font-mono mb-1">
                     Alasan yang Kamu Tuliskan:
                   </span>
-                  "{savedPrediction.reasoning}"
+                  &quot;{savedPrediction.reasoning}&quot;
                 </div>
               )}
             </div>
@@ -1063,7 +1065,7 @@ export function MillikanReflectionExperience() {
                     }}
                     className="px-2.5 py-1 rounded-lg bg-white border border-border-default hover:border-accent-cobalt/40 text-slate-700 hover:text-accent-cobalt transition-colors cursor-pointer flex-shrink-0 text-[10px]"
                   >
-                    "{starter}"
+                    &quot;{starter}&quot;
                   </button>
                 ))}
               </div>

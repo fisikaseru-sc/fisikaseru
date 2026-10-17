@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { MillikanReflectionExperience } from "@/features/millikan/components/reflection/MillikanReflectionExperience";
+import { type MillikanTrialRecord, isMillikanTrial } from "@/features/shared/trialRecords";
 
 function ParabolaReflectionSkeleton() {
   return (
@@ -126,10 +127,11 @@ export default function ReflectionPage() {
   }, [regressionBandul.slope]);
 
   // ── Millikan stats ──
-  const trialsAug = useMemo(() => trials.map((t: any) => {
-    const cf = cunninghamFactor(t.r ?? 1.5);
-    return { ...t, cf, qCorr: t.q * cf };
-  }), [trials]);
+  const trialsAug = useMemo(() =>
+    (trials as MillikanTrialRecord[]).filter(isMillikanTrial).map((t) => {
+      const cf = cunninghamFactor(t.r ?? 1.5);
+      return { ...t, cf, qCorr: t.q * cf, n: t.n };
+    }), [trials]);
 
   const calculatedE = useMemo(() => {
     const valid = trialsAug.filter(t => t.n > 0 && t.qCorr > 0);
@@ -377,7 +379,7 @@ export default function ReflectionPage() {
                   {savedPrediction?.reasoning && savedPrediction.reasoning !== "(Tidak ada catatan tambahan)" && (
                     <div className="mt-2.5 text-xs text-slate-600 italic bg-white/70 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
                       <span className="font-semibold not-italic text-amber-900 block text-[10px] uppercase font-mono mb-0.5">Penalaran Awalmu:</span>
-                      "{savedPrediction.reasoning}"
+                      &quot;{savedPrediction.reasoning}&quot;
                     </div>
                   )}
                 </div>
@@ -397,7 +399,7 @@ export default function ReflectionPage() {
                   </div>
                   <p className="text-sm text-slate-700 leading-relaxed mb-3">
                     {moduleSlug === "millikan"
-                      ? <>Muatan selalu <b>mengelompok secara diskret</b> di kelipatan muatan tunggal <b>1.6 × 10⁻¹⁹ C</b> (nilai e). Tidak ada muatan "pecahan" di alam.</>
+                      ? <>Muatan selalu <b>mengelompok secara diskret</b> di kelipatan muatan tunggal <b>1.6 × 10⁻¹⁹ C</b> (nilai e). Tidak ada muatan &quot;pecahan&quot; di alam.</>
                       : <>Data menunjukkan <b>massa tidak mempengaruhi periode</b>. T hanya bergantung pada panjang tali (L) dan gravitasi (g).</>
                     }
                   </p>
@@ -625,7 +627,7 @@ function ResultRow({ label, value, status }: { label: string; value: string; sta
 
 // ─── Dialogue Section ─────────────────────────────────────────────────────────
 function DialogueSection({ moduleSlug, trials, prediction, writtenReflections, setWrittenReflections, onBack, onNext }: {
-  moduleSlug: string; trials: any[]; prediction?: any;
+  moduleSlug: string; trials: unknown[]; prediction?: { hypothesis: string; reasoning: string; confidence: number; submittedAt?: string } | null;
   writtenReflections: { q1: string; q2: string; q3: string; final: string }; setWrittenReflections: React.Dispatch<React.SetStateAction<{ q1: string; q2: string; q3: string; final: string }>>;
   onBack: () => void; onNext: () => void;
 }) {

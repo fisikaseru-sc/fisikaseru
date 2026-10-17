@@ -2,7 +2,7 @@ import { REFLECTION_QUESTIONS as millikanQuestions, CONSTANTS as millikanConstan
 import { REFLECTION_QUESTIONS as bandulQuestions, CONSTANTS as bandulConstants, MODULE_TITLE as bandulTitle } from './bandul/config';
 import { PARABOLA_CONFIG } from './parabola/config';
 
-export const ConfigRegistry: Record<string, { title: string, questions: { key: string, q: string }[], constants: any }> = {
+export const ConfigRegistry: Record<string, { title: string, questions: { key: string, q: string }[], constants: Record<string, number | string> }> = {
   millikan: {
     title: millikanTitle,
     questions: millikanQuestions,

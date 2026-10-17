@@ -20,6 +20,7 @@ import { RealLabGuideModal } from "./RealLabGuideModal";
 import { DropletSpec, ExperimentMission } from "../types";
 import { generateDropletIdentity } from "../simulation/dataGenerator";
 import type { MillikanDropletState } from "../views3d/MillikanChamber3D";
+import { type MillikanTrialRecord, isMillikanTrial } from "@/features/shared/trialRecords";
 
 const MillikanChamber3D = dynamic(() => import("../views3d/MillikanChamber3D"), {
   ssr: false,
@@ -195,12 +196,12 @@ export default function LabPage() {
   const MAX_TRIALS = 5;
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
   // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
-  const [trials, setTrials] = useState<any[]>(() => {
+  const [trials, setTrials] = useState<MillikanTrialRecord[]>(() => {
     const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
     if (savedTrials) {
       try {
-        const p = JSON.parse(savedTrials);
-        if (Array.isArray(p) && p.length > 0) return p;
+        const p: unknown = JSON.parse(savedTrials);
+        if (Array.isArray(p) && p.length > 0 && p.every(isMillikanTrial)) return p;
       } catch (_) {}
     }
     return [];
@@ -298,7 +299,7 @@ export default function LabPage() {
   }
 
   useEffect(() => {
-    let id: any;
+    let id: ReturnType<typeof setInterval> | undefined;
     if (isRunning) {
       const t0 = Date.now() - stopwatch * 1000;
       id = setInterval(() => setStopwatch((Date.now() - t0) / 1000), 30);

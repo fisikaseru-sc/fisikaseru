@@ -88,11 +88,11 @@ export function ScientificJourneySummary({
               Apa yang Awalnya Kamu Pikirkan?
             </h4>
             <p className="text-xs text-slate-700 leading-relaxed">
-              "{initialIdeaText}"
+              &quot;{initialIdeaText}&quot;
             </p>
             {prediction?.reasoning && prediction.reasoning !== "(Tidak ada catatan tambahan)" && (
               <p className="text-[11px] text-text-muted italic">
-                Alasan awal: "{prediction.reasoning}" (Keyakinan: {prediction.confidence}/5)
+                Alasan awal: &quot;{prediction.reasoning}&quot; (Keyakinan: {prediction.confidence}/5)
               </p>
             )}
           </div>
@@ -202,7 +202,7 @@ export function ScientificJourneySummary({
               Pertanyaan Ilmiah yang Masih Mengundang Rasa Ingin Tahu
             </h4>
             <p className="text-xs text-slate-700 italic leading-relaxed">
-              "{remainingQuestion || "Bagaimana sifat partikel fundamental seperti elektron mempengaruhi susunan seluruh materi di alam semesta?"}"
+              &quot;{remainingQuestion || "Bagaimana sifat partikel fundamental seperti elektron mempengaruhi susunan seluruh materi di alam semesta?"}&quot;
             </p>
           </div>
         </div>

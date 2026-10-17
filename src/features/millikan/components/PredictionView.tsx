@@ -88,7 +88,7 @@ export function PredictionView({ slug, onComplete }: PredictionViewProps) {
             </Badge>
           </div>
           <h3 className="font-display font-bold text-sm leading-snug text-white mb-1.5">
-            "Apakah muatan listrik dapat bernilai berapa saja?"
+            &quot;Apakah muatan listrik dapat bernilai berapa saja?&quot;
           </h3>
           <p className="text-[11px] text-slate-300 leading-relaxed">
             Sebelum memulai observasi laboratorium, seorang ilmuwan selalu merumuskan hipotesis. 
