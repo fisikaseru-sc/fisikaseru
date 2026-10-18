@@ -1,0 +1,42 @@
+[
+  {
+    "id": "G1",
+    "model": "ag/gemini-3.8-flash-high",
+    "chars": 10333
+  },
+  {
+    "id": "G3",
+    "model": "ag/gemini-3.8-flash-low",
+    "chars": 7248
+  },
+  {
+    "id": "G5",
+    "model": "ag/gemini-3.8-flash-medium",
+    "chars": 7167
+  },
+  {
+    "id": "S3",
+    "model": "ag/gemini-3.8-flash-medium",
+    "chars": 5597
+  },
+  {
+    "id": "S4",
+    "model": "ag/gemini-3.8-flash-high",
+    "chars": 8189
+  },
+  {
+    "id": "S6",
+    "model": "ag/gemini-3.8-flash-low",
+    "chars": 4377
+  },
+  {
+    "id": "S7",
+    "model": "ag/gemini-3.8-flash-medium",
+    "chars": 5880
+  },
+  {
+    "id": "S8",
+    "model": "ag/gemini-3.8-flash",
+    "chars": 5117
+  }
+]
