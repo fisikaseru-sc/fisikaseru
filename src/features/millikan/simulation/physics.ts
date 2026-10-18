@@ -104,18 +104,6 @@ export function calculateRadiusFromFallVelocity(vf_ms: number): number {
 }
 
 /**
- * Menghitung Massa (m) Tetesan Minyak dari Radius
- * m = ρ_oil · (4/3)·π·r³
- * @param r_um Radius dalam µm
- * @returns Massa dalam kg
- */
-export function calculateMassFromRadius(r_um: number): number {
-  if (r_um <= 0) return 0;
-  const r_m = r_um * 1e-6;
-  return MILLIKAN_CONSTANTS.RHO_OIL * (4 / 3) * Math.PI * Math.pow(r_m, 3);
-}
-
-/**
  * Kuat Medan Listrik Homogen di antara Dua Pelat Sejajar
  * E = V / d
  */

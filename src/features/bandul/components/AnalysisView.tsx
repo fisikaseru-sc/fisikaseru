@@ -35,7 +35,7 @@ function timingUncertainty(tf: number, tr: number): number {
 
 function linearRegression(data: { x: number; y: number }[]) {
   const n = data.length;
-  if (n === 0) return { slope: 0, intercept: 0, r2: 0 };
+  if (n < 2) return { slope: 0, intercept: 0, r2: 0 };
   const sumX  = data.reduce((s, d) => s + d.x, 0);
   const sumY  = data.reduce((s, d) => s + d.y, 0);
   const sumXY = data.reduce((s, d) => s + d.x * d.y, 0);
@@ -46,8 +46,8 @@ function linearRegression(data: { x: number; y: number }[]) {
   const intercept = (sumY - slope * sumX) / n;
   const ssRes = data.reduce((s, d) => s + (d.y - (slope * d.x + intercept)) ** 2, 0);
   const ssTot = data.reduce((s, d) => s + (d.y - sumY / n) ** 2, 0);
-  if (ssTot === 0) return { slope, intercept, r2: 1 };
-  return { slope, intercept, r2: 1 - ssRes / ssTot };
+  if (ssTot === 0) return { slope, intercept, r2: 0 };
+  return { slope, intercept, r2: Math.max(0, 1 - ssRes / ssTot) };
 }
 
 // Kontrak data trial + type guard kini tinggal di features/shared/trialRecords.ts
@@ -181,6 +181,7 @@ export default function AnalysisPage() {
   }, [bandulTrials, transform, isBandul]);
 
   const regressionBandul = useMemo(() => linearRegression(chartDataBandul), [chartDataBandul]);
+  const hasEnoughBandulData = chartDataBandul.length >= 2;
 
   // g referensi kontekstual: trial yang disimpan mulai mencatat g gravitasi lab.
   // Jika siswa merekam di Bulan/Jupiter, galat harus dihitung terhadap g lab itu,
@@ -191,9 +192,9 @@ export default function AnalysisPage() {
   }, [bandulTrials]);
 
   const calculatedG = useMemo(() => {
-    if (regressionBandul.slope === 0) return 0;
+    if (!hasEnoughBandulData || regressionBandul.slope <= 0) return 0;
     return (4 * Math.PI ** 2) / regressionBandul.slope;
-  }, [regressionBandul.slope]);
+  }, [hasEnoughBandulData, regressionBandul.slope]);
 
   const maxChartX = useMemo(() => chartDataBandul.length === 0 ? 1 : Math.max(...chartDataBandul.map(d => d.x)), [chartDataBandul]);
 
@@ -208,7 +209,10 @@ export default function AnalysisPage() {
     ];
   }, [regressionBandul, maxChartX, chartDataBandul]);
 
-  const gError = useMemo(() => calculatedG > 0 ? Math.abs((calculatedG - gRef) / gRef * 100) : 0, [calculatedG, gRef]);
+  const gError = useMemo<number | null>(() => {
+    if (!hasEnoughBandulData || calculatedG <= 0) return null;
+    return Math.abs((calculatedG - gRef) / gRef * 100);
+  }, [hasEnoughBandulData, calculatedG, gRef]);
 
   // ─── Millikan calcs ───────────────────────────────────────────────────────────
   const trialsAug = useMemo(() => millikanTrials.map(t => {
@@ -777,17 +781,27 @@ export default function AnalysisPage() {
               <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-xl border border-border-default shadow-sm flex-wrap">
                 <div className="flex items-center gap-2">
                   <span className="text-text-muted text-xs">R²</span>
-                  <span className={cn("font-mono font-bold text-base", regressionBandul.r2 > 0.99 ? "text-success" : regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-500")}>
-                    {regressionBandul.r2.toFixed(4)}
+                  <span className={cn("font-mono font-bold text-base",
+                    !hasEnoughBandulData ? "text-text-muted" :
+                    regressionBandul.r2 > 0.99 ? "text-success" :
+                    regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-500")}>
+                    {hasEnoughBandulData ? regressionBandul.r2.toFixed(4) : "—"}
                   </span>
                 </div>
                 <div className="w-px h-6 bg-border-default" />
                 <div className="flex items-center gap-2">
                   <span className="text-text-muted text-xs">Gradien (4π²/g)</span>
-                  <span className="font-mono font-bold text-primary-navy">{regressionBandul.slope.toFixed(4)}</span>
+                  <span className="font-mono font-bold text-primary-navy">
+                    {hasEnoughBandulData && regressionBandul.slope > 0 ? regressionBandul.slope.toFixed(4) : "—"}
+                  </span>
                 </div>
-                {regressionBandul.r2 > 0.99 && (
+                {hasEnoughBandulData && regressionBandul.r2 > 0.99 && (
                   <Badge variant="success" size="sm" className="ml-auto"><TrendingUp className="w-3 h-3" /> Excellent Fit</Badge>
+                )}
+                {!hasEnoughBandulData && (
+                  <Badge variant="outline" size="sm" className="ml-auto text-amber-600 border-amber-300">
+                    <AlertCircle className="w-3 h-3 mr-1" /> Butuh min. 2 data
+                  </Badge>
                 )}
               </div>
 
@@ -852,23 +866,31 @@ export default function AnalysisPage() {
                     <div className="bg-slate-800 rounded-lg p-2.5 space-y-1.5 text-[10px]">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Gradien (m)</span>
-                        <span className="text-yellow-300">{regressionBandul.slope.toFixed(4)} s²/m</span>
+                        <span className="text-yellow-300">
+                          {hasEnoughBandulData && regressionBandul.slope > 0 ? `${regressionBandul.slope.toFixed(4)} s²/m` : "—"}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">R²</span>
-                        <span className={regressionBandul.r2 > 0.99 ? "text-green-300" : "text-amber-300"}>{regressionBandul.r2.toFixed(4)}</span>
+                        <span className={!hasEnoughBandulData ? "text-slate-400" : regressionBandul.r2 > 0.99 ? "text-green-300" : "text-amber-300"}>
+                          {hasEnoughBandulData ? regressionBandul.r2.toFixed(4) : "—"}
+                        </span>
                       </div>
                       <div className="flex justify-between border-t border-slate-700 pt-1.5">
                         <span className="text-slate-400">g hitung</span>
-                        <span className="text-sky-300 font-bold">{calculatedG.toFixed(4)} m/s²</span>
+                        <span className="text-sky-300 font-bold">
+                          {hasEnoughBandulData && calculatedG > 0 ? `${calculatedG.toFixed(4)} m/s²` : "—"}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">g referensi</span>
-                        <span className="text-slate-300">9.8067 m/s²</span>
+                        <span className="text-slate-300">{gRef.toFixed(4)} m/s²</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-slate-400">Galat</span>
-                        <span className={gError < 2 ? "text-green-300" : "text-amber-300"}>{gError.toFixed(2)}%</span>
+                        <span className={gError === null ? "text-slate-400" : gError < 2 ? "text-green-300" : "text-amber-300"}>
+                          {gError !== null ? `${gError.toFixed(2)}%` : "—"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -909,22 +931,36 @@ export default function AnalysisPage() {
               {/* Gravity result */}
               <div className="bg-white rounded-xl border border-border-default p-4 shadow-sm">
                 <h3 className="font-display font-semibold text-primary-navy text-sm mb-3">Nilai Gravitasi Terukur</h3>
-                <div className="bg-accent-cobalt/5 rounded-xl p-4 border border-accent-cobalt/20 mb-3">
-                  <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="font-mono text-3xl font-bold text-primary-navy">{calculatedG.toFixed(3)}</span>
-                    <span className="font-mono text-sm text-text-muted">m/s²</span>
+                {!hasEnoughBandulData || calculatedG <= 0 || gError === null ? (
+                  <div className="bg-amber-50 rounded-xl p-3.5 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="font-semibold text-amber-900">Data Belum Cukup untuk Regresi</p>
+                      <p className="text-[11px] text-amber-700 leading-snug">
+                        Regresi linear membutuhkan minimal 2 data dengan panjang tali berbeda (disarankan minimal 3–5 data) untuk menghasilkan estimasi gravitasi yang bermakna.
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className={cn("rounded-xl p-3 border text-[10px]",
-                  gError < 2 ? "bg-success/5 border-success/20 text-success" :
-                  gError < 5 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
-                  <div className="flex items-center gap-1.5 font-semibold mb-0.5">
-                    {gError < 2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
-                    Referensi: {gRef.toFixed(4)} m/s²{Math.abs(gRef - 9.80665) > 0.05 ? " (lab non-Bumi)" : ""}
-                  </div>
-                  <p>Galat: <b>{gError.toFixed(3)}%</b> · R² = <b>{regressionBandul.r2.toFixed(4)}</b></p>
-                </div>
+                ) : (
+                  <>
+                    <div className="bg-accent-cobalt/5 rounded-xl p-4 border border-accent-cobalt/20 mb-3">
+                      <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-mono text-3xl font-bold text-primary-navy">{calculatedG.toFixed(3)}</span>
+                        <span className="font-mono text-sm text-text-muted">m/s²</span>
+                      </div>
+                    </div>
+                    <div className={cn("rounded-xl p-3 border text-[10px]",
+                      gError < 2 ? "bg-success/5 border-success/20 text-success" :
+                      gError < 5 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
+                      <div className="flex items-center gap-1.5 font-semibold mb-0.5">
+                        {gError < 2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+                        Referensi: {gRef.toFixed(4)} m/s²{Math.abs(gRef - 9.80665) > 0.05 ? " (lab non-Bumi)" : ""}
+                      </div>
+                      <p>Galat: <b>{gError.toFixed(3)}%</b> · R² = <b>{regressionBandul.r2.toFixed(4)}</b></p>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Navigation */}

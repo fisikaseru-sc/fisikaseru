@@ -28,7 +28,7 @@ function ParabolaReflectionSkeleton() {
 // ─── Math helpers ──────────────────────────────────────────────────────────────
 function linearRegression(data: { x: number; y: number }[]) {
   const n = data.length;
-  if (n === 0) return { slope: 0, intercept: 0, r2: 0 };
+  if (n < 2) return { slope: 0, intercept: 0, r2: 0 };
   const sumX  = data.reduce((s, d) => s + d.x, 0);
   const sumY  = data.reduce((s, d) => s + d.y, 0);
   const sumXY = data.reduce((s, d) => s + d.x * d.y, 0);
@@ -39,8 +39,8 @@ function linearRegression(data: { x: number; y: number }[]) {
   const intercept = (sumY - slope * sumX) / n;
   const ssRes = data.reduce((s, d) => s + (d.y - (slope * d.x + intercept)) ** 2, 0);
   const ssTot = data.reduce((s, d) => s + (d.y - sumY / n) ** 2, 0);
-  if (ssTot === 0) return { slope, intercept, r2: 1 };
-  return { slope, intercept, r2: 1 - ssRes / ssTot };
+  if (ssTot === 0) return { slope, intercept, r2: 0 };
+  return { slope, intercept, r2: Math.max(0, 1 - ssRes / ssTot) };
 }
 
 const C_LAMBDA = 65e-9;
