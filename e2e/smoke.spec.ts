@@ -27,8 +27,7 @@ test.describe("Smoke: halaman inti", () => {
       await expect(page.locator("body")).toBeVisible();
 
       // Minimal ada konten teks (bukan halaman kosong/blank).
-      const text = await page.locator("body").innerText();
-      expect(text.trim().length).toBeGreaterThan(0);
+      await expect(page.locator("body")).toHaveText(/\S/);
 
       expect(errors, `pageerror: ${errors.join(" | ")}`).toEqual([]);
     });
@@ -46,8 +45,7 @@ test.describe("Smoke: halaman eksperimen & analisis (client-side, dynamic ssr:fa
       await page.waitForLoadState("networkidle");
 
       // Eksperimen harus menampilkan sesuatu — header/footer/kontrol.
-      const text = await page.locator("body").innerText();
-      expect(text.trim().length).toBeGreaterThan(0);
+      await expect(page.locator("body")).toHaveText(/\S/);
       expect(errors, `pageerror: ${errors.join(" | ")}`).toEqual([]);
     });
 
@@ -58,8 +56,7 @@ test.describe("Smoke: halaman eksperimen & analisis (client-side, dynamic ssr:fa
       await page.goto(`/modules/${slug}/analysis`, { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("networkidle");
 
-      const text = await page.locator("body").innerText();
-      expect(text.trim().length).toBeGreaterThan(0);
+      await expect(page.locator("body")).toHaveText(/\S/);
       expect(errors, `pageerror: ${errors.join(" | ")}`).toEqual([]);
     });
   }

@@ -31,6 +31,7 @@
 - **Verifikasi evaluator:** KONFIRMASI perilaku desain: `ProjectileScene3D` memakai bounce-and-stop (restitusi + redaman horizontal) — bola memantul/menggelinding setelah mendarat sehingga x akhir > rangeX pendaratan pertama. HUD menampilkan posisi akhir, tabel merekam titik jatuh. Tidak crash; inkonsistensi presentasi.
 - **Keparahan:** MEDIUM · **Frekuensi simulatif:** 4/13 · **Keyakinan:** tinggi
 - **Rekomendasi:** Setelah `rested`, bekukan HUD x pada `rangeX` (atau beri label "jarak total tempuh (termasuk pantulan)"), agar HUD konsisten dengan tabel.
+- **Status (18 Okt 2026):** **TERSELESAIKAN** — Saat bola mendarat (`sceneState.rangeX !== null`), baris `R jatuh` (titik impak pertama) dimunculkan secara eksplisit di HUD fisika real-time berdampingan dengan `x` (posisi akhir).
 
 ## F-04 · Instruksi/miskonsepsi: slider Massa Beban ada tapi tidak pernah diuji alur
 
@@ -40,6 +41,7 @@
 - **Verifikasi evaluator:** KONFIRMASI — `ExperimentView.tsx` slider mass ada; `recordTrial` hanya pakai L, gravity, angle; tidak ada tugas/tantangan variasi massa. Fisika simulasi benar (T tak tergantung m), tapi bukti empirisnya tidak pernah diperlihatkan siswa.
 - **Keparahan:** HIGH (pedagogis) · **Frekuensi simulatif:** 1/13 (tapi kategori miskonsepsi klasik) · **Keyakinan:** tinggi
 - **Rekomendasi:** Tambah checklist/mini-tugas: "Ubah massa 50 g → 500 g dengan L tetap; amati T tidak berubah" — mengubah miskonsepsi menjadi pengalaman penemuan. (Keputusan kurikulum pengguna.)
+- **Status (18 Okt 2026):** **TERSELESAIKAN** — Kartu panduan "Uji Miskonsepsi" ditambahkan tepat di bawah slider panel Pengukuran bandul, mengajak siswa menguji pengaruh massa terhadap periode.
 
 ## F-05 · Aksesibilitas: slider tidak dalam tab-order tahap awal; aria-label tombol step berisi newline
 
@@ -58,6 +60,7 @@
 - **Verifikasi evaluator:** Teks persis ada di halaman refleksi. Sifatnya informatif, tapi nada "belum mengisi" dibaca persona sebagai kesalahan prosedur.
 - **Keparahan:** LOW · **Frekuensi simulatif:** 2/13 · **Keyakinan:** tinggi
 - **Rekomendasi:** Reformulasi positif: "Opsional: isi prediksi dulu supaya intuisimu tercatat — atau lanjutkan refleksi."
+- **Status (18 Okt 2026):** **TERSELESAIKAN** — Pesan di `ReflectionView.tsx` direformulasi dengan nada ramah/afirmatif ("Langkah Prediksi Bersifat Opsional") dan ikon pemantik (Lightbulb), menghilangkan kesan salah prosedur pada siswa pemalu/cemas.
 
 ## F-07 · Pedagogi: celah jalan pintas (skip prediksi; salin jawaban kartu kesimpulan)
 
@@ -76,6 +79,7 @@
 - **Verifikasi evaluator:** KONFIRMASI mekanisme: `recordTrial` menyimpan `currentDroplet.label`; setelah rekam sukses, `triggerAtomizer` menyiapkan droplet baru. Pada pengumpulan bukti, rekaman kedua dilakukan pada droplet yang sama setelah sinar-X (chargeN berubah, currentDroplet tidak) — label tetap. Jadi bukan bug indexing, melainkan konsekuensi merekam droplet sama dua kali + label tidak membedakan.
 - **Keparahan:** MEDIUM · **Frekuensi simulatif:** 2/13 · **Keyakinan:** tinggi
 - **Rekomendasi:** Tambah sufiks pengamatan (mis. "Drop #01 · obs 2") atau nonaktifkan rekam ulang untuk droplet yang sama sampai atomizer dipicu.
+- **Status (18 Okt 2026):** **TERSELESAIKAN** — Saat merekam droplet yang sama berulang kali, ditambahkan penomoran observasi otomatis (mis. `Drop #01 (obs 2)`) sehingga data tidak lagi terkesan duplikat atau eror identifikasi.
 
 ## F-09 · Keterbatasan bukti: discovery Millikan (Cari Pola → estimasi e) tidak terekam
 

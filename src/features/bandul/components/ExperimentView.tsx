@@ -106,9 +106,31 @@ export default function LabPage() {
     }
     return [];
   });
-  const [sliders, setSliders] = useState({
-    length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT,
+  const [sliders, setSliders] = useState(() => {
+    try {
+      const raw = localStorage.getItem(`fisikaseru:params:${slug}`);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p === "object" && p !== null) {
+          const l = typeof p.length === "number" && p.length >= 0.2 && p.length <= 1.0 ? p.length : 0.75;
+          const m = typeof p.mass === "number" && p.mass >= 0.05 && p.mass <= 0.5 ? p.mass : 0.1;
+          const a = typeof p.angle === "number" && p.angle >= 5 && p.angle <= 30 ? p.angle : 10;
+          const g = typeof p.gravity === "number" && p.gravity >= 1.6 && p.gravity <= 25 ? p.gravity : G_DEFAULT;
+          return { length: l, mass: m, angle: a, gravity: g };
+        }
+      }
+    } catch (_) {}
+    return {
+      length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT,
+    };
   });
+
+  // Persist parameter bandul agar bertahan saat reload
+  useEffect(() => {
+    try {
+      localStorage.setItem(`fisikaseru:params:${slug}`, JSON.stringify(sliders));
+    } catch (_) {}
+  }, [sliders, slug]);
 
   const bandulRef    = useRef<HTMLCanvasElement>(null);
   const animRef      = useRef<number>(0);
@@ -128,6 +150,8 @@ export default function LabPage() {
     )) return;
     setTrials([]);
     localStorage.removeItem(`fisikaseru:trials:${slug}`);
+    localStorage.removeItem(`fisikaseru:params:${slug}`);
+    setSliders({ length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT });
     updateStep(0);
     setPretestAnswers({});
     localStorage.removeItem(`fisikaseru:pretest:ans:${slug}`);
@@ -672,6 +696,9 @@ export default function LabPage() {
                         </button>
                       ))}
                     </div>
+                    <p className="text-[10px] text-amber-800 bg-amber-50/90 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
+                      💡 <strong>Uji Miskonsepsi:</strong> Coba variasikan <em>Massa Beban (m)</em> pada panjang tali tetap. Perhatikan apakah nilai periode (T) berubah!
+                    </p>
                   </div>
 
                   {/* Data table */}

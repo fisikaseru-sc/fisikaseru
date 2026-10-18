@@ -159,7 +159,16 @@ export default function LabPage() {
   const [visualMode, setVisualMode]          = useState<"2d" | "3d">("2d");
   const [resetCount, setResetCount]          = useState(0);
   const [sceneState, setSceneState]          = useState<MillikanDropletState | null>(null);
-  const [voltageOn, setVoltageOn]           = useState(true);
+  const [voltageOn, setVoltageOn]           = useState(() => {
+    try {
+      const raw = localStorage.getItem(`fisikaseru:params:${slug}`);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.voltageOn === "boolean") return p.voltageOn;
+      }
+    } catch (_) {}
+    return true;
+  });
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPhysicsInspect, setShowPhysicsInspect] = useState(false);
   const [showEvidenceTable, setShowEvidenceTable] = useState(false);
@@ -206,11 +215,33 @@ export default function LabPage() {
     }
     return [];
   });
-  const [sliders, setSliders] = useState(() => ({
-    voltage: 300,
-    // Radius mengikuti droplet restore (setara triggerAtomizer saat muat ulang).
-    radius: currentDroplet.radiusUm,
-  }));
+  const [sliders, setSliders] = useState(() => {
+    let savedV = 300;
+    try {
+      const raw = localStorage.getItem(`fisikaseru:params:${slug}`);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.voltage === "number" && p.voltage >= 50 && p.voltage <= 600) {
+          savedV = p.voltage;
+        }
+      }
+    } catch (_) {}
+    return {
+      voltage: savedV,
+      // Radius mengikuti droplet restore (setara triggerAtomizer saat muat ulang).
+      radius: currentDroplet.radiusUm,
+    };
+  });
+
+  // Persist parameter millikan (tegangan & status medan) agar bertahan saat reload
+  useEffect(() => {
+    try {
+      localStorage.setItem(`fisikaseru:params:${slug}`, JSON.stringify({
+        voltage: sliders.voltage,
+        voltageOn,
+      }));
+    } catch (_) {}
+  }, [sliders.voltage, voltageOn, slug]);
 
   const millikanRef  = useRef<HTMLCanvasElement>(null);
   const dropFracRef  = useRef(0.5);
@@ -251,6 +282,9 @@ export default function LabPage() {
     )) return;
     setTrials([]);
     localStorage.removeItem(`fisikaseru:trials:${slug}`);
+    localStorage.removeItem(`fisikaseru:params:${slug}`);
+    setVoltageOn(true);
+    setSliders(p => ({ ...p, voltage: 300 }));
     updateStep(0);
     const clearedExp = { sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false };
     setExpSteps(clearedExp);
@@ -824,9 +858,11 @@ export default function LabPage() {
     }
 
     const q19 = q_calc * 1e19;
+    const sameDropCount = trials.filter(t => t.dropletLabel?.startsWith(currentDroplet.label)).length;
+    const finalLabel = sameDropCount > 0 ? `${currentDroplet.label} (obs ${sameDropCount + 1})` : currentDroplet.label;
     const newTrial = {
       id: trials.length + 1,
-      dropletLabel: currentDroplet.label,
+      dropletLabel: finalLabel,
       r, V,
       tf: tf_obs,
       tr: tr_obs,

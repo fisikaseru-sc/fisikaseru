@@ -263,6 +263,9 @@ export default function ExperimentView() {
             {[
               { label: "t", value: `${sceneState.t.toFixed(2)} s`, color: "text-slate-300" },
               { label: "x", value: `${sceneState.x.toFixed(1)} m`, color: "text-yellow-300" },
+              ...(sceneState.rangeX !== null ? [
+                { label: "R jatuh", value: `${sceneState.rangeX.toFixed(1)} m`, color: "text-emerald-400 font-bold" }
+              ] : []),
               { label: "y", value: `${Math.max(sceneState.y, 0).toFixed(1)} m`, color: "text-yellow-300" },
               { label: "|v|", value: `${speedMag.toFixed(1)} m/s`, color: "text-cyan-400" },
             ].map(({ label, value, color }) => (
@@ -271,9 +274,15 @@ export default function ExperimentView() {
                 <span className={`font-bold ${color}`}>{value}</span>
               </div>
             ))}
-            <div className="border-t border-slate-700 pt-1.5 flex justify-between">
+            <div className="border-t border-slate-700 pt-1.5 flex justify-between items-center text-[9px]">
               <span className="text-slate-400">R teori</span>
-              <span className="text-green-400 font-bold">{theory.range.toFixed(1)} m</span>
+              {trials.length >= 3 ? (
+                <span className="text-green-400 font-bold">{theory.range.toFixed(1)} m</span>
+              ) : (
+                <span className="text-slate-500 italic" title="Terbuka setelah mencatat minimal 3 percobaan">
+                  Terkunci (≥3 data)
+                </span>
+              )}
             </div>
           </div>
 
@@ -427,7 +436,11 @@ export default function ExperimentView() {
               <section className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-gray-50 rounded-xl p-2 border border-border-default/60">
                   <span className="text-[8px] text-text-muted font-mono uppercase tracking-wider block">R teori</span>
-                  <span className="font-mono text-xs font-bold text-primary-navy">{theory.range.toFixed(1)} m</span>
+                  {trials.length >= 3 ? (
+                    <span className="font-mono text-xs font-bold text-primary-navy">{theory.range.toFixed(1)} m</span>
+                  ) : (
+                    <span className="font-mono text-[9px] text-text-muted italic block mt-0.5" title="Terbuka setelah mencatat minimal 3 data">≥3 data</span>
+                  )}
                 </div>
                 <div className="bg-gray-50 rounded-xl p-2 border border-border-default/60">
                   <span className="text-[8px] text-text-muted font-mono uppercase tracking-wider block">H maks</span>

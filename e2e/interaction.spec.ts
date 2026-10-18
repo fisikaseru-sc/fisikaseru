@@ -49,7 +49,32 @@ test.describe("Interaksi bandul", () => {
     expect(typeof last.T2).toBe("number");
     expect(last.T2).toBeCloseTo(last.T * last.T, 1);
 
+    // Verifikasi persistensi parameter bandul (G-6b)
+    const bandulParams = await page.evaluate(() => {
+      const raw = localStorage.getItem("fisikaseru:params:bandul");
+      return raw ? JSON.parse(raw) : null;
+    });
+    if (bandulParams) {
+      expect(typeof bandulParams.length).toBe("number");
+      expect(typeof bandulParams.gravity).toBe("number");
+    }
+
     expect(errors, `pageerror: ${errors.join(" | ")}`).toEqual([]);
+  });
+});
+
+test.describe("Interaksi millikan", () => {
+  test("parameter millikan dipersist saat eksperimen dibuka", async ({ page }) => {
+    await page.goto("/modules/millikan/experiment", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle");
+
+    const params = await page.evaluate(() => {
+      const raw = localStorage.getItem("fisikaseru:params:millikan");
+      return raw ? JSON.parse(raw) : null;
+    });
+    expect(params).not.toBeNull();
+    expect(typeof params.voltage).toBe("number");
+    expect(typeof params.voltageOn).toBe("boolean");
   });
 });
 

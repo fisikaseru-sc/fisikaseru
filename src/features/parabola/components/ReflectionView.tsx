@@ -246,13 +246,18 @@ export default function ReflectionView() {
           </h2>
 
           {!prediction ? (
-            <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 text-sm text-text-muted">
-              Kamu belum mengisi langkah Prediksi. Kalau ingin intuisimu diuji,
-              buka dulu{" "}
-              <Link href="/modules/parabola/predict" className="text-accent-cobalt hover:underline font-medium">
-                halaman prediksi
-              </Link>
-              . Kamu tetap bisa melanjutkan refleksi ini.
+            <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 text-sm text-text-muted flex items-start gap-3">
+              <Lightbulb className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-primary-navy mb-1">Langkah Prediksi Bersifat Opsional</p>
+                <p className="text-xs text-text-muted leading-relaxed">
+                  Jika kamu ingin intuisimu diuji dan diadu langsung dengan data, kamu bisa mengisi{" "}
+                  <Link href="/modules/parabola/predict" className="text-accent-cobalt hover:underline font-semibold">
+                    halaman prediksi
+                  </Link>
+                  . Jangan khawatir, kamu tetap bisa menjawab pertanyaan refleksi di bawah ini dengan baik!
+                </p>
+              </div>
             </div>
           ) : !best ? (
             <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 text-sm text-text-muted">
