@@ -1,0 +1,17 @@
+DATA CONTOH — BUKAN HASIL UJI NYATA
+id_responden,peran,skenario,tanggal,durasi_menit,status,skor_pre,skor_post,d1_kemenjelasan,d2_pemahaman,d3_beban_kognitif,d4_umpan_balik,d5_keterlacakan,d6_keterbacaan,d7_eksplorasi,d8_kepuasan,sumber_data,catatan
+G1,guru,H1,2026-11-20,32,LULUS,14,18,4,4,4,4,5,4,4,4,CONTOH,"Teks contoh fiktif: guru menemukan sudut puncak lewat grafik."
+G1,guru,H2,2026-11-20,29,LULUS,15,18,4,4,3,4,4,4,4,4,CONTOH,"Teks contoh fiktif: regresi T2-L menghasilkan g dalam toleransi."
+G2,guru,H5,2026-11-21,26,SEBAGIAN,15,15,3,4,4,3,4,3,3,3,CONTOH,"Teks contoh fiktif: navigasi keyboard ok, grafik kurang terbaca di proyektor."
+S1,siswa,H1,2026-11-22,28,LULUS,8,15,4,3,3,4,4,4,5,4,CONTOH,"Teks contoh fiktif: awalnya salah tebak 60 derajat."
+S1,siswa,H2,2026-11-22,31,GAGAL,7,10,3,2,2,3,3,3,3,3,CONTOH,"Teks contoh fiktif: galat g di luar 2 persen, sulit membaca kurva regresi."
+S2,siswa,H1,2026-11-22,25,SEBAGIAN,9,13,3,3,3,3,3,3,4,3,CONTOH,"Teks contoh fiktif: melompati tahap prediksi."
+S2,siswa,H2,2026-11-22,30,SEBAGIAN,8,12,3,3,3,3,3,3,3,3,CONTOH,"Teks contoh fiktif: belum paham apa yang diukur regresi."
+S3,siswa,H3,2026-11-23,33,LULUS,10,17,4,4,3,4,4,4,4,5,CONTOH,"Teks contoh fiktif: menemukan pola tetes diskret tanpa diberi tahu e."
+S3,siswa,H2,2026-11-23,34,GAGAL,9,11,2,2,2,3,2,3,3,2,CONTOH,"Teks contoh fiktif:Tabel lama membingungkan,-many errors."
+S4,siswa,H3,2026-11-23,30,SEBAGIAN,9,13,3,3,2,3,3,3,3,3,CONTOH,"Teks contoh fiktif: koreksi Cunningham membuat Confusion."
+S5,siswa,H1,2026-11-24,27,LULUS,10,16,4,4,4,4,4,4,4,4,CONTOH,"Teks contoh fiktif: grafik jelas, prediksi ditulis dengan benar."
+S5,siswa,H3,2026-11-24,29,LULUS,11,18,4,4,3,4,4,4,5,5,CONTOH,"Teks contoh fiktif: probing mandiri."
+S6,siswa,H2,2026-11-24,35,GAGAL,6,9,3,2,2,2,3,2,3,2,CONTOH,"Teks contoh fiktif: salah pilih panjang bandul, data tidak konvergen."
+S7,siswa,H1,2026-11-25,24,LULUS,8,14,3,3,3,4,4,4,4,4,CONTOH,"Teks contoh fiktif: cepat menemukan 45 derajat."
+S7,siswa,H3,2026-11-25,32,SEBAGIAN,10,14,3,3,3,3,3,3,4,4,CONTOH,"Teks contoh fiktif: histogram kurang terbaca."

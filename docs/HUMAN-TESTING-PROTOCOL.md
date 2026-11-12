@@ -1,6 +1,7 @@
 # Protokol Uji Manusia — FisikaSeru
 
 > Status: **PENDING** — belum ada satu pun skenario yang dijalankan manusia.
+> **12 Nov 2026:** skenario H1–H5 di bawah kini dilengkapi instrumen siap pakai di `docs/human-testing/` (informed consent, rekrutmen, lembar observasi, pre/post-test, rubrik analisis, skrip hitung, papan pelacakan). Status tetap PENDING: paketnya siap, hasilnya belum ada.
 > Tanggal dibuat: 2026-10-17. Target: 5 guru fisika + 8 siswa SMA (kelas XI).
 > Setiap skenario dijalankan di: Chrome terbaru, laptop standar (bukan perangkat mobile), jaringan normal.
 > Durasi sesi per modul: ±25–35 menit.
