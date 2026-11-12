@@ -594,6 +594,7 @@ export function ProjectileScene3D({
         showGrid
         showAxes={false}
         shadows
+        ariaLabel="Simulasi 3D gerak parabola: bola ditembakkan dari meriam, terbang melengkung, memantul saat mendarat, dengan penggaris jarak dan penanda tinggi maksimum di medan latih"
       >
         <OrbitControlsWrapper
           target={[midX, 1.1, 0]}

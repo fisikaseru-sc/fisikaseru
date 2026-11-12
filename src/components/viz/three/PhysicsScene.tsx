@@ -43,6 +43,8 @@ export interface PhysicsSceneProps {
   frameloop?: "always" | "demand" | "never";
   /** Kelas tambahan untuk container div. */
   className?: string;
+  /** Deskripsi scene untuk pembaca layar — wrapper div memperoleh role="img" bila diisi (audit F-05). */
+  ariaLabel?: string;
 }
 
 const GRID_COLORS = {
@@ -63,13 +65,17 @@ export function PhysicsScene({
   shadows = true,
   frameloop = "always",
   className,
+  ariaLabel,
 }: PhysicsSceneProps) {
   const isDark = background === "dark";
   const bgColor = isDark ? colors.bgDark : colors.bgLight;
   const grid = isDark ? GRID_COLORS.dark : GRID_COLORS.light;
 
   return (
-    <div className={cn("h-full w-full", className)}>
+    <div
+      className={cn("h-full w-full", className)}
+      {...(ariaLabel ? { role: "img", "aria-label": ariaLabel } : {})}
+    >
       <Canvas
         dpr={[1, 2]}
         frameloop={frameloop}

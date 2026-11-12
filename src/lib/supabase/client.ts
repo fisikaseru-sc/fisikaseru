@@ -5,10 +5,13 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey || supabaseUrl.includes("placeholder-url")) {
   if (typeof window !== "undefined") {
-    console.error(
-      "❌ Supabase environment variables are missing or unconfigured! " +
-      "Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY " +
-      "are set in your environment variables (e.g., Vercel Project Settings) and rebuild the application."
+    // Warning, bukan error: konfigurasi opsional (analytics/auth opsional) —
+    // fitur inti lab berjalan lokal tanpa Supabase, dan console.error merah
+    // di setiap halaman produksi mengikis kepercayaan guru/siswa (F-05 ronde 2).
+    console.warn(
+      "⚠️ Supabase environment variables are missing or unconfigured. " +
+      "Fitur inti lab tetap berjalan lokal; set NEXT_PUBLIC_SUPABASE_URL dan " +
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY (mis. Vercel Project Settings) untuk mengaktifkan fitur backend."
     );
   }
 }

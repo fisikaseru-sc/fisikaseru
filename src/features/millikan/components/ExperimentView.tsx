@@ -1356,8 +1356,9 @@ export default function LabPage() {
         >
           {panelCollapsed ? (
             <button onClick={() => setPanelCollapsed(false)}
+              aria-label="Tampilkan panel pengaturan"
               className="h-full flex flex-col items-center justify-start pt-4 gap-3 p-2 hover:bg-gray-50 transition-colors cursor-pointer">
-              <ChevronLeft className="w-4 h-4 text-text-muted rotate-180" />
+              <ChevronLeft className="w-4 h-4 text-text-muted rotate-180" aria-hidden="true" />
             </button>
           ) : (
             <div className="flex flex-col h-full overflow-hidden">
@@ -1368,8 +1369,8 @@ export default function LabPage() {
                   <Sliders className="w-3.5 h-3.5 text-accent-cobalt" />
                   {currentStep === 0 ? "Dugaan Awal" : currentStep === 1 ? "Pengamatan" : "Instrumen Lab"}
                 </h2>
-                <button onClick={() => setPanelCollapsed(true)} className="p-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
-                  <ChevronRight className="w-3.5 h-3.5 text-text-muted" />
+                <button onClick={() => setPanelCollapsed(true)} aria-label="Sembunyikan panel pengaturan" className="p-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+                  <ChevronRight className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                 </button>
               </div>
 
@@ -1469,6 +1470,7 @@ export default function LabPage() {
                             </div>
                             <input
                               type="range"
+                              aria-label="Tegangan (V)"
                               min={50}
                               max={600}
                               step={5}
@@ -1658,6 +1660,7 @@ function SliderField({ label, unit, min, max, step, value, onChange, decimals = 
         <span className="font-mono text-accent-cobalt font-bold">{display} {unit}</span>
       </div>
       <input type="range" min={min} max={max} step={step} value={value}
+        aria-label={`${label} (${unit})`}
         onChange={e => onChange(parseFloat(e.target.value))}
         className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt" />
       <div className="flex justify-between text-[9px] text-text-muted">
