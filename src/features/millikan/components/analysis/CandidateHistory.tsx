@@ -55,7 +55,7 @@ export function CandidateHistory({
         <div className="flex items-center gap-2 text-text-muted text-xs font-display font-semibold">
           <History className="w-4 h-4 text-accent-cobalt" />
           <span className="text-primary-navy">Jejak Hipotesis Satuan yang Diuji</span>
-          <Badge variant="outline" size="sm" className="text-[10px] font-mono">
+          <Badge variant="outline" size="sm" className="text-[11px] font-mono">
             {history.length} Teruji
           </Badge>
         </div>
@@ -99,9 +99,9 @@ export function CandidateHistory({
                   <span className="font-bold text-primary-navy">
                     {item.candidate.toFixed(2)}
                   </span>
-                  <span className="text-[10px] text-text-muted">× 10⁻¹⁹ C</span>
+                  <span className="text-[11px] text-text-muted">× 10⁻¹⁹ C</span>
                 </div>
-                <p className="text-[10px] font-sans text-slate-600 mt-1 flex items-center gap-1">
+                <p className="text-[11px] font-sans text-slate-600 mt-1 flex items-center gap-1">
                   <span
                     className={cn(
                       "w-1.5 h-1.5 rounded-full",
@@ -120,7 +120,7 @@ export function CandidateHistory({
                 variant="outline"
                 size="sm"
                 onClick={() => onReuseCandidate(item.candidate)}
-                className="text-[10px] h-7 px-2.5 cursor-pointer flex items-center gap-1 bg-white hover:bg-slate-50"
+                className="text-[11px] h-7 px-2.5 cursor-pointer flex items-center gap-1 bg-white hover:bg-slate-50"
               >
                 <RotateCcw className="w-3 h-3 text-text-muted" /> Uji Lagi
               </Button>
@@ -152,34 +152,34 @@ export function CandidateHistory({
               <Sparkles className="w-3.5 h-3.5" />
               <span>Komparasi Dua Bukti Hipotesis</span>
             </div>
-            <span className="text-[10px] text-text-muted font-sans">
+            <span className="text-[11px] text-text-muted font-sans">
               Apa yang dipelajari dari perbandingan ini?
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="p-3 bg-slate-50 rounded-lg border border-border-default space-y-1">
-              <span className="text-[10px] text-text-muted font-mono uppercase block">Hipotesis A</span>
+              <span className="text-[11px] text-text-muted font-mono uppercase block">Hipotesis A</span>
               <div className="font-mono font-bold text-sm text-primary-navy">
                 {recordA.candidate.toFixed(2)} × 10⁻¹⁹ C
               </div>
               <p className="text-[11px] font-sans text-slate-600">
                 Status: <b>{recordA.consistencyDescription}</b>
               </p>
-              <p className="text-[10px] font-mono text-slate-500">
+              <p className="text-[11px] font-mono text-slate-500">
                 Rata-rata Deviasi: ±{recordA.meanDeviation.toFixed(3)}
               </p>
             </div>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-border-default space-y-1">
-              <span className="text-[10px] text-text-muted font-mono uppercase block">Hipotesis B</span>
+              <span className="text-[11px] text-text-muted font-mono uppercase block">Hipotesis B</span>
               <div className="font-mono font-bold text-sm text-primary-navy">
                 {recordB.candidate.toFixed(2)} × 10⁻¹⁹ C
               </div>
               <p className="text-[11px] font-sans text-slate-600">
                 Status: <b>{recordB.consistencyDescription}</b>
               </p>
-              <p className="text-[10px] font-mono text-slate-500">
+              <p className="text-[11px] font-mono text-slate-500">
                 Rata-rata Deviasi: ±{recordB.meanDeviation.toFixed(3)}
               </p>
             </div>

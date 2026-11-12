@@ -377,6 +377,10 @@ export default function LabPage() {
     if (canvas.width !== rect.width * dpr) { canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; }
     ctx.save(); ctx.scale(dpr, dpr);
     const W = rect.width; const H = rect.height;
+    // Kanvas belum sempat berukuran pada frame pertama (mis. di mobile saat
+    // layout baru dihitung). Menggambar dengan W/H = 0 membuat radius gradien
+    // negatif → createRadialGradient melempar error. Lewati frame itu.
+    if (W < 40 || H < 40) { ctx.restore(); return; }
     if (viewMode === "chamber") drawChamberView(ctx, W, H, dt);
     else drawEyepieceView(ctx, W, H, dt);
     ctx.restore();
@@ -394,7 +398,7 @@ export default function LabPage() {
 
     const chW = Math.min(160, W * 0.38); const chH = Math.min(240, H * 0.68);
     const chX = cx - chW / 2; const chY = cy - chH / 2;
-    const plateThick = 8; const plateW = chW - 10; const plateX = cx - plateW / 2;
+    const plateThick = 8; const plateW = Math.max(12, chW - 10); const plateX = cx - plateW / 2;
     const topPlateY = chY + chH * 0.18; const botPlateY = chY + chH * 0.82 - plateThick;
     const innerTop = topPlateY + plateThick; const innerBot = botPlateY;
     const gapH = innerBot - innerTop;
@@ -914,14 +918,21 @@ export default function LabPage() {
       <header className="h-12 bg-white border-b border-border-default flex items-center justify-between px-4 flex-shrink-0 z-30">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 min-w-0">
-          <Link href="/modules" className="flex items-center gap-1.5 text-text-muted hover:text-primary-navy transition-colors text-xs font-medium whitespace-nowrap">
+          <Link href="/modules" className="flex items-center gap-1.5 py-1 -my-1 text-text-muted hover:text-primary-navy transition-colors text-xs font-medium whitespace-nowrap">
             <ChevronLeft className="w-3.5 h-3.5" /> Katalog
           </Link>
-          <span className="text-border-default text-xs">/</span>
-          <span className="text-xs font-semibold text-primary-navy hidden sm:block truncate">{moduleTitle}</span>
+          <span className="text-border-default text-xs hidden sm:inline">/</span>
+          <span className="text-xs font-semibold text-primary-navy truncate">{moduleTitle}</span>
         </div>
 
         {/* Step progress (center) */}
+        {/* Indikator langkah ringkas untuk layar kecil */}
+        <div className="md:hidden flex items-center gap-1.5 px-2 py-1 rounded-lg bg-accent-cobalt/10 text-accent-cobalt text-[11px] font-semibold shrink-0">
+          <span className="font-mono">{Math.min(currentStep + 1, LAB_STEPS.length)}</span>
+          <span className="opacity-60">/</span>
+          <span>{currentStep === 0 ? "Persiapan" : currentStep === 1 ? "Pengamatan" : currentStep === 2 ? "Pengukuran" : LAB_STEPS[Math.min(currentStep, LAB_STEPS.length - 1)]}</span>
+        </div>
+
         <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {LAB_STEPS.map((step, i) => {
             const isCurrent = (i < 3 && i === currentStep);
@@ -934,9 +945,9 @@ export default function LabPage() {
                     else if (i === 4) router.push(`/modules/${slug}/reflection`);
                   }}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all",
                     isCurrent ? "bg-accent-cobalt text-white" :
-                    (i < 3 && i < currentStep) ? "bg-success/10 text-success" :
+                    (i < 3 && i < currentStep) ? "bg-success/10 text-emerald-700" :
                     i >= 3 ? "bg-white border border-border-default text-text-muted hover:text-accent-cobalt hover:border-accent-cobalt/30" :
                     "text-text-muted bg-gray-50 opacity-40 cursor-not-allowed"
                   )}
@@ -955,34 +966,35 @@ export default function LabPage() {
         {/* Right tools */}
         <div className="flex items-center gap-2">
           <button onClick={() => setShowGuideModal(true)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt/10 border border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/20 transition-all cursor-pointer">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt/10 border border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/20 transition-all cursor-pointer">
             <BookOpen className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Prinsip Lab</span>
           </button>
           <button onClick={() => setShowVectors(!showVectors)}
             aria-label="Tampilkan vektor gaya" aria-pressed={showVectors}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             {showVectors ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">Vektor</span>
           </button>
           <Link href="/dashboard" aria-label="Dashboard"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             <BarChart2 className="w-3.5 h-3.5" /><span className="hidden sm:inline">Dashboard</span>
           </Link>
         </div>
       </header>
 
       {/* ── MAIN WORKSPACE ── */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      {/* Mobile: kanvas di atas (tinggi tetap), panel-settings di bawah. */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
 
         {/* ── CANVAS & OBSERVATION HERO AREA ── */}
-        <main className="flex-1 flex flex-col relative min-w-0 overflow-hidden bg-slate-950">
+        <main className="relative min-w-0 overflow-hidden bg-slate-950 h-[46vh] min-h-[300px] shrink-0 lg:h-auto lg:min-h-0 lg:flex-1 flex flex-col">
 
           {/* ── CHAMBER / OKULAR HERO VIEWPORT ── */}
           <div className="flex-1 relative overflow-hidden" style={{ background: "#050810" }}>
 
             {/* Top-Left: Visual Mode (2D/3D) + Minimal View Switcher */}
-            <div className="absolute top-3 left-3 z-20 flex items-center gap-2">
+            <div className="absolute top-3 left-3 z-20 flex flex-wrap items-center gap-2 max-w-[62%] sm:max-w-none">
               <div className="flex items-center gap-1 bg-slate-900/90 backdrop-blur-md p-1 rounded-xl border border-slate-700/60 shadow-lg">
                 {(["2d", "3d"] as const).map(mode => (
                   <button
@@ -1041,10 +1053,15 @@ export default function LabPage() {
                   physics.isHovering ? "bg-emerald-400 animate-ping" :
                   physics.netForce > 0 ? "bg-cyan-400" : "bg-amber-400"
                 )} />
-                <span>
+                <span className="hidden min-[380px]:inline">
                   {!voltageOn ? "E = 0 (Jatuh Bebas)" :
                    physics.isHovering ? "✨ Melayang Seimbang" :
                    physics.netForce > 0 ? "▲ Bergerak Naik" : "▼ Turun Lambat"}
+                </span>
+                <span className="min-[380px]:hidden" aria-hidden="true">
+                  {!voltageOn ? "E=0" :
+                   physics.isHovering ? "Melayang" :
+                   physics.netForce > 0 ? "Naik" : "Turun"}
                 </span>
               </div>
 
@@ -1085,8 +1102,8 @@ export default function LabPage() {
 
             {/* Live readout (3D) */}
             {visualMode === "3d" && (
-              <div className="absolute bottom-3 right-3 z-20 bg-slate-900/90 backdrop-blur-md rounded-xl p-3 border border-slate-700/60 shadow-lg space-y-1 text-[10px] font-mono min-w-[170px]">
-                <div className="text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-1">Pengukuran Droplet 3D</div>
+              <div className="absolute bottom-3 right-3 z-20 bg-slate-900/90 backdrop-blur-md rounded-xl p-3 border border-slate-700/60 shadow-lg space-y-1 text-[11px] font-mono min-w-[170px]">
+                <div className="text-slate-400 uppercase tracking-wider font-bold text-[11px] mb-1">Pengukuran Droplet 3D</div>
                 <div className="flex justify-between gap-3">
                   <span className="text-slate-400">Kecepatan</span>
                   <span className="font-bold text-accent-cobalt">
@@ -1141,7 +1158,7 @@ export default function LabPage() {
                 )}
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <Badge variant="outline" className="font-mono text-[10px]">
+                <Badge variant="outline" className="font-mono text-[11px]">
                   Target: {trials.length}/5 Droplet
                 </Badge>
               </div>
@@ -1202,7 +1219,7 @@ export default function LabPage() {
                 >
                   <Save className="w-4 h-4" />
                   <span>Rekam Observasi</span>
-                  <span className="font-mono text-[10px] bg-white/20 px-1.5 py-0.5 rounded">
+                  <span className="font-mono text-[11px] bg-white/20 px-1.5 py-0.5 rounded">
                     {currentDroplet.label}
                   </span>
                 </Button>
@@ -1211,9 +1228,9 @@ export default function LabPage() {
               {/* Right: Stopwatch & Timer Readout */}
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">
-                  <span className="text-[10px] uppercase font-mono font-bold text-slate-500">Stopwatch</span>
+                  <span className="text-[11px] uppercase font-mono font-bold text-slate-600">Stopwatch</span>
                   <span className="font-mono font-bold text-sm text-primary-navy">
-                    {stopwatch.toFixed(2)}<span className="text-[10px] text-slate-400 font-normal ml-0.5">s</span>
+                    {stopwatch.toFixed(2)}<span className="text-[11px] text-slate-600 font-normal ml-0.5">s</span>
                   </span>
                 </div>
               </div>
@@ -1281,11 +1298,11 @@ export default function LabPage() {
                       <span className="font-mono font-bold text-[11px] text-accent-cobalt">
                         {t.dropletLabel || `Drop #${t.id}`}
                       </span>
-                      <Badge variant="outline" className="text-[9px] py-0 px-1 border-success/30 text-success bg-success/5 font-semibold">
+                      <Badge variant="outline" className="text-[11px] py-0 px-1 border-success/30 text-success bg-success/5 font-semibold">
                         ✓ Terekam
                       </Badge>
                     </div>
-                    <div className="text-[10px] font-mono text-slate-600 space-y-0.5">
+                    <div className="text-[11px] font-mono text-slate-600 space-y-0.5">
                       <div className="flex justify-between">
                         <span className="text-text-muted">Voltase:</span>
                         <span className="font-semibold">{t.V} V</span>
@@ -1335,14 +1352,14 @@ export default function LabPage() {
                           <td className="px-3 py-1.5">{t.tf.toFixed(2)} s</td>
                           <td className="px-3 py-1.5">
                             {t.method === "balanced" ? (
-                              <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded text-[10px]">
+                              <span className="text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded text-[11px]">
                                 Melayang (Seimbang)
                               </span>
                             ) : (
                               t.tr < 200 ? `${t.tr.toFixed(2)} s` : "—"
                             )}
                           </td>
-                          <td className="px-3 py-1.5 text-success font-semibold text-[10px]">✓ Terekam</td>
+                          <td className="px-3 py-1.5 text-emerald-700 font-semibold text-[11px]">✓ Terekam</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1354,10 +1371,13 @@ export default function LabPage() {
         </main>
 
         {/* ── UNIFIED RIGHT INSTRUMENT PANEL ── */}
-        <motion.aside
-          animate={{ width: panelCollapsed ? 44 : 330 }}
-          transition={{ duration: 0.25 }}
-          className="bg-white border-l border-border-default flex flex-col flex-shrink-0 overflow-hidden"
+        <aside
+          className={cn(
+            "bg-white border-border-default flex flex-col overflow-hidden shrink-0",
+            panelCollapsed
+              ? "hidden lg:flex lg:w-11 border-l"
+              : "flex-1 lg:flex-none lg:w-[330px] border-t lg:border-t-0 lg:border-l"
+          )}
         >
           {panelCollapsed ? (
             <button onClick={() => setPanelCollapsed(false)}
@@ -1374,7 +1394,7 @@ export default function LabPage() {
                   <Sliders className="w-3.5 h-3.5 text-accent-cobalt" />
                   {currentStep === 0 ? "Dugaan Awal" : currentStep === 1 ? "Pengamatan" : "Instrumen Lab"}
                 </h2>
-                <button onClick={() => setPanelCollapsed(true)} aria-label="Sembunyikan panel pengaturan" className="p-1 rounded hover:bg-gray-100 transition-colors cursor-pointer">
+                <button onClick={() => setPanelCollapsed(true)} aria-label="Sembunyikan panel pengaturan" className="p-2 -m-2 rounded hover:bg-gray-100 transition-colors cursor-pointer">
                   <ChevronRight className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                 </button>
               </div>
@@ -1395,7 +1415,7 @@ export default function LabPage() {
                       <CircleDot className="w-4 h-4 text-teal flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="font-display font-semibold text-xs text-teal">Eksplorasi Lab Bebas</h3>
-                        <p className="text-[10px] text-teal/80 leading-snug mt-0.5">
+                        <p className="text-[11px] text-teal/80 leading-snug mt-0.5">
                           Eksplorasi instrumen di bawah dan amati bagaimana tetesan minyak merespon medan listrik dan sinar-X.
                         </p>
                       </div>
@@ -1413,8 +1433,8 @@ export default function LabPage() {
                     {/* Progress indicator */}
                     <div className="bg-gray-50 rounded-xl p-3 border border-border-default/60">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-[10px] font-semibold text-text-muted">Checklist Eksplorasi</span>
-                        <span className="text-[10px] font-mono font-bold text-accent-cobalt">
+                        <span className="text-[11px] font-semibold text-text-muted">Checklist Eksplorasi</span>
+                        <span className="text-[11px] font-mono font-bold text-accent-cobalt">
                           {`${Object.values(expSteps).filter(Boolean).length}/4`}
                         </span>
                       </div>
@@ -1432,7 +1452,7 @@ export default function LabPage() {
                       Mulai Pengukuran Presisi <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
                     {!observationDone && (
-                      <p className="text-[10px] text-text-muted text-center mt-2">Selesaikan semua checklist terlebih dahulu.</p>
+                      <p className="text-[11px] text-text-muted text-center mt-2">Selesaikan semua checklist terlebih dahulu.</p>
                     )}
                   </div>
                 </div>
@@ -1457,7 +1477,7 @@ export default function LabPage() {
                                 updateExpStep("voltageChanged", true);
                               }}
                               className={cn(
-                                "text-[10px] font-mono font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer",
+                                "text-[11px] font-mono font-bold px-2 py-1 rounded-lg border transition-all cursor-pointer",
                                 voltageOn
                                   ? "bg-amber-100 border-amber-300 text-amber-800"
                                   : "bg-slate-100 border-slate-300 text-slate-500"
@@ -1486,7 +1506,7 @@ export default function LabPage() {
                               }}
                               className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt"
                             />
-                            <div className="flex justify-between items-center text-[9px] text-text-muted">
+                            <div className="flex justify-between items-center text-[11px] text-text-muted">
                               <span>50 V</span>
                               <div className="flex gap-1.5">
                                 <button
@@ -1507,7 +1527,7 @@ export default function LabPage() {
                           </div>
 
                           {/* Field Readout */}
-                          <div className="bg-slate-50 rounded-lg p-2 flex justify-between items-center text-[10px] font-mono">
+                          <div className="bg-slate-50 rounded-lg p-2 flex justify-between items-center text-[11px] font-mono">
                             <span className="text-slate-500">Kuat Medan E = V / d:</span>
                             <span className="font-bold text-primary-navy">
                               {voltageOn ? `${((sliders.voltage / PLATE_D) / 1000).toFixed(1)} kV/m` : "0.0 kV/m"}
@@ -1519,14 +1539,14 @@ export default function LabPage() {
                         <div className="bg-white border border-border-default/80 rounded-xl p-3.5 shadow-xs space-y-3">
                           <div className="flex items-center justify-between">
                             <div>
-                              <span className="text-[10px] uppercase font-mono font-bold text-text-muted block">Droplet Aktif</span>
+                              <span className="text-[11px] uppercase font-mono font-bold text-text-muted block">Droplet Aktif</span>
                               <h4 className="font-mono font-bold text-accent-cobalt text-xs">{currentDroplet.label}</h4>
                             </div>
                             <Button
                               size="sm"
                               variant="outline"
                               onClick={triggerAtomizer}
-                              className="text-[10px] gap-1 cursor-pointer border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/5"
+                              className="text-[11px] gap-1 cursor-pointer border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/5"
                             >
                               <Sparkles className="w-3 h-3" /> Tetes Baru
                             </Button>
@@ -1553,12 +1573,12 @@ export default function LabPage() {
                             <Button
                               size="sm"
                               onClick={triggerIonization}
-                              className="bg-cyan-700 hover:bg-cyan-600 text-white text-[10px] cursor-pointer py-1 h-auto"
+                              className="bg-cyan-700 hover:bg-cyan-600 text-white text-[11px] cursor-pointer py-1 h-auto"
                             >
                               ⚡ Tembakkan
                             </Button>
                           </div>
-                          <p className="text-[10px] text-cyan-800/80 leading-relaxed">
+                          <p className="text-[11px] text-cyan-800/80 leading-relaxed">
                             Mengionisasi molekul udara. Elektron menempel pada tetesan dan mengubah jumlah muatannya secara spontan!
                           </p>
                         </div>
@@ -1580,7 +1600,7 @@ export default function LabPage() {
                           </button>
 
                           {showPhysicsInspect && (
-                            <div className="p-3 bg-white space-y-1.5 font-mono text-[10px] border-t border-border-default/60">
+                            <div className="p-3 bg-white space-y-1.5 font-mono text-[11px] border-t border-border-default/60">
                               <div className="flex justify-between text-slate-600">
                                 <span>Gaya Berat W_eff (Fg):</span>
                                 <span className="font-bold text-rose-600">{(physics.Fg * 1e14).toFixed(3)} × 10⁻¹⁴ N</span>
@@ -1618,7 +1638,7 @@ export default function LabPage() {
                     ) : (
                       <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3">
                         <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                        <p className="text-[10px] text-amber-800 leading-snug">
+                        <p className="text-[11px] text-amber-800 leading-snug">
                           {`Kumpulkan minimal 5 droplet sebelum analisis data. (${trials.length}/5 selesai)`}
                         </p>
                       </div>
@@ -1640,7 +1660,7 @@ export default function LabPage() {
               )}
             </div>
           )}
-        </motion.aside>
+        </aside>
       </div>
 
       {/* ── Real Lab & Physics Theory Modal ── */}
@@ -1668,7 +1688,7 @@ function SliderField({ label, unit, min, max, step, value, onChange, decimals = 
         aria-label={`${label} (${unit})`}
         onChange={e => onChange(parseFloat(e.target.value))}
         className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt" />
-      <div className="flex justify-between text-[9px] text-text-muted">
+      <div className="flex justify-between text-[11px] text-text-muted">
         <span>{displayFn ? displayFn(min) : min} {unit}</span>
         <span>{displayFn ? displayFn(max) : max} {unit}</span>
       </div>
@@ -1688,7 +1708,7 @@ function ChecklistItem({ label, desc, checked }: { label: string; desc: string; 
       </div>
       <div>
         <h4 className={cn("font-display font-semibold text-[11px] leading-tight", checked ? "text-success" : "text-primary-navy")}>{label}</h4>
-        <p className="text-[10px] text-text-muted leading-snug mt-0.5">{desc}</p>
+        <p className="text-[11px] text-text-muted leading-snug mt-0.5">{desc}</p>
       </div>
     </motion.div>
   );

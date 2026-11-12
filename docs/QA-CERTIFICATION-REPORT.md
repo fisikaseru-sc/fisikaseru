@@ -112,6 +112,24 @@ Detail lengkap: [`evaluations/2026-11-12-ai-persona/`](evaluations/2026-11-12-ai
 | Delivery Gate canonical workspace (`harnessctl gate -C <repo> --allow-restrictions`) | **PASS** (lint · typecheck · test · build terarsip) — 9 `eslint-disable` yang dilaporkan gate adalah **pre-existing di HEAD** (dengan alasan di komentar), bukan tambahan perubahan ini; `--allow-restrictions` dipakai karena itu, bukan untuk menutupi violation baru |
 | Verifikasi fungsional ulang di build produksi | tidak ada `pageerror`; bandul 2D: stopwatch berjalan (1,83 s → 3,36 s) + kartu mini-aktivitas tampil; scene 3D bandul/parabola/millikan termuat; F-09A: headline Stokes + catatan "koreksi tanpa sebabnya"; `/api/health` ok, `/api/metrics` ok, header `Server-Timing: proxy;dur=` ada, `POST /api/telemetry` 200 |
 
+## H. Audit UI/UX ronde 3 (12 Nov 2026)
+
+Detail: [`UI-AUDIT-2026-11-12.md`](UI-AUDIT-2026-11-12.md) · label bukti `AI_SIMULATED_USER_EVALUATION` (audit agen AI di build produksi, bukan uji manusia).
+
+| Dimensi audit (13 halaman × desktop + mobile) | Sebelum | Sesudah |
+|---|---|---|
+| Overflow horizontal di mobile | 4 halaman | **0** |
+| Teks < 11px | ~120 | **0** |
+| Pelanggaran kontras WCAG AA | ~60 | **0** (3 dekoratif/disabled) |
+| Kontrol tanpa nama aksesibel | 3 | **0** |
+| Error konsol / pageerror | 1 | **0** |
+| Halaman tanpa `h1` | 12 | **0** |
+| Target sentuh < 24px | 18 | 6 (link inline dalam kalimat — dikecualikan WCAG 2.5.8) |
+
+Temuan utama: halaman lab bandul & millikan **tidak dapat dipakai di HP** (kanvas tertqueeze ~140px, tombol terpotong) — kini kanvas & panel ditumpuk vertikal di bawah `lg`; CTA "Pelajari Pendekatan Kami" **tak terlihat** (putih di atas putih, kontras 1.0:1); `createRadialGradient` melempar error saat kanvas belum berukuran; 327 mikro-label 8–10px dinormalisasi ke 11px.
+
+Gate setelah perbaikan: lint 0/0 · tsc 0 · 4 suite test · build sukses · E2E 22/22 · `harnessctl gate` PASS.
+
 ### Sisa backlog setelah penutupan 12 Nov 2026
 
 | Butir | Status setelah closure | Yang tersisa (tergantung pada manusia) |

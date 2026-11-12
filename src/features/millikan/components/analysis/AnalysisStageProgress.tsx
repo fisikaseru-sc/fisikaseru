@@ -90,7 +90,7 @@ export function AnalysisStageProgress({
                 </div>
                 <p
                   className={cn(
-                    "text-[10px] truncate leading-tight font-sans",
+                    "text-[11px] truncate leading-tight font-sans",
                     isActive ? "text-white/80" : "text-text-muted"
                   )}
                 >

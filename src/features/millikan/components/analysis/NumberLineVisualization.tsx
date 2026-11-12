@@ -33,7 +33,7 @@ export function NumberLineVisualization({
             Perhatikan posisi titik-titik rasio: apakah mereka tersebar acak di antara garis, atau berkumpul di dekat posisi bilangan bulat?
           </p>
         </div>
-        <span className="text-[10px] font-mono text-text-muted bg-slate-100 px-2 py-0.5 rounded-md">
+        <span className="text-[11px] font-mono text-text-muted bg-slate-100 px-2 py-0.5 rounded-md">
           Skala: Rasio (q / Kandidat)
         </span>
       </div>
@@ -98,13 +98,13 @@ export function NumberLineVisualization({
                 {/* Visual Pin / Dot */}
                 <div
                   className={cn(
-                    "px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold border shadow-sm transition-transform transform group-hover:scale-110 flex items-center gap-1",
+                    "px-1.5 py-0.5 rounded-full text-[11px] font-mono font-bold border shadow-sm transition-transform transform group-hover:scale-110 flex items-center gap-1",
                     isNear
                       ? "bg-accent-cobalt text-white border-accent-cobalt/80"
                       : "bg-slate-700 text-white border-slate-800"
                   )}
                 >
-                  <span className="text-[9px] opacity-75">#{pt.id}</span>
+                  <span className="text-[11px] opacity-75">#{pt.id}</span>
                   <span>{pt.ratio.toFixed(2)}</span>
                 </div>
 
@@ -118,7 +118,7 @@ export function NumberLineVisualization({
                 />
 
                 {/* Hover Tooltip */}
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-mono py-1 px-2 rounded shadow-lg pointer-events-none whitespace-nowrap z-20">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[11px] font-mono py-1 px-2 rounded shadow-lg pointer-events-none whitespace-nowrap z-20">
                   {pt.label || `Tetes #${pt.id}`}: q = {pt.q.toFixed(2)} × 10⁻¹⁹ C
                   <br />
                   Hasil bagi = {pt.ratio.toFixed(2)}
@@ -138,7 +138,7 @@ export function NumberLineVisualization({
             <span className="w-3 h-2 rounded border border-dashed border-slate-300 bg-slate-100/80" /> Posisi bilangan bulat
           </span>
         </div>
-        <span className="font-mono text-[10px]">
+        <span className="font-mono text-[11px]">
           Toleransi ketidakpastian eksperimen: ±0.15
         </span>
       </div>

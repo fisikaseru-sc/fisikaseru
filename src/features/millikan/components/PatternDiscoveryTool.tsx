@@ -198,7 +198,7 @@ export function PatternDiscoveryTool({
       <div className="border-b border-border-default pb-5 space-y-2">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-accent-cobalt animate-pulse" />
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
             Penyelidikan Ilmiah
           </span>
           <Badge variant={isAlreadyDiscovered ? "success" : "primary"} size="sm" className="ml-auto">
@@ -229,7 +229,7 @@ export function PatternDiscoveryTool({
       <div className="bg-slate-50/80 border border-border-default rounded-2xl p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted block">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-text-muted block">
               Eksplorasi Hipotesis
             </span>
             <h4 className="font-display font-bold text-sm text-primary-navy">
@@ -309,6 +309,7 @@ export function PatternDiscoveryTool({
           <div className="space-y-1.5">
             <input
               type="range"
+              aria-label="Kandidat satuan muatan elementer (× 10⁻¹⁹ C)"
               min={0.5}
               max={3.5}
               step={0.05}
@@ -316,7 +317,7 @@ export function PatternDiscoveryTool({
               onChange={(e) => handleSliderChange(parseFloat(e.target.value))}
               className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt"
             />
-            <div className="flex justify-between text-[10px] text-text-muted font-mono px-0.5">
+            <div className="flex justify-between text-[11px] text-text-muted font-mono px-0.5">
               <span>0.50</span>
               <span>1.50</span>
               <span>2.50</span>
@@ -387,7 +388,7 @@ export function PatternDiscoveryTool({
               className="p-4 bg-white border-t border-border-default overflow-x-auto"
             >
               <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-slate-50 border-b border-border-default text-text-muted text-[10px]">
+                <thead className="bg-slate-50 border-b border-border-default text-text-muted text-[11px]">
                   <tr>
                     <th className="py-2 px-3">Droplet</th>
                     <th className="py-2 px-3">q Terukur (10⁻¹⁹ C)</th>
@@ -413,11 +414,11 @@ export function PatternDiscoveryTool({
                       </td>
                       <td className="py-2 px-3 font-sans">
                         {r.isNear ? (
-                          <span className="text-emerald-700 font-semibold inline-flex items-center gap-1 text-[10px] bg-emerald-50 px-2 py-0.5 rounded-md">
+                          <span className="text-emerald-700 font-semibold inline-flex items-center gap-1 text-[11px] bg-emerald-50 px-2 py-0.5 rounded-md">
                             Dekat posisi bulat
                           </span>
                         ) : (
-                          <span className="text-slate-400 text-[10px]">
+                          <span className="text-slate-400 text-[11px]">
                             Tersebar bebas
                           </span>
                         )}

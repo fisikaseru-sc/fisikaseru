@@ -140,7 +140,7 @@ export function ScientificExplanationSection({
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-300">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300">
                 Tahap 05: Teori Ilmiah & Verifikasi NIST
               </span>
               <Badge variant="success" size="sm">
@@ -236,7 +236,7 @@ export function ScientificExplanationSection({
                     <h4 className="font-display font-bold text-primary-navy text-sm">
                       Sebaran Muatan dengan Pita Kuantum (1e, 2e, 3e, 4e, 5e, 6e)
                     </h4>
-                    <span className="text-[10px] font-mono text-accent-cobalt bg-accent-cobalt/10 px-2 py-0.5 rounded-full font-bold">
+                    <span className="text-[11px] font-mono text-accent-cobalt bg-accent-cobalt/10 px-2 py-0.5 rounded-full font-bold">
                       Toleransi ±10%
                     </span>
                   </div>
@@ -305,7 +305,7 @@ export function ScientificExplanationSection({
                       </ComposedChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="mt-3 flex items-center gap-4 text-[10px] font-mono text-text-muted flex-wrap">
+                  <div className="mt-3 flex items-center gap-4 text-[11px] font-mono text-text-muted flex-wrap">
                     <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-[#64748B]" /> q Stokes</span>
                     <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-teal" /> q Terkoreksi (+Cunningham)</span>
                     <span className="flex items-center gap-1.5"><span className="w-4 h-2.5 rounded bg-[#0ea5e9]/20" /> Tingkat Kuantum (1e–6e)</span>
@@ -426,7 +426,7 @@ export function ScientificExplanationSection({
             </div>
 
             <div className="bg-teal/5 border border-teal/20 rounded-xl p-3.5">
-              <div className="flex justify-between items-center text-[10px] font-mono text-teal uppercase tracking-wider mb-1">
+              <div className="flex justify-between items-center text-[11px] font-mono text-teal uppercase tracking-wider mb-1">
                 <span>Hasil Pengukuranmu (Hukum Stokes)</span>
                 <span className="font-bold">Δ {errorPct_stokes.toFixed(2)}% vs NIST</span>
               </div>
@@ -484,14 +484,14 @@ export function ScientificExplanationSection({
               <h4 className="font-display font-bold text-sm text-primary-navy">
                 Dekomposisi Kuantum Tiap Tetes
               </h4>
-              <span className="text-[10px] font-mono text-text-muted">
+              <span className="text-[11px] font-mono text-text-muted">
                 q = n · e
               </span>
             </div>
 
             <div className="rounded-xl border border-border-default overflow-x-auto max-h-60 overflow-y-auto">
               <table className="w-full text-left text-[11px] font-mono">
-                <thead className="bg-slate-50 border-b border-border-default text-text-muted text-[10px] sticky top-0">
+                <thead className="bg-slate-50 border-b border-border-default text-text-muted text-[11px] sticky top-0">
                   <tr>
                     <th className="p-2">#</th>
                     <th className="p-2">q Terkoreksi</th>

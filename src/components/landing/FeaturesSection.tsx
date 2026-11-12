@@ -108,8 +108,8 @@ export function FeaturesSection() {
               Setiap fitur, setiap interaksi, setiap keputusan desain diukur dengan satu pertanyaan:
               apakah ini membangun mental model siswa?
             </p>
-            <a href="#how-it-works">
-              <Button variant="outline" size="lg" className="border-white/20 text-white hover:bg-white/10 hover:border-white/30 cursor-pointer">
+            <a href="#how-it-works" className="inline-flex">
+              <Button variant="outline" size="lg" className="bg-transparent border-white/25 text-white hover:bg-white/10 hover:border-white/40 cursor-pointer">
                 Pelajari Pendekatan Kami <ArrowRight className="w-4 h-4" />
               </Button>
             </a>

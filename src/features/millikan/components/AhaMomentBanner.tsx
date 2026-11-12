@@ -50,7 +50,7 @@ export function AhaMomentBanner({
           >
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-cyan-300">
+              <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-cyan-300">
                 Langkah 1 dari 3 · Kembali ke Temuanmu
               </span>
             </div>
@@ -66,15 +66,15 @@ export function AhaMomentBanner({
 
             {/* Evidence Recap Cards */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-md">
-              <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block mb-2">
+              <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider block mb-2">
                 Sampel Rasio Hasil Pembagian yang Kamu Amati:
               </span>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs text-center">
                 {sampleRatios.slice(0, 4).map((r, i) => (
                   <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-2.5">
-                    <span className="text-[10px] text-slate-400 block font-sans">Tetes #{i + 1}</span>
+                    <span className="text-[11px] text-slate-400 block font-sans">Tetes #{i + 1}</span>
                     <span className="text-base font-bold text-cyan-300">{r.toFixed(2)}</span>
-                    <span className="text-[10px] text-emerald-300 block font-sans mt-0.5">≈ {Math.round(r)} satuan</span>
+                    <span className="text-[11px] text-emerald-300 block font-sans mt-0.5">≈ {Math.round(r)} satuan</span>
                   </div>
                 ))}
               </div>
@@ -121,7 +121,7 @@ export function AhaMomentBanner({
                       )}
                     >
                       <span>{opt.label}</span>
-                      <span className="text-[10px] text-cyan-300 self-end mt-1">
+                      <span className="text-[11px] text-cyan-300 self-end mt-1">
                         {isSelected ? "✓ Terpilih" : "Pilih"}
                       </span>
                     </button>
@@ -168,7 +168,7 @@ export function AhaMomentBanner({
           >
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-cyan-400" />
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-cyan-300">
+              <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-cyan-300">
                 Langkah 2 dari 3 · Dari Pengamatan ke Persamaan Umum
               </span>
             </div>
@@ -199,7 +199,7 @@ export function AhaMomentBanner({
               </div>
 
               <div className="py-3 px-4 bg-slate-900/90 border border-yellow-400/30 rounded-xl text-center space-y-1">
-                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest block">
+                <span className="text-[11px] font-mono text-slate-400 uppercase tracking-widest block">
                   Generalisasi Bentuk Umum:
                 </span>
                 <div className="font-mono text-2xl md:text-3xl font-extrabold text-yellow-300">
@@ -212,12 +212,12 @@ export function AhaMomentBanner({
 
               <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono pt-2 border-t border-white/10">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">SATUAN TERUKUR DARI DATAMU:</span>
+                  <span className="text-slate-400 block text-[11px]">SATUAN TERUKUR DARI DATAMU:</span>
                   <span className="text-cyan-300 font-bold text-sm">e ≈ {unitDisplay} × 10⁻¹⁹ C</span>
                 </div>
                 <div className="hidden sm:block w-px h-7 bg-white/10" />
                 <div>
-                  <span className="text-slate-400 block text-[10px]">STANDAR NIST 2018 (1 ELEKTRON):</span>
+                  <span className="text-slate-400 block text-[11px]">STANDAR NIST 2018 (1 ELEKTRON):</span>
                   <span className="text-emerald-400 font-bold text-sm">e = 1.602 × 10⁻¹⁹ C</span>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export function AhaMomentBanner({
           >
             <div className="flex items-center gap-2">
               <Atom className="w-4 h-4 text-cyan-400" />
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-cyan-300">
+              <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-cyan-300">
                 Langkah 3 dari 3 · Makna Fisika Kuantisasi
               </span>
             </div>
@@ -266,7 +266,7 @@ export function AhaMomentBanner({
             {/* Continuous vs Quantized Visual Model */}
             <div className="grid sm:grid-cols-2 gap-3 text-xs">
               <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-2">
-                <span className="font-bold text-slate-300 uppercase tracking-wider text-[10px] block font-mono">
+                <span className="font-bold text-slate-300 uppercase tracking-wider text-[11px] block font-mono">
                   Gagasan Kontinu (Zat Cair Bebas)
                 </span>
                 <div className="h-1 bg-slate-600 rounded-full my-4 relative">
@@ -278,7 +278,7 @@ export function AhaMomentBanner({
               </div>
 
               <div className="bg-cyan-950/40 border border-cyan-500/40 rounded-2xl p-4 space-y-2">
-                <span className="font-bold text-cyan-300 uppercase tracking-wider text-[10px] block font-mono">
+                <span className="font-bold text-cyan-300 uppercase tracking-wider text-[11px] block font-mono">
                   Gagasan Kuantisasi (Paket Terpisah)
                 </span>
                 <div className="h-1 bg-cyan-900 rounded-full my-4 relative flex justify-between items-center px-1">

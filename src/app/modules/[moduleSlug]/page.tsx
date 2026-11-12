@@ -85,10 +85,10 @@ export default function ModulePage() {
 
           {/* Badges */}
           <div className="flex justify-center gap-2 mb-4">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-accent-cobalt/5 text-accent-cobalt border border-accent-cobalt/10">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-accent-cobalt/5 text-accent-cobalt border border-accent-cobalt/10">
               <Lock className="w-3 h-3" /> Segera Hadir
             </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-slate-100 text-slate-600 border border-slate-200">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-mono font-bold tracking-wider uppercase bg-slate-100 text-slate-600 border border-slate-200">
               Fase Inkubasi
             </span>
           </div>
@@ -109,7 +109,7 @@ export default function ModulePage() {
                 <ArrowLeft className="w-4 h-4 mr-2" /> Kembali ke Katalog
               </Button>
             </Link>
-            <p className="text-[10px] text-text-muted font-mono">
+            <p className="text-[11px] text-text-muted font-mono">
               Ingin memberikan masukan fitur? Hubungi riset@fisikaseru.id
             </p>
           </div>
@@ -117,7 +117,7 @@ export default function ModulePage() {
       </main>
 
       {/* Footer info */}
-      <footer className="py-4 border-t border-border-default/60 text-center text-[10px] text-text-muted">
+      <footer className="py-4 border-t border-border-default/60 text-center text-[11px] text-text-muted">
         © 2026 FisikaSeru Lab. Hak Cipta Dilindungi Undang-Undang.
       </footer>
     </div>

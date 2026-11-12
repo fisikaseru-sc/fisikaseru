@@ -346,12 +346,14 @@ export default function LabPage() {
     // (T = T₀·(1+θ₀²/16)), agar angka di layar = angka yang direkam di tabel.
     const theta0Rd = (sliders.angle * Math.PI) / 180;
     const T_theory = 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + (theta0Rd * theta0Rd) / 16);
+    // Readout ditaruh di KANAN ATAS: bilah kontrol melayang occupies bagian
+    // bawah kanvas, jadi di layar pendek keduanya akan bertumpuk.
     ctx.fillStyle = "rgba(15,23,42,0.82)";
-    roundRect(ctx, W - 132, H - 52, 124, 44, 8); ctx.fill();
-    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
-    ctx.fillText("T (teoritis)", W - 126, H - 37);
-    ctx.fillStyle = "#38bdf8"; ctx.font = "bold 14px monospace";
-    ctx.fillText(`${T_theory.toFixed(3)} s`, W - 126, H - 20);
+    roundRect(ctx, W - 140, 16, 132, 48, 8); ctx.fill();
+    ctx.fillStyle = "#cbd5e1"; ctx.font = "bold 10px monospace"; ctx.textAlign = "left";
+    ctx.fillText("T (teoritis)", W - 132, 34);
+    ctx.fillStyle = "#38bdf8"; ctx.font = "bold 15px monospace";
+    ctx.fillText(`${T_theory.toFixed(3)} s`, W - 132, 53);
 
     ctx.restore();
   }, [isRunning, showVectors, sliders]);
@@ -398,11 +400,18 @@ export default function LabPage() {
       <header className="h-12 bg-white border-b border-border-default flex items-center justify-between px-4 flex-shrink-0 z-30">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 min-w-0">
-          <Link href="/modules" className="flex items-center gap-1.5 text-text-muted hover:text-primary-navy transition-colors text-xs font-medium whitespace-nowrap">
+          <Link href="/modules" className="flex items-center gap-1.5 py-1 -my-1 text-text-muted hover:text-primary-navy transition-colors text-xs font-medium whitespace-nowrap">
             <ChevronLeft className="w-3.5 h-3.5" /> Katalog
           </Link>
-          <span className="text-border-default text-xs">/</span>
-          <span className="text-xs font-semibold text-primary-navy hidden sm:block truncate">{moduleTitle}</span>
+          <span className="text-border-default text-xs hidden sm:inline" aria-hidden="true">/</span>
+          <span className="text-xs font-semibold text-primary-navy truncate">{moduleTitle}</span>
+        </div>
+
+        {/* Indikator langkah ringkas untuk layar kecil (nav penuh hanya di md+) */}
+        <div className="md:hidden flex items-center gap-1.5 px-2 py-1 rounded-lg bg-accent-cobalt/10 text-accent-cobalt text-[11px] font-semibold shrink-0">
+          <span className="font-mono">{Math.min(currentStep + 1, LAB_STEPS.length)}</span>
+          <span className="opacity-60">/</span>
+          <span>{currentStep === 0 ? "Pretest" : currentStep === 1 ? "Pengamatan" : currentStep === 2 ? "Pengukuran" : LAB_STEPS[Math.min(currentStep, LAB_STEPS.length - 1)]}</span>
         </div>
 
         {/* Step progress (center) */}
@@ -418,9 +427,9 @@ export default function LabPage() {
                     else if (i === 4) router.push(`/modules/${slug}/reflection`);
                   }}
                   className={cn(
-                    "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all",
+                    "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all",
                     isCurrent ? "bg-accent-cobalt text-white" :
-                    (i < 3 && i < currentStep) ? "bg-success/10 text-success" :
+                    (i < 3 && i < currentStep) ? "bg-success/10 text-emerald-700" :
                     i >= 3 ? "bg-white border border-border-default text-text-muted hover:text-accent-cobalt hover:border-accent-cobalt/30" :
                     "text-text-muted bg-gray-50 opacity-40 cursor-not-allowed"
                   )}
@@ -440,29 +449,31 @@ export default function LabPage() {
         <div className="flex items-center gap-2">
           <button onClick={() => setShowVectors(!showVectors)}
             aria-label="Tampilkan vektor gaya" aria-pressed={showVectors}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             {showVectors ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             <span className="hidden sm:inline">Vektor</span>
           </button>
           <Link href="/dashboard" aria-label="Dashboard"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-gray-50 border border-border-default hover:bg-gray-100 transition-all text-text-muted">
             <BarChart2 className="w-3.5 h-3.5" /><span className="hidden sm:inline">Dashboard</span>
           </Link>
         </div>
       </header>
 
       {/* ── MAIN WORKSPACE ── */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+      {/* Di layar kecil kanvas & panel ditumpuk vertikal: kanvas tetap punya
+          tinggi yang bisa dipakai, panel menjadi area di bawahnya. */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
 
         {/* ── CANVAS AREA ── */}
-        <main className="flex-1 flex flex-col relative min-w-0 overflow-hidden" style={{ background: "#f0f4f8" }}>
+        <main className="relative min-w-0 overflow-hidden h-[44vh] min-h-[280px] shrink-0 lg:h-auto lg:min-h-0 lg:flex-1 flex flex-col" style={{ background: "#f0f4f8" }}>
 
           {/* Visual mode switcher (2D / 3D) */}
           <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-white/95 backdrop-blur-sm p-1 rounded-xl border border-border-default shadow-depth">
             {(["2d", "3d"] as const).map(mode => (
               <button key={mode} onClick={() => setVisualMode(mode)}
                 aria-pressed={visualMode === mode}
-                className={cn("px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all cursor-pointer",
+                className={cn("px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all cursor-pointer",
                   visualMode === mode ? "bg-accent-cobalt text-white" : "text-text-muted hover:text-primary-navy hover:bg-gray-100")}>
                 {mode.toUpperCase()}
               </button>
@@ -492,8 +503,8 @@ export default function LabPage() {
 
           {/* Live period readout (3D) */}
           {visualMode === "3d" && (
-            <div className="absolute top-3 right-3 z-20 bg-white/95 backdrop-blur-sm rounded-xl p-3 border border-border-default shadow-depth space-y-1 text-[10px] font-mono min-w-[150px]">
-              <div className="text-text-muted uppercase tracking-wider font-bold text-[8px] mb-1">Pengukuran Periode</div>
+            <div className="absolute top-3 right-3 z-20 bg-white/95 backdrop-blur-sm rounded-xl p-3 border border-border-default shadow-depth space-y-1 text-[11px] font-mono min-w-[150px]">
+              <div className="text-text-muted uppercase tracking-wider font-bold text-[11px] mb-1">Pengukuran Periode</div>
               <div className="flex justify-between gap-3">
                 <span className="text-text-muted">T teoritis</span>
                 <span className="font-bold text-primary-navy">
@@ -510,29 +521,31 @@ export default function LabPage() {
           )}
 
           {/* ── Simulation Controls (floating bottom) ── */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
-            <div className="flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-depth border border-border-default/80">
+          <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex items-center z-20 w-[calc(100%-1rem)] sm:w-auto sm:max-w-[calc(100%-1rem)]">
+            <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 bg-white/95 backdrop-blur-sm rounded-2xl px-2.5 sm:px-4 py-2 shadow-depth border border-border-default/80 w-full sm:w-auto">
               <button
                 onClick={() => setIsRunning(!isRunning)}
-                className={cn("flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all",
+                className={cn("flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs font-bold cursor-pointer transition-all shrink-0",
                   isRunning ? "bg-amber-500 hover:bg-amber-600 text-white" : "bg-accent-cobalt hover:bg-accent-cobalt-light text-white")}>
                 {isRunning ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                 {isRunning ? "Pause" : "Mulai"}
               </button>
               <button
                 onClick={() => { setIsRunning(false); stopwatchRef.current = 0; setStopwatch(0); setResetCount(c => c + 1); }}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all shrink-0"
                 title="Mengembalikan bandul ke posisi awal — data percobaan tetap aman">
-                <RotateCcw className="w-3.5 h-3.5" /> Reset Simulasi
+                <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="hidden sm:inline">Reset Simulasi</span>
+                <span className="sr-only sm:hidden">Reset Simulasi</span>
               </button>
               <button onClick={recordTrial} disabled={trials.length >= MAX_TRIALS}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-success/10 hover:bg-success/20 text-success border border-success/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2.5 rounded-xl text-xs font-semibold cursor-pointer bg-success/10 hover:bg-success/20 text-emerald-700 border border-emerald-200 transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0">
                 <Save className="w-3.5 h-3.5" /> Rekam {trials.length}/{MAX_TRIALS}
               </button>
-              <div className="pl-2 border-l border-border-default text-center">
-                <div className="text-[8px] text-text-muted font-mono uppercase">Timer</div>
+              <div className="pl-2 border-l border-border-default text-center shrink-0 pl-2.5 sm:pl-2">
+                <div className="text-[11px] text-text-muted font-mono uppercase">Timer</div>
                 <div className="font-mono font-bold text-sm text-primary-navy leading-tight">
-                  {stopwatch.toFixed(2)}<span className="text-[9px] text-text-muted">s</span>
+                  {stopwatch.toFixed(2)}<span className="text-[11px] text-text-muted">s</span>
                 </div>
               </div>
             </div>
@@ -540,10 +553,15 @@ export default function LabPage() {
         </main>
 
         {/* ── RIGHT PANEL ── */}
-        <motion.aside
-          animate={{ width: panelCollapsed ? 44 : 320 }}
-          transition={{ duration: 0.25 }}
-          className="bg-white border-l border-border-default flex flex-col flex-shrink-0 overflow-hidden">
+        <aside
+          className={cn(
+            "bg-white border-border-default flex flex-col overflow-hidden shrink-0",
+            // Mobile: panel menjadi area penuh di bawah kanvas (tanpa mode runtuh).
+            // Desktop: panel samping dengan lebar tetap & bisa diruntuhkan.
+            panelCollapsed
+              ? "hidden lg:flex lg:w-11 border-l"
+              : "flex-1 lg:flex-none lg:w-80 border-t lg:border-t-0 lg:border-l"
+          )}>
           {panelCollapsed ? (
             <button onClick={() => setPanelCollapsed(false)}
               aria-label="Tampilkan panel pengaturan"
@@ -559,7 +577,7 @@ export default function LabPage() {
                   <Settings className="w-3.5 h-3.5 text-text-muted" />
                   {currentStep === 0 ? "Pretest" : currentStep === 1 ? "Pengamatan" : "Pengukuran"}
                 </h2>
-                <button onClick={() => setPanelCollapsed(true)} aria-label="Sembunyikan panel pengaturan" className="p-1 rounded hover:bg-gray-100 transition-colors">
+                <button onClick={() => setPanelCollapsed(true)} aria-label="Sembunyikan panel pengaturan" className="p-2 -m-2 rounded hover:bg-gray-100 transition-colors">
                   <ChevronRight className="w-3.5 h-3.5 text-text-muted" aria-hidden="true" />
                 </button>
               </div>
@@ -574,7 +592,7 @@ export default function LabPage() {
                       <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="font-display font-semibold text-xs text-amber-900">Pretest Kognitif</h3>
-                        <p className="text-[10px] text-amber-700 leading-snug mt-0.5">
+                        <p className="text-[11px] text-amber-700 leading-snug mt-0.5">
                           Rekam intuisimu sebelum eksperimen — jangan khawatir soal benar atau salah.
                         </p>
                       </div>
@@ -609,12 +627,12 @@ export default function LabPage() {
                                   <button key={oIdx} disabled={pretestSubmitted}
                                     onClick={() => handleSetPretestAnswer(q.id, oIdx)}
                                     className={cn(
-                                      "w-full text-left px-3 py-2 rounded-lg text-[10px] transition-all border flex items-start gap-2 cursor-pointer leading-snug",
+                                      "w-full text-left px-3 py-2 rounded-lg text-[11px] transition-all border flex items-start gap-2 cursor-pointer leading-snug",
                                       selected === oIdx
                                         ? pretestSubmitted
-                                          ? isCorrect ? "bg-success/10 border-success text-success font-medium" : "bg-danger/10 border-danger text-danger font-medium"
+                                          ? isCorrect ? "bg-success/10 border-success text-emerald-700 font-medium" : "bg-danger/10 border-danger text-danger font-medium"
                                           : "bg-accent-cobalt/10 border-accent-cobalt text-accent-cobalt font-medium"
-                                        : pretestSubmitted && oIdx === q.ans ? "bg-success/5 border-success/30 text-success font-medium"
+                                        : pretestSubmitted && oIdx === q.ans ? "bg-success/5 border-success/30 text-emerald-700 font-medium"
                                         : "bg-white border-border-default/60 text-text-muted hover:bg-slate-50"
                                     )}>
                                     <span className="font-mono font-bold flex-shrink-0">{String.fromCharCode(65 + oIdx)}.</span>
@@ -624,8 +642,8 @@ export default function LabPage() {
                               </div>
                             </div>
                             {pretestSubmitted && (
-                              <div className={cn("px-3 py-2.5 text-[10px] leading-relaxed border-t",
-                                isCorrect ? "bg-success/5 border-success/20 text-success" : "bg-slate-50 border-border-default text-text-muted")}>
+                              <div className={cn("px-3 py-2.5 text-[11px] leading-relaxed border-t",
+                                isCorrect ? "bg-success/5 border-success/20 text-emerald-700" : "bg-slate-50 border-border-default text-text-muted")}>
                                 <span className="font-semibold block mb-0.5">{isCorrect ? "✓ Tepat!" : `✗ Jawaban: ${String.fromCharCode(65 + q.ans)}`}</span>
                                 {q.exp}
                               </div>
@@ -661,7 +679,7 @@ export default function LabPage() {
                       <CircleDot className="w-4 h-4 text-teal flex-shrink-0 mt-0.5" />
                       <div>
                         <h3 className="font-display font-semibold text-xs text-teal">Eksplorasi Bebas</h3>
-                        <p className="text-[10px] text-teal/80 leading-snug mt-0.5">
+                        <p className="text-[11px] text-teal/80 leading-snug mt-0.5">
                           Coba semua kontrol di bawah dan amati apa yang terjadi pada simulasi.
                         </p>
                       </div>
@@ -676,8 +694,8 @@ export default function LabPage() {
                     {/* Progress indicator */}
                     <div className="bg-gray-50 rounded-xl p-3 border border-border-default/60">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-[10px] font-semibold text-text-muted">Progress</span>
-                        <span className="text-[10px] font-mono font-bold text-accent-cobalt">
+                        <span className="text-[11px] font-semibold text-text-muted">Progress</span>
+                        <span className="text-[11px] font-mono font-bold text-accent-cobalt">
                           {[isRunning, expSteps.interactionChanged, showVectors].filter(Boolean).length}/3
                         </span>
                       </div>
@@ -695,7 +713,7 @@ export default function LabPage() {
                       Mulai Pengukuran <ArrowRight className="w-3.5 h-3.5" />
                     </Button>
                     {!observationDone && (
-                      <p className="text-[10px] text-text-muted text-center mt-2">Jalankan simulasi atau ubah salah satu variabel dulu.</p>
+                      <p className="text-[11px] text-text-muted text-center mt-2">Jalankan simulasi atau ubah salah satu variabel dulu.</p>
                     )}
                   </div>
                 </div>
@@ -718,7 +736,7 @@ export default function LabPage() {
                       {GRAVITY_PRESETS.map(preset => (
                         <button key={preset.label} type="button"
                           onClick={() => setSliders(prev => ({ ...prev, gravity: preset.g }))}
-                          className={cn("flex-1 px-2 py-1 rounded-lg text-[9px] font-semibold border transition-all cursor-pointer",
+                          className={cn("flex-1 px-2 py-1 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer",
                             Math.abs(sliders.gravity - preset.g) < 0.005
                               ? "bg-accent-cobalt/10 border-accent-cobalt text-accent-cobalt"
                               : "bg-white border-border-default text-text-muted hover:border-accent-cobalt/30")}>
@@ -726,22 +744,22 @@ export default function LabPage() {
                         </button>
                       ))}
                     </div>
-                    <div className="text-[10px] text-amber-800 bg-amber-50/90 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
+                    <div className="text-[11px] text-amber-800 bg-amber-50/90 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
                       💡 <strong>Uji Miskonsepsi:</strong> Coba variasikan <em>Massa Beban (m)</em> pada panjang tali tetap. Perhatikan apakah nilai periode (T) berubah!
                     </div>
                     {/* Mini-aktivitas terarah (keputusan pedagogis F-05): langkah
                         eksplisit + perbandingan T live saat massa digeser. */}
                     <div className="rounded-xl border border-accent-cobalt/25 bg-accent-cobalt/5 p-2.5 space-y-1.5">
-                      <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+                      <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                         Mini-aktivitas · Apakah massa memengaruhi T?
                       </p>
-                      <ol className="text-[10px] text-text-muted list-decimal pl-4 space-y-0.5 leading-snug">
+                      <ol className="text-[11px] text-text-muted list-decimal pl-4 space-y-0.5 leading-snug">
                         <li>Pastikan <b>Panjang Tali (L)</b> tetap.</li>
                         <li>Geser <b>Massa Beban (m)</b> 2–3 langkah.</li>
                         <li>Bandingkan nilai T di bawah ini.</li>
                       </ol>
                       {massProbe && (
-                        <div className="text-[10px] font-mono bg-white rounded-lg border border-border-default p-2 space-y-1">
+                        <div className="text-[11px] font-mono bg-white rounded-lg border border-border-default p-2 space-y-1">
                           <div className="flex justify-between gap-2">
                             <span className="text-text-muted">T @ m = {Math.round(massProbe.fromMass * 1000)} g</span>
                             <span className="font-bold text-primary-navy">{massProbe.fromT.toFixed(3)} s</span>
@@ -753,14 +771,14 @@ export default function LabPage() {
                             </span>
                           </div>
                           {Math.abs(massProbe.fromT - 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)) < 0.005 && (
-                            <p className="text-[10px] font-sans font-semibold text-success">
+                            <p className="text-[11px] font-sans font-semibold text-emerald-700">
                               ✓ T tetap — massa tidak memengaruhi periode!
                             </p>
                           )}
                         </div>
                       )}
                       {massProbe && Math.abs(massProbe.fromT - 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)) >= 0.005 && (
-                        <p className="text-[10px] font-sans text-amber-700 leading-snug">
+                        <p className="text-[11px] font-sans text-amber-700 leading-snug">
                           Nilai T berubah — tapi karena massa, atau karena L/θ₀ ikut bergeser? Kembalikan L, lalu geser massa lagi.
                         </p>
                       )}
@@ -774,7 +792,7 @@ export default function LabPage() {
                       <Badge variant="primary" size="sm">{trials.length}/{MAX_TRIALS}</Badge>
                       {trials.length > 0 && (
                         <button onClick={handleResetLab}
-                          className="text-[9px] text-danger font-semibold px-1.5 py-0.5 rounded border border-danger/30 hover:bg-danger/5 cursor-pointer transition-colors"
+                          className="text-[11px] text-danger font-semibold px-1.5 py-0.5 rounded border border-danger/30 hover:bg-danger/5 cursor-pointer transition-colors"
                           title="Menghapus SEMUA data percobaan dan pretest (ada konfirmasi)">
                           Hapus Semua Data
                         </button>
@@ -820,8 +838,8 @@ export default function LabPage() {
                       </Link>
                     ) : (
                       <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl p-3">
-                        <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                        <p className="text-[10px] text-amber-700">
+                        <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <p className="text-[11px] text-amber-700">
                           Rekam minimal <b>3 trial</b> untuk lanjut. ({trials.length}/3)
                         </p>
                       </div>
@@ -843,7 +861,7 @@ export default function LabPage() {
               )}
             </div>
           )}
-        </motion.aside>
+        </aside>
       </div>
     </div>
   );
@@ -865,7 +883,7 @@ function SliderField({ label, unit, min, max, step, value, onChange, decimals = 
         aria-label={`${label} (${unit})`}
         onChange={e => onChange(parseFloat(e.target.value))}
         className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt" />
-      <div className="flex justify-between text-[9px] text-text-muted">
+      <div className="flex justify-between text-[11px] text-text-muted">
         <span>{displayFn ? displayFn(min) : min} {unit}</span>
         <span>{displayFn ? displayFn(max) : max} {unit}</span>
       </div>
@@ -884,8 +902,8 @@ function ChecklistItem({ label, desc, checked }: { label: string; desc: string; 
         {checked && <CheckCircle2 className="w-3 h-3 text-white stroke-[3]" />}
       </div>
       <div>
-        <h4 className={cn("font-display font-semibold text-[11px] leading-tight", checked ? "text-success" : "text-primary-navy")}>{label}</h4>
-        <p className="text-[10px] text-text-muted leading-snug mt-0.5">{desc}</p>
+        <h4 className={cn("font-display font-semibold text-[11px] leading-tight", checked ? "text-emerald-700" : "text-primary-navy")}>{label}</h4>
+        <p className="text-[11px] text-text-muted leading-snug mt-0.5">{desc}</p>
       </div>
     </motion.div>
   );

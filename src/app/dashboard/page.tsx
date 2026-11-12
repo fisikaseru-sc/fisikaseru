@@ -228,9 +228,9 @@ export default function StudentDashboard() {
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[10px] text-text-muted font-mono uppercase font-semibold">Tingkat Kemahiran</div>
+              <div className="text-[11px] text-text-muted font-mono uppercase font-semibold">Tingkat Kemahiran</div>
               <div className="text-sm font-bold text-primary-navy flex items-center gap-1.5">
-                Pemula Sains <Badge className="bg-success text-white text-[9px] px-1.5 py-0.5">Aktif</Badge>
+                Pemula Sains <Badge className="bg-success text-white text-[11px] px-1.5 py-0.5">Aktif</Badge>
               </div>
             </div>
           </div>
@@ -330,7 +330,7 @@ export default function StudentDashboard() {
                       <FlaskConical className="w-5 h-5 animate-float-gentle" aria-hidden="true" />
                     </div>
                     <div>
-                      <Badge className="bg-accent-cobalt/5 text-accent-cobalt font-mono border-accent-cobalt/10 text-[9px] mb-0.5">
+                      <Badge className="bg-accent-cobalt/5 text-accent-cobalt font-mono border-accent-cobalt/10 text-[11px] mb-0.5">
                         MODUL UTAMA FISIKA MODERN
                       </Badge>
                       <CardTitle className="font-display font-extrabold text-lg text-primary-navy">
@@ -354,21 +354,21 @@ export default function StudentDashboard() {
                 {/* Analytical Stats Grid */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/50 text-center">
-                    <span className="text-[9px] text-text-muted font-mono block uppercase">Data Tercatat</span>
+                    <span className="text-[11px] text-text-muted font-mono block uppercase">Data Tercatat</span>
                     <span className="font-mono text-lg font-extrabold text-primary-navy mt-1 block">
                       {trials.length} <span className="text-xs text-text-muted font-normal font-sans">droplet</span>
                     </span>
                   </div>
                   
                   <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/50 text-center">
-                    <span className="text-[9px] text-text-muted font-mono block uppercase">Estimasi $e$</span>
+                    <span className="text-[11px] text-text-muted font-mono block uppercase">Estimasi $e$</span>
                     <span className="font-mono text-xs sm:text-sm font-extrabold text-accent-cobalt mt-1 block">
                       {estimatedE}×10⁻¹⁹ C
                     </span>
                   </div>
                   
                   <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/50 text-center">
-                    <span className="text-[9px] text-text-muted font-mono block uppercase">Galat Eksperimen</span>
+                    <span className="text-[11px] text-text-muted font-mono block uppercase">Galat Eksperimen</span>
                     <span className={cn(
                       "font-mono text-lg font-extrabold mt-1 block",
                       validTrials.length === 0 ? "text-text-muted" : parseFloat(errorPct) < 3.0 ? "text-success" : "text-amber-500"
@@ -386,34 +386,34 @@ export default function StudentDashboard() {
                         <Database className="w-3.5 h-3.5 text-accent-cobalt" />
                         Bagan Kuantisasi Muatan Listrik $q$
                       </h3>
-                      <p className="text-[10px] text-text-muted">
+                      <p className="text-[11px] text-text-muted">
                         Muatan droplet terdistribusi pada kelipatan 1.6 × 10⁻¹⁹ C (1e, 2e, 3e dst).
                       </p>
                     </div>
                     {trials.length > 0 && (
                       <button 
                         onClick={handleClearData}
-                        className="flex items-center text-[10px] text-danger hover:underline gap-1 font-semibold cursor-pointer"
+                        className="flex items-center text-[11px] text-danger hover:underline gap-1 font-semibold cursor-pointer"
                       >
                         <Trash2 className="w-3 h-3" /> Hapus Data
                       </button>
                     )}
                   </div>
 
-                  <div className="h-[220px] w-full text-[9px] font-mono">
+                  <div className="h-[220px] w-full text-[11px] font-mono">
                     {trials.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-border-default rounded-xl bg-white/70">
                         <Info className="w-8 h-8 text-text-muted/40 mb-2" />
                         <span className="text-xs font-semibold text-text-primary">Belum Ada Data Eksperimen</span>
-                        <p className="text-[10px] text-text-muted max-w-xs mt-1">
+                        <p className="text-[11px] text-text-muted max-w-xs mt-1">
                           Masuk ke simulator lab dan catat data tetes minyak, atau klik tombol di bawah untuk menyimulasikan data contoh.
                         </p>
                         <div className="flex gap-2 mt-4">
-                          <Button size="sm" onClick={handleLoadSampleData} className="text-[10px] py-1 cursor-pointer">
+                          <Button size="sm" onClick={handleLoadSampleData} className="text-[11px] py-1 cursor-pointer">
                             <RefreshCw className="w-3 h-3 mr-1" /> Simulasi Data Sampel
                           </Button>
                           <Link href="/modules/millikan/experiment">
-                            <Button size="sm" variant="outline" className="text-[10px] py-1 cursor-pointer bg-white">
+                            <Button size="sm" variant="outline" className="text-[11px] py-1 cursor-pointer bg-white">
                               Masuk Lab <ArrowUpRight className="w-3 h-3 ml-1" />
                             </Button>
                           </Link>
@@ -443,7 +443,7 @@ export default function StudentDashboard() {
                               if (active && payload && payload.length) {
                                 const data = payload[0].payload;
                                 return (
-                                  <div className="bg-slate-900 border border-slate-800 text-white p-3 rounded-lg text-[9px] shadow-depth font-mono">
+                                  <div className="bg-slate-900 border border-slate-800 text-white p-3 rounded-lg text-[11px] shadow-depth font-mono">
                                     <div className="font-bold text-accent-cobalt mb-1">{data.trial}</div>
                                     <div>Radius (r): <span className="text-yellow-400">{data.radius} µm</span></div>
                                     <div>Tegangan (V): <span className="text-yellow-400">{data.voltage} V</span></div>
@@ -481,7 +481,7 @@ export default function StudentDashboard() {
                     </div>
                     {/* Droplet representation */}
                     <div className="w-5 h-5 rounded-full bg-cyan-400 border border-white z-10 flex items-center justify-center shadow-depth animate-float-gentle">
-                      <span className="text-[8px] text-slate-950 font-bold font-mono">-q</span>
+                      <span className="text-[11px] text-slate-950 font-bold font-mono">-q</span>
                     </div>
                     {/* Upwards Force Arrow: Fe */}
                     <div className="absolute top-[18px] flex flex-col items-center">
@@ -509,7 +509,7 @@ export default function StudentDashboard() {
                 </div>
 
                 {trials.length < 3 && trials.length > 0 && (
-                  <p className="text-[10px] text-text-muted text-center mt-2">
+                  <p className="text-[11px] text-text-muted text-center mt-2">
                     * Catat minimal 3 droplet di lab untuk mengaktifkan halaman Analisis Data.
                   </p>
                 )}
@@ -547,7 +547,7 @@ export default function StudentDashboard() {
                   </div>
                   <div>
                     <h3 className="font-display font-bold text-xs">AI Tutor Sokratis</h3>
-                    <div className="text-[9px] text-accent-cobalt-light font-mono flex items-center gap-1">
+                    <div className="text-[11px] text-accent-cobalt-light font-mono flex items-center gap-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" aria-hidden="true" /> Pendamping Lab Aktif
                     </div>
                   </div>
@@ -567,7 +567,7 @@ export default function StudentDashboard() {
                         : "bg-accent-cobalt text-white ml-auto rounded-tr-none"
                     )}
                   >
-                    <span className="font-mono text-[8px] opacity-60 mb-1 font-semibold uppercase">
+                    <span className="font-mono text-[11px] opacity-60 mb-1 font-semibold uppercase">
                       {msg.sender === "ai" ? "FisikaSeru AI" : "Anda"}
                     </span>
                     <p className="whitespace-pre-line">{msg.text}</p>
@@ -582,7 +582,7 @@ export default function StudentDashboard() {
                   <button
                     key={q}
                     onClick={() => handleSendMessage(q)}
-                    className="px-2.5 py-1.5 rounded-lg border border-border-default hover:border-accent-cobalt/35 text-[10px] text-text-muted hover:text-accent-cobalt bg-slate-50 hover:bg-accent-cobalt/5 transition-all cursor-pointer font-medium"
+                    className="px-2.5 py-1.5 rounded-lg border border-border-default hover:border-accent-cobalt/35 text-[11px] text-text-muted hover:text-accent-cobalt bg-slate-50 hover:bg-accent-cobalt/5 transition-all cursor-pointer font-medium"
                   >
                     {q}
                   </button>
@@ -636,7 +636,7 @@ export default function StudentDashboard() {
                       <div className="text-xs font-bold text-primary-navy group-hover:text-accent-cobalt transition-colors">
                         Gerak Harmonik Bandul
                       </div>
-                      <div className="flex items-center gap-2 text-[9px] text-text-muted mt-0.5">
+                      <div className="flex items-center gap-2 text-[11px] text-text-muted mt-0.5">
                         <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 25 mnt</span>
                         <span>•</span>
                         <span className="flex items-center gap-0.5"><BarChart3 className="w-2.5 h-2.5" /> Lv.2</span>
@@ -654,14 +654,14 @@ export default function StudentDashboard() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-primary-navy">Hukum Ohm</div>
-                      <div className="flex items-center gap-2 text-[9px] text-text-muted mt-0.5">
+                      <div className="flex items-center gap-2 text-[11px] text-text-muted mt-0.5">
                         <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 20 mnt</span>
                         <span>•</span>
                         <span className="flex items-center gap-0.5"><BarChart3 className="w-2.5 h-2.5" /> Lv.2</span>
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-[8px] px-1 py-0 border-yellow-200 bg-yellow-50 text-yellow-600">
+                  <Badge variant="outline" className="text-[11px] px-1 py-0 border-yellow-200 bg-yellow-50 text-yellow-600">
                     Segera
                   </Badge>
                 </div>
@@ -674,14 +674,14 @@ export default function StudentDashboard() {
                     </div>
                     <div>
                       <div className="text-xs font-bold text-primary-navy">Pembiasan Snellius</div>
-                      <div className="flex items-center gap-2 text-[9px] text-text-muted mt-0.5">
+                      <div className="flex items-center gap-2 text-[11px] text-text-muted mt-0.5">
                         <span className="flex items-center gap-0.5"><Clock className="w-2.5 h-2.5" /> 25 mnt</span>
                         <span>•</span>
                         <span className="flex items-center gap-0.5"><BarChart3 className="w-2.5 h-2.5" /> Lv.3</span>
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="text-[8px] px-1 py-0 border-teal-200 bg-teal-50 text-teal">
+                  <Badge variant="outline" className="text-[11px] px-1 py-0 border-teal-200 bg-teal-50 text-teal">
                     Segera
                   </Badge>
                 </div>

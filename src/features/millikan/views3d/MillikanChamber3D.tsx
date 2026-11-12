@@ -436,8 +436,8 @@ export function MillikanChamber3D({
       </PhysicsScene>
 
       {showHud ? (
-        <div className="absolute left-3 top-3 z-10 flex flex-col gap-1 rounded-xl border border-border bg-background/90 px-3 py-2 font-mono text-[10px] shadow-depth backdrop-blur-sm">
-          <span className="text-[8px] font-bold uppercase tracking-wider text-text-muted">
+        <div className="absolute left-3 top-3 z-10 flex flex-col gap-1 rounded-xl border border-border bg-background/90 px-3 py-2 font-mono text-[11px] shadow-depth backdrop-blur-sm">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-text-muted">
             Kondisi Kamar
           </span>
           <span className="flex justify-between gap-4">

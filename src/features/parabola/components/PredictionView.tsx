@@ -60,7 +60,7 @@ export default function PredictionView() {
       {/* Header */}
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30">
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">
             Katalog
           </Link>
           <span>/</span>
@@ -75,8 +75,8 @@ export default function PredictionView() {
               <div
                 className={
                   i === 0
-                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white"
-                    : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold text-text-muted bg-gray-50 opacity-40"
+                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white"
+                    : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-text-muted bg-gray-50 opacity-40"
                 }
               >
                 <span className="font-mono opacity-70">{i + 1}</span>
@@ -103,7 +103,7 @@ export default function PredictionView() {
               transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.1 }}
               className="w-20 h-20 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-6"
             >
-              <CheckCircle2 className="w-10 h-10 text-success" />
+              <CheckCircle2 className="w-10 h-10 text-emerald-700" />
             </motion.div>
             <h1 className="font-display text-2xl font-bold text-primary-navy mb-2">Prediksi Terekam!</h1>
             <p className="text-sm text-text-muted leading-relaxed max-w-md mx-auto mb-6">
@@ -112,7 +112,7 @@ export default function PredictionView() {
             </p>
 
             <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 mb-7 text-left max-w-md mx-auto">
-              <p className="text-[10px] font-mono uppercase tracking-wider text-text-muted mb-2">Catatan prediksimu</p>
+              <p className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-2">Catatan prediksimu</p>
               <p className="text-sm text-slate-700 italic leading-relaxed mb-3">&ldquo;{saved.reasoning}&rdquo;</p>
               <div className="flex items-center gap-2 text-xs text-text-muted">
                 <span className="font-mono">Keyakinan:</span>
@@ -162,7 +162,7 @@ export default function PredictionView() {
             <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-5 shadow-depth relative overflow-hidden border border-slate-800 mb-6">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 rounded-full filter blur-2xl pointer-events-none" />
               <div className="flex items-center gap-2 mb-2">
-                <Badge className="bg-amber-500 text-white border-0 text-[9px] font-mono uppercase tracking-wider">
+                <Badge className="bg-amber-500 text-white border-0 text-[11px] font-mono uppercase tracking-wider">
                   The Big Question
                 </Badge>
               </div>
@@ -206,7 +206,7 @@ export default function PredictionView() {
                 }}
                 aria-label="Tebakan sudut optimal"
               />
-              <div className="flex justify-between text-[10px] font-mono text-text-muted mt-2">
+              <div className="flex justify-between text-[11px] font-mono text-text-muted mt-2">
                 <span>10° datar</span>
                 <span>80° curam</span>
               </div>

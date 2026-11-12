@@ -49,7 +49,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
               <div>
                 <h2 className="font-display font-bold text-sm tracking-tight flex items-center gap-2">
                   Prinsip Nyata Lab Tetes Minyak Millikan
-                  <Badge variant="outline" className="text-[9px] border-cyan-400/40 text-cyan-300 font-mono">
+                  <Badge variant="outline" className="text-[11px] border-cyan-400/40 text-cyan-300 font-mono">
                     NIST Physics
                   </Badge>
                 </h2>
@@ -109,7 +109,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="border border-border-default rounded-xl p-3.5 bg-white space-y-1">
                     <div className="flex items-center gap-2 text-primary-navy font-bold">
-                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-mono">1</span>
+                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-mono">1</span>
                       Atomizer (Penyemprot)
                     </div>
                     <p className="text-text-muted text-[11px]">
@@ -119,7 +119,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
 
                   <div className="border border-border-default rounded-xl p-3.5 bg-white space-y-1">
                     <div className="flex items-center gap-2 text-primary-navy font-bold">
-                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-mono">2</span>
+                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-mono">2</span>
                       Dua Pelat Logam Sejajar
                     </div>
                     <p className="text-text-muted text-[11px]">
@@ -129,7 +129,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
 
                   <div className="border border-border-default rounded-xl p-3.5 bg-white space-y-1">
                     <div className="flex items-center gap-2 text-primary-navy font-bold">
-                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-mono">3</span>
+                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-mono">3</span>
                       Sumber Sinar-X (Ionisasi)
                     </div>
                     <p className="text-text-muted text-[11px]">
@@ -139,7 +139,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
 
                   <div className="border border-border-default rounded-xl p-3.5 bg-white space-y-1">
                     <div className="flex items-center gap-2 text-primary-navy font-bold">
-                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-mono">4</span>
+                      <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[11px] font-mono">4</span>
                       Mengapa Minyak, Bukan Air?
                     </div>
                     <p className="text-text-muted text-[11px]">
@@ -195,7 +195,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
                   <div className="border-2 border-emerald-500/30 rounded-xl p-4 bg-emerald-50/20 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-emerald-800 text-xs uppercase tracking-wide">Metode 1: Keseimbangan</span>
-                      <Badge variant="outline" className="text-[9px] border-emerald-300 text-emerald-700 bg-white">Melayang Diam</Badge>
+                      <Badge variant="outline" className="text-[11px] border-emerald-300 text-emerald-700 bg-white">Melayang Diam</Badge>
                     </div>
                     <p className="text-[11px] text-slate-600">
                       Tegangan <code className="font-mono text-primary-navy">V</code> disetel perlahan sampai tetesan berhenti bergerak dan melayang diam di udara (<code className="font-mono text-primary-navy">v₂ = 0</code>).
@@ -205,7 +205,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
                       <p>q · E = m · g</p>
                       <p className="text-accent-cobalt font-bold">q = (m · g · d) / V</p>
                     </div>
-                    <p className="text-[10px] text-text-muted">
+                    <p className="text-[11px] text-text-muted">
                       Sangat intuitif: cukup mencatat voltase penyeimbang saat tetesan tidak bergerak naik ataupun turun.
                     </p>
                   </div>
@@ -214,7 +214,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
                   <div className="border-2 border-cyan-500/30 rounded-xl p-4 bg-cyan-50/20 space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-cyan-800 text-xs uppercase tracking-wide">Metode 2: Dinamis</span>
-                      <Badge variant="outline" className="text-[9px] border-cyan-300 text-cyan-700 bg-white">Bergerak Naik</Badge>
+                      <Badge variant="outline" className="text-[11px] border-cyan-300 text-cyan-700 bg-white">Bergerak Naik</Badge>
                     </div>
                     <p className="text-[11px] text-slate-600">
                       Tegangan disetel lebih tinggi agar tetesan bergerak naik dengan kecepatan terminal konstan <code className="font-mono text-primary-navy">v₂</code>.
@@ -224,7 +224,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
                       <p>q · E = 6πηr(v₁ + v₂)</p>
                       <p className="text-accent-cobalt font-bold">q = [6πηr(v₁ + v₂)d] / V</p>
                     </div>
-                    <p className="text-[10px] text-text-muted">
+                    <p className="text-[11px] text-text-muted">
                       Metode ini menghilangkan ketergantungan pada pengukuran voltase keseimbangan yang sangat sensitif terhadap arus udara.
                     </p>
                   </div>
@@ -249,20 +249,20 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
 
                   <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/70 space-y-2 font-mono text-[11px]">
                     <div className="space-y-1">
-                      <span className="text-slate-400 uppercase text-[9px] font-bold block">1. Keseimbangan Jatuh Bebas (E = 0):</span>
+                      <span className="text-slate-400 uppercase text-[11px] font-bold block">1. Keseimbangan Jatuh Bebas (E = 0):</span>
                       <p>m · g = 6π · η · r · v₁</p>
                       <p>(4/3)π · r³ · (ρ_m − ρ_u) · g = 6π · η · r · v₁</p>
                     </div>
 
                     <div className="pt-2 border-t border-border-default/60">
-                      <span className="text-slate-400 uppercase text-[9px] font-bold block">2. Solusi Jari-Jari (r):</span>
+                      <span className="text-slate-400 uppercase text-[11px] font-bold block">2. Solusi Jari-Jari (r):</span>
                       <p className="text-accent-cobalt font-bold text-xs">
                         r = √[ (9 · η · v₁) / (2 · (ρ_m − ρ_u) · g) ]
                       </p>
                     </div>
 
                     <div className="pt-2 border-t border-border-default/60">
-                      <span className="text-slate-400 uppercase text-[9px] font-bold block">3. Massa Bola Minyak (m):</span>
+                      <span className="text-slate-400 uppercase text-[11px] font-bold block">3. Massa Bola Minyak (m):</span>
                       <p className="text-teal font-bold">m = ρ_m · (4/3)π · r³</p>
                     </div>
                   </div>
@@ -284,7 +284,7 @@ export function RealLabGuideModal({ isOpen, onClose }: RealLabGuideModalProps) {
 
           {/* Footer */}
           <div className="px-6 py-3 border-t border-border-default bg-slate-50 flex items-center justify-between flex-shrink-0">
-            <span className="text-[10px] text-text-muted">
+            <span className="text-[11px] text-text-muted">
               FisikaSeru Interactive Physics Discovery Lab
             </span>
             <Button size="sm" onClick={onClose} className="cursor-pointer text-xs">

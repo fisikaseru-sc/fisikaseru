@@ -154,7 +154,7 @@ export default function ReflectionPage() {
     return (
       <div className="min-h-screen bg-bg-primary flex flex-col font-body">
         <header className="h-14 bg-white border-b border-border-default flex items-center px-6 sticky top-0 z-30 justify-between">
-          <Link href="/modules" className="flex items-center gap-2 text-text-muted hover:text-primary-navy transition-colors">
+          <Link href="/modules" className="flex items-center gap-2 py-1 -my-1 text-text-muted hover:text-primary-navy transition-colors">
             <ChevronLeft className="w-4 h-4" /><span className="text-sm font-display font-medium">Katalog</span>
           </Link>
           <Link href="/" className="flex items-center gap-2.5">
@@ -170,7 +170,7 @@ export default function ReflectionPage() {
               className="w-[72px] h-[72px] rounded-2xl bg-accent-cobalt/5 border border-accent-cobalt/10 flex items-center justify-center mx-auto mb-5">
               <Wrench className="w-8 h-8 text-accent-cobalt" />
             </motion.div>
-            <Badge variant="outline" className="text-[10px] font-mono mb-3"><Lock className="w-2.5 h-2.5 mr-1" /> Segera Hadir</Badge>
+            <Badge variant="outline" className="text-[11px] font-mono mb-3"><Lock className="w-2.5 h-2.5 mr-1" /> Segera Hadir</Badge>
             <h2 className="font-display text-xl font-bold text-primary-navy mb-2">{currentTitle}</h2>
             <p className="text-xs text-text-muted leading-relaxed mb-6">Halaman refleksi untuk topik ini sedang disiapkan.</p>
             <Link href="/modules"><Button className="w-full cursor-pointer"><ChevronLeft className="w-4 h-4 mr-1" /> Katalog</Button></Link>
@@ -196,7 +196,7 @@ export default function ReflectionPage() {
           <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
             <Link href="/modules" className="hover:text-primary-navy transition-colors">Katalog</Link>
             <span>/</span>
-            <Link href="/modules/millikan/analysis" className="hover:text-primary-navy transition-colors">Analisis</Link>
+            <Link href="/modules/millikan/analysis" className="py-1 -my-1 hover:text-primary-navy transition-colors">Analisis</Link>
             <span>/</span>
             <span className="text-text-primary font-semibold">Refleksi</span>
           </div>
@@ -205,9 +205,9 @@ export default function ReflectionPage() {
             {LAB_STEPS.map((s, i) => (
               <React.Fragment key={s}>
                 <div className={cn(
-                  "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold",
+                  "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold",
                   i === 4 ? "bg-accent-cobalt text-white" :
-                  i < 4   ? "bg-success/10 text-success" : "text-text-muted bg-gray-50 opacity-40"
+                  i < 4   ? "bg-success/10 text-emerald-700" : "text-text-muted bg-gray-50 opacity-40"
                 )}>
                   {i < 4 ? <CheckCircle2 className="w-3 h-3" /> : <span className="font-mono opacity-70">{i + 1}</span>}
                   <span className="hidden lg:inline">{s}</span>
@@ -219,7 +219,7 @@ export default function ReflectionPage() {
 
           <div className="ml-auto flex items-center gap-2">
             <Link href="/modules/millikan/analysis"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
               <ChevronLeft className="w-3.5 h-3.5" /> Analisis
             </Link>
           </div>
@@ -240,18 +240,18 @@ export default function ReflectionPage() {
         <div className="border-b-2 border-slate-900 pb-4 mb-6">
           <div className="flex items-center justify-between">
             <h1 className="text-xl font-bold text-slate-900">Laporan Kognitif Sains — FisikaSeru</h1>
-            <p className="text-[10px] text-slate-400">Lab: {moduleTitle}</p>
+            <p className="text-[11px] text-slate-400">Lab: {moduleTitle}</p>
           </div>
-          <p className="text-[10px] text-slate-500 mt-0.5">Sertifikat Kelulusan Eksperimen Virtual</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Sertifikat Kelulusan Eksperimen Virtual</p>
         </div>
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="p-3 bg-gray-50 rounded-lg border">
-            <p className="font-bold text-[10px] mb-1">Spesifikasi Eksperimen</p>
+            <p className="font-bold text-[11px] mb-1">Spesifikasi Eksperimen</p>
             <p>Modul: {moduleTitle}</p>
             <p>Jumlah Trial: {trials.length}</p>
           </div>
           <div className="p-3 bg-gray-50 rounded-lg border">
-            <p className="font-bold text-[10px] mb-1">Hasil Statistik</p>
+            <p className="font-bold text-[11px] mb-1">Hasil Statistik</p>
             {moduleSlug === "millikan"
               ? calculatedE !== null
                 ? <><p>e hitung: {calculatedE.toFixed(4)} ×10⁻¹⁹ C</p><p>Galat: {(eError ?? 0).toFixed(2)}%</p></>
@@ -282,7 +282,7 @@ export default function ReflectionPage() {
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
           <Link href="/modules" className="hover:text-primary-navy transition-colors">Katalog</Link>
           <span>/</span>
-          <Link href={`/modules/${moduleSlug}/analysis`} className="hover:text-primary-navy transition-colors">Analisis</Link>
+          <Link href={`/modules/${moduleSlug}/analysis`} className="py-1 -my-1 hover:text-primary-navy transition-colors">Analisis</Link>
           <span>/</span>
           <span className="text-text-primary font-semibold">Refleksi</span>
         </div>
@@ -292,9 +292,9 @@ export default function ReflectionPage() {
           {LAB_STEPS.map((s, i) => (
             <React.Fragment key={s}>
               <div className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold",
                 i === 4 ? "bg-accent-cobalt text-white" :
-                i < 4   ? "bg-success/10 text-success" : "text-text-muted bg-gray-50 opacity-40"
+                i < 4   ? "bg-success/10 text-emerald-700" : "text-text-muted bg-gray-50 opacity-40"
               )}>
                 {i < 4 ? <CheckCircle2 className="w-3 h-3" /> : <span className="font-mono opacity-70">{i + 1}</span>}
                 <span className="hidden lg:inline">{s}</span>
@@ -307,7 +307,7 @@ export default function ReflectionPage() {
         {/* Nav */}
         <div className="ml-auto flex items-center gap-2">
           <Link href={`/modules/${moduleSlug}/analysis`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
             <ChevronLeft className="w-3.5 h-3.5" /> Analisis
           </Link>
         </div>
@@ -350,7 +350,7 @@ export default function ReflectionPage() {
                       </h3>
                     </div>
                     {savedPrediction && (
-                      <span className="text-[10px] font-mono font-semibold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md">
+                      <span className="text-[11px] font-mono font-semibold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md">
                         Keyakinan Awal: {savedPrediction.confidence}/5
                       </span>
                     )}
@@ -378,7 +378,7 @@ export default function ReflectionPage() {
 
                   {savedPrediction?.reasoning && savedPrediction.reasoning !== "(Tidak ada catatan tambahan)" && (
                     <div className="mt-2.5 text-xs text-slate-600 italic bg-white/70 p-2.5 rounded-lg border border-amber-200/60 leading-relaxed">
-                      <span className="font-semibold not-italic text-amber-900 block text-[10px] uppercase font-mono mb-0.5">Penalaran Awalmu:</span>
+                      <span className="font-semibold not-italic text-amber-900 block text-[11px] uppercase font-mono mb-0.5">Penalaran Awalmu:</span>
                       &quot;{savedPrediction.reasoning}&quot;
                     </div>
                   )}
@@ -431,7 +431,7 @@ export default function ReflectionPage() {
                     {moduleSlug === "millikan" && savedPrediction?.hypothesis === "QUANTIZED_PATTERN" ? (
                       <>
                         <Badge variant="success" size="sm">Terkonfirmasi!</Badge>
-                        <span className="text-xs text-success font-medium">
+                        <span className="text-xs text-emerald-700 font-medium">
                           Dugaan awalmu tepat! Bukti eksperimen menunjukkan kuantisasi diskret.
                         </span>
                       </>
@@ -516,7 +516,7 @@ export default function ReflectionPage() {
                 </label>
 
                 <div className="bg-gray-50 rounded-xl p-3.5 border border-border-default/60">
-                  <p className="text-[10px] font-display font-semibold text-text-muted mb-2 uppercase tracking-wider">Panduan menulis:</p>
+                  <p className="text-[11px] font-display font-semibold text-text-muted mb-2 uppercase tracking-wider">Panduan menulis:</p>
                   <ul className="text-[11px] text-text-muted space-y-1 leading-relaxed">
                     <li>• Apa gagasan awalmu yang salah? Bukti apa yang membuktikannya?</li>
                     <li>• Hukum fisika mana yang mengatur fenomena ini?</li>
@@ -544,7 +544,7 @@ export default function ReflectionPage() {
                 initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }}
                 transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.15 }}
                 className="w-24 h-24 rounded-2xl bg-success/10 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle2 className="w-12 h-12 text-success" />
+                <CheckCircle2 className="w-12 h-12 text-emerald-700" />
               </motion.div>
               <h2 className="font-display text-3xl font-bold text-primary-navy mb-2">Selesai! 🎉</h2>
               <p className="text-text-muted text-sm max-w-md mx-auto mb-8 leading-relaxed">
@@ -597,13 +597,13 @@ export default function ReflectionPage() {
 function StatChip({ label, value, color }: { label: string; value: string; color: "cobalt" | "success" | "teal" | "amber" }) {
   const colors: Record<string, string> = {
     cobalt:  "bg-accent-cobalt/5 border-accent-cobalt/20 text-accent-cobalt",
-    success: "bg-success/5 border-success/20 text-success",
+    success: "bg-success/5 border-success/20 text-emerald-700",
     teal:    "bg-teal/5 border-teal/20 text-teal",
     amber:   "bg-amber/5 border-amber/20 text-amber",
   };
   return (
     <div className={cn("rounded-xl px-3 py-2 border", colors[color] || colors.cobalt)}>
-      <span className="text-[9px] block opacity-70 uppercase tracking-wider font-mono">{label}</span>
+      <span className="text-[11px] block opacity-70 uppercase tracking-wider font-mono">{label}</span>
       <span className="font-mono font-bold text-sm">{value}</span>
     </div>
   );
@@ -708,11 +708,11 @@ function DialogueSection({ moduleSlug, trials, prediction, setWrittenReflections
       <div className="bg-white rounded-2xl border border-border-default shadow-sm overflow-hidden mb-4">
         {/* Progress bar */}
         <div className="px-4 py-2.5 border-b border-border-default bg-gray-50/50 flex items-center gap-3">
-          <span className="text-[10px] font-mono text-text-muted">Pertanyaan</span>
+          <span className="text-[11px] font-mono text-text-muted">Pertanyaan</span>
           <div className="flex-1 bg-gray-200 rounded-full h-1">
             <motion.div className="bg-accent-cobalt h-1 rounded-full" animate={{ width: `${(chatIndex / (questions.length - 1)) * 100}%` }} />
           </div>
-          <span className="text-[10px] font-mono text-accent-cobalt font-bold">{chatIndex + 1}/{questions.length}</span>
+          <span className="text-[11px] font-mono text-accent-cobalt font-bold">{chatIndex + 1}/{questions.length}</span>
         </div>
 
         {/* Messages */}

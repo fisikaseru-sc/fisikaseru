@@ -149,7 +149,7 @@ export function AITutorSection() {
               {/* Layer indicator */}
               <div className="mt-5 pt-4 border-t border-border-default/50 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">Layer</span>
+                  <span className="text-[11px] font-mono text-text-muted uppercase tracking-wider">Layer</span>
                   <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((l) => (
                       <div
@@ -161,7 +161,7 @@ export function AITutorSection() {
                     ))}
                   </div>
                 </div>
-                <span className="text-[10px] font-mono text-teal">Socratic Guide Active</span>
+                <span className="text-[11px] font-mono text-teal">Socratic Guide Active</span>
               </div>
             </div>
           </motion.div>

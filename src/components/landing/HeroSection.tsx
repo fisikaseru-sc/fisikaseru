@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
 /** Lightweight physics-flavored visual: animated pendulum swing (CSS/framer-motion, no 3D libs) */
@@ -30,11 +29,11 @@ function AnimatedPendulum() {
       </motion.div>
       {/* arc guide */}
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 w-40 h-16 border-b-2 border-dashed border-slate-700 rounded-t-full" aria-hidden="true" />
-      <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-mono text-slate-500">
+      <span className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[11px] font-mono text-slate-300">
         T = 2π√(L/g)
       </span>
       {/* period badge */}
-      <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-teal/20 border border-teal/30 text-[9px] font-mono text-teal-light">
+      <div className="absolute top-3 right-3 px-2 py-0.5 rounded bg-teal/20 border border-teal/30 text-[11px] font-mono text-teal-light">
         Gerak Harmonik Sederhana
       </div>
     </div>
@@ -43,7 +42,7 @@ function AnimatedPendulum() {
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden pt-16">
+    <section className="relative lg:min-h-screen flex items-center overflow-hidden pt-10 sm:pt-14 lg:pt-16">
       {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-bg-primary via-white to-sky-blue/5" />
@@ -59,7 +58,7 @@ export function HeroSection() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-20 w-full">
+      <div className="max-w-7xl mx-auto px-6 py-12 sm:py-16 lg:py-20 w-full">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
           <motion.div
@@ -67,18 +66,17 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <Badge variant="primary" size="lg" className="mb-6">
-              <Sparkles className="w-3.5 h-3.5" />
-              Platform Eksperimen Fisika Mendalam
-            </Badge>
-
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-[3.5rem] font-bold text-primary-navy leading-[1.1] tracking-tight mb-6">
+            <h1 className="font-display text-[2.1rem] sm:text-5xl lg:text-[3.5rem] font-bold text-primary-navy leading-[1.12] tracking-tight mb-4">
               Bangun Pemahaman{" "}
-              <span className="text-gradient-science">Fisika</span> yang{" "}
-              <span className="text-gradient-discovery">Sesungguhnya</span>
+              <span className="text-accent-cobalt">Fisika</span> yang{" "}
+              <span className="text-teal">Sesungguhnya</span>
             </h1>
 
-            <p className="text-lg text-text-muted leading-relaxed mb-8 max-w-xl">
+            <p className="text-sm font-medium text-accent-cobalt mb-6">
+              Platform Eksperimen Fisika Mendalam
+            </p>
+
+            <p className="text-base sm:text-lg text-text-muted leading-relaxed mb-7 sm:mb-8 max-w-xl">
               Bukan sekadar menghafal rumus. FisikaSeru membimbing siswa merekonstruksi
               pemahaman konsep melalui{" "}
               <strong className="text-text-primary font-medium">eksperimen virtual interaktif</strong> (seperti Tetes Minyak Millikan),{" "}
@@ -86,7 +84,7 @@ export function HeroSection() {
               <strong className="text-text-primary font-medium">AI Tutor Sokratis</strong>.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 mb-12">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-9 sm:mb-12">
               <Link href="/modules">
                 <Button size="lg" className="cursor-pointer">
                   Mulai Eksperimen <ArrowRight className="w-4 h-4" />
@@ -127,7 +125,7 @@ export function HeroSection() {
                   <div className="w-2.5 h-2.5 rounded-full bg-rose/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-amber/60" />
                   <div className="w-2.5 h-2.5 rounded-full bg-success/60" />
-                  <span className="ml-3 text-[11px] text-text-muted font-mono">
+                  <span className="ml-3 text-xs text-text-muted font-mono">
                     fisikaseru.id/lab/millikan
                   </span>
                 </div>
@@ -169,10 +167,10 @@ export function HeroSection() {
                   ].map((d) => (
                     <Card key={d.label} size="sm" className="bg-gray-50 border border-border-default/50 shadow-none">
                       <CardContent className="text-center">
-                        <div className="text-[10px] text-text-muted font-medium mb-1">{d.label}</div>
+                        <div className="text-[11px] text-text-muted font-medium mb-1">{d.label}</div>
                         <div className="font-mono font-bold text-primary-navy text-sm leading-none">
                           {d.value}
-                          <span className="text-[10px] text-text-muted ml-0.5 font-normal">{d.unit}</span>
+                          <span className="text-[11px] text-text-muted ml-0.5 font-normal">{d.unit}</span>
                         </div>
                       </CardContent>
                     </Card>

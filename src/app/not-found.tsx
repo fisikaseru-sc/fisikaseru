@@ -87,7 +87,7 @@ export default function NotFound() {
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-accent-cobalt" />
                 </motion.div>
                 {/* Formula hint */}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] font-mono text-text-muted">
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[11px] font-mono text-text-muted">
                   g ≈ 9.8 m/s² — halaman ini tetap tunduk pada gravitasi
                 </span>
               </div>
@@ -123,7 +123,7 @@ export default function NotFound() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 border-t border-border-default/60 text-center text-[10px] text-text-muted">
+      <footer className="py-4 border-t border-border-default/60 text-center text-[11px] text-text-muted">
         © {new Date().getFullYear()} FisikaSeru Lab. Hak Cipta Dilindungi Undang-Undang.
       </footer>
     </div>

@@ -86,7 +86,12 @@ export default function LoginPage() {
           >
             <FlaskConical className="w-6 h-6 text-white animate-pulse" />
           </motion.div>
-          <h2 className="font-display text-2xl font-bold text-primary-navy">FisikaSeru</h2>
+          {/* h1: halaman login sebelumnya tidak punya heading utama (h2 saja),
+              sehingga struktur heading halaman kosong bagi pembaca layar. */}
+          <h1 className="font-display text-2xl font-bold text-primary-navy">Masuk ke FisikaSeru</h1>
+          <p className="font-display text-sm font-semibold text-accent-cobalt text-center -mt-1">
+            FisikaSeru
+          </p>
           <p className="text-sm text-text-muted mt-1 text-center">
             Pintu gerbang menuju rekonstruksi pemahaman konsep fisika mendalam.
           </p>
@@ -133,7 +138,7 @@ export default function LoginPage() {
               {/* Separator */}
               <div className="flex items-center gap-3 py-1">
                 <div className="h-px bg-border-default/80 flex-1" />
-                <span className="text-[10px] text-text-muted font-mono uppercase tracking-wider">
+                <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider">
                   atau gunakan email
                 </span>
                 <div className="h-px bg-border-default/80 flex-1" />
@@ -222,7 +227,7 @@ export default function LoginPage() {
         {/* Footer info */}
         <div className="mt-8 pt-4 border-t border-border-default/80 flex items-center justify-center gap-2">
           <Sparkles className="w-3.5 h-3.5 text-teal" />
-          <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">
+          <span className="text-[11px] font-mono text-text-muted uppercase tracking-wider">
             Sains • Pemahaman • Eureka
           </span>
         </div>

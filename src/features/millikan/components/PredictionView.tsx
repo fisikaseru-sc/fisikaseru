@@ -82,7 +82,7 @@ export function PredictionView({ slug, onComplete }: PredictionViewProps) {
         <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-4 shadow-depth relative overflow-hidden border border-slate-800">
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent-cobalt/20 rounded-full filter blur-2xl pointer-events-none" />
           <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-accent-cobalt text-white border-0 text-[9px] font-mono uppercase tracking-wider">
+            <Badge className="bg-accent-cobalt text-white border-0 text-[11px] font-mono uppercase tracking-wider">
               Step 1 · The Big Question
             </Badge>
           </div>
@@ -124,7 +124,7 @@ export function PredictionView({ slug, onComplete }: PredictionViewProps) {
                       {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                     </div>
                   </div>
-                  <p className="text-[10px] text-text-muted leading-normal">
+                  <p className="text-[11px] text-text-muted leading-normal">
                     {opt.desc}
                   </p>
                 </button>
@@ -159,16 +159,23 @@ export function PredictionView({ slug, onComplete }: PredictionViewProps) {
               {confidence === 5 && "5/5 (Sangat Yakin)"}
             </span>
           </div>
-          <input
-            type="range"
-            min={1}
-            max={5}
-            step={1}
-            value={confidence}
-            onChange={(e) => setConfidence(parseInt(e.target.value, 10))}
-            className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-accent-cobalt"
-          />
-          <div className="flex justify-between text-[9px] text-text-muted font-mono">
+          {/* Slider keyakinan: elemen inputnya setinggi 24px (target sentuh
+              yang layak) sementara jalur tipisnya digambar terpisah — kalau
+              CONDITION track setebal 6px, area sentuhnya hanya 6px. */}
+          <div className="relative h-6 flex items-center">
+            <div className="absolute inset-x-0 h-1.5 rounded-full bg-gray-200" aria-hidden="true" />
+            <input
+              type="range"
+              aria-label="Tingkat keyakinan tebakan (1 = sangat ragu, 5 = sangat yakin)"
+              min={1}
+              max={5}
+              step={1}
+              value={confidence}
+              onChange={(e) => setConfidence(parseInt(e.target.value, 10))}
+              className="relative w-full h-6 bg-transparent appearance-none cursor-pointer accent-accent-cobalt"
+            />
+          </div>
+          <div className="flex justify-between text-[11px] text-text-muted font-mono">
             <span>Tidak Yakin</span>
             <span>Sangat Yakin</span>
           </div>
@@ -186,7 +193,7 @@ export function PredictionView({ slug, onComplete }: PredictionViewProps) {
           {isSaved ? "Lanjut ke Observasi Lab" : "Kunci Prediksi & Masuk Lab"} 
           <ArrowRight className="w-3.5 h-3.5" />
         </Button>
-        <p className="text-[10px] text-text-muted text-center mt-2">
+        <p className="text-[11px] text-text-muted text-center mt-2">
           Prediksimu akan dikonfrontasikan dengan data eksperimen di akhir modul.
         </p>
       </div>
@@ -224,7 +231,7 @@ export function CompactPredictionCard({
       <div className="bg-slate-50 border border-dashed border-border-default rounded-xl p-3 flex items-center justify-between text-xs">
         <span className="text-text-muted text-[11px]">Dugaan awal belum dicatat</span>
         {onExpand && (
-          <button onClick={onExpand} className="text-[10px] text-accent-cobalt font-semibold hover:underline cursor-pointer">
+          <button onClick={onExpand} className="text-[11px] text-accent-cobalt font-semibold hover:underline cursor-pointer">
             Isi Dugaan
           </button>
         )}
@@ -235,13 +242,13 @@ export function CompactPredictionCard({
   return (
     <div className="bg-slate-50/80 border border-border-default/80 rounded-xl p-3 space-y-1.5 text-xs">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
+        <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles className="w-3 h-3 text-amber-500" /> Dugaan Awalmu
         </span>
         {onExpand && (
           <button
             onClick={onExpand}
-            className="text-[10px] text-accent-cobalt font-semibold hover:underline cursor-pointer"
+            className="text-[11px] text-accent-cobalt font-semibold hover:underline cursor-pointer"
           >
             Ubah
           </button>
@@ -251,12 +258,12 @@ export function CompactPredictionCard({
         <span className="font-semibold text-primary-navy text-[11px]">
           {labelMap[prediction.hypothesis]}
         </span>
-        <Badge variant="outline" className="text-[9px] py-0 px-1 font-mono">
+        <Badge variant="outline" className="text-[11px] py-0 px-1 font-mono">
           Keyakinan: {prediction.confidence}/5
         </Badge>
       </div>
       {prediction.reasoning && prediction.reasoning !== "(Tidak ada catatan tambahan)" && (
-        <p className="text-[10px] text-text-muted italic line-clamp-2">
+        <p className="text-[11px] text-text-muted italic line-clamp-2">
           &ldquo;{prediction.reasoning}&rdquo;
         </p>
       )}

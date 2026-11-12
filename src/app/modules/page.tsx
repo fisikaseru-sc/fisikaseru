@@ -54,7 +54,7 @@ export default function CatalogPage() {
         {/* Page Header */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex items-center gap-2 text-sm text-text-muted mb-2">
-            <Link href="/" className="hover:text-accent-cobalt transition-colors">Beranda</Link>
+            <Link href="/" className="inline-block py-1 -my-1 hover:text-accent-cobalt transition-colors">Beranda</Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <span className="text-text-primary font-medium">Katalog Modul</span>
           </div>

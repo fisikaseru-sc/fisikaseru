@@ -83,7 +83,7 @@ export function TransferChallengeSection({
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <FlaskConical className="w-4 h-4 text-purple-600" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-700">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-700">
               Uji Transfer Konsep · Skenario Baru
             </span>
           </div>
@@ -105,7 +105,7 @@ export function TransferChallengeSection({
               Kasus: Hasil Pengukuran dari Peneliti Lain
             </h4>
           </div>
-          <Badge variant="outline" size="sm" className="font-mono text-[10px]">
+          <Badge variant="outline" size="sm" className="font-mono text-[11px]">
             Data Independen
           </Badge>
         </div>
@@ -121,13 +121,13 @@ export function TransferChallengeSection({
               key={item.id}
               className="bg-slate-50 border border-border-default rounded-xl p-3 text-center space-y-1 shadow-xs"
             >
-              <span className="text-[10px] font-mono text-text-muted uppercase block">
+              <span className="text-[11px] font-mono text-text-muted uppercase block">
                 {item.label}
               </span>
               <div className="font-mono font-bold text-sm text-primary-navy">
                 {item.q.toFixed(2)}
               </div>
-              <span className="text-[10px] text-text-muted font-mono">
+              <span className="text-[11px] text-text-muted font-mono">
                 × 10⁻¹⁹ C
               </span>
             </div>
@@ -171,9 +171,9 @@ export function TransferChallengeSection({
                   r.isNear ? "bg-emerald-50/60 border-emerald-200" : "bg-white border-border-default"
                 )}
               >
-                <div className="text-[10px] text-text-muted">{r.label} / {testedUnit.toFixed(2)}</div>
+                <div className="text-[11px] text-text-muted">{r.label} / {testedUnit.toFixed(2)}</div>
                 <div className="font-bold text-primary-navy">{r.ratio.toFixed(2)}</div>
-                <div className="text-[10px] font-sans text-slate-500">
+                <div className="text-[11px] font-sans text-slate-500">
                   {r.isNear ? `≈ ${r.nearest} (Bulat)` : `Deviasi ±${r.dev.toFixed(2)}`}
                 </div>
               </div>
@@ -205,7 +205,7 @@ export function TransferChallengeSection({
         <div className="border-t border-border-default pt-4 space-y-2">
           <div className="flex items-center justify-between">
             <label className="font-display font-bold text-sm text-primary-navy block flex items-center gap-1.5">
-              <Lightbulb className="w-4 h-4 text-amber-500" />
+              <Lightbulb className="w-4 h-4 text-amber-600" />
               2. Tantangan Lanjutan (Anomali Nilai)
             </label>
             {!showFollowUp && (
@@ -214,7 +214,7 @@ export function TransferChallengeSection({
                 variant="outline"
                 size="sm"
                 onClick={() => setShowFollowUp(true)}
-                className="text-[10px] h-6 px-2 cursor-pointer text-accent-cobalt"
+                className="text-[11px] h-6 px-2 cursor-pointer text-accent-cobalt"
               >
                 Buka Tantangan Ini
               </Button>

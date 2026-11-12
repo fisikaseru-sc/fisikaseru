@@ -174,13 +174,13 @@ export default function AnalysisView() {
       {/* ── Header ── */}
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30">
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">
             Katalog
           </Link>
           <span>/</span>
           <Link
             href="/modules/parabola/experiment"
-            className="hover:text-primary-navy transition-colors whitespace-nowrap"
+            className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1"
           >
             {moduleTitle}
           </Link>
@@ -194,10 +194,10 @@ export default function AnalysisView() {
               <div
                 className={
                   i === 2
-                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white"
+                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white"
                     : i < 2
-                      ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-success/10 text-success"
-                      : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-border-default text-text-muted"
+                      ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-success/10 text-emerald-700"
+                      : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-border-default text-text-muted"
                 }
               >
                 <span className="font-mono opacity-70">{i + 1}</span>
@@ -213,13 +213,13 @@ export default function AnalysisView() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/modules/parabola/experiment"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default"
           >
             <ChevronLeft className="w-3.5 h-3.5" /> Lab
           </Link>
           <Link
             href="/modules/parabola/reflection"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all"
           >
             Refleksi <ChevronRight className="w-3.5 h-3.5" />
           </Link>
@@ -251,7 +251,7 @@ export default function AnalysisView() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link href="/modules/parabola/experiment">
+              <Link href="/modules/parabola/experiment" className="inline-flex">
                 <Button className="cursor-pointer">
                   Buka Laboratorium <ArrowRight className="w-4 h-4" />
                 </Button>
@@ -290,7 +290,7 @@ export default function AnalysisView() {
                             <TableRow className="bg-gray-50">
                               {["#", "v₀ (m/s)", "θ (°)", "g (m/s²)", "h₀ (m)", "R terukur (m)", "R teori (m)"].map(
                                 (h) => (
-                                  <TableHead key={h} className="text-[10px] px-2 py-2 whitespace-nowrap">
+                                  <TableHead key={h} className="text-[11px] px-2 py-2 whitespace-nowrap">
                                     {h}
                                   </TableHead>
                                 )
@@ -327,7 +327,7 @@ export default function AnalysisView() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="bg-accent-cobalt/5 rounded-xl p-3 border border-accent-cobalt/20">
-                        <span className="text-[9px] text-accent-cobalt font-mono uppercase tracking-wider block">
+                        <span className="text-[11px] text-accent-cobalt font-mono uppercase tracking-wider block">
                           Sudut terbaik dari datamu
                         </span>
                         <span className="font-mono text-2xl font-bold text-accent-cobalt">
@@ -338,7 +338,7 @@ export default function AnalysisView() {
                         </span>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-3 border border-border-default/60">
-                        <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
+                        <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">
                           Jarak dari teori 45°
                         </span>
                         <span className="font-mono text-lg font-bold text-primary-navy">
@@ -352,7 +352,7 @@ export default function AnalysisView() {
                       </div>
                       {complementaryPairs.length > 0 ? (
                         <div className="bg-teal/5 rounded-xl p-3 border border-teal/20">
-                          <span className="text-[9px] text-teal font-mono uppercase tracking-wider block mb-1">
+                          <span className="text-[11px] text-teal font-mono uppercase tracking-wider block mb-1">
                             Pasangan komplemen ditemukan
                           </span>
                           {complementaryPairs.map((p, i) => (
@@ -397,7 +397,7 @@ export default function AnalysisView() {
                       {v} m/s
                     </button>
                   ))}
-                  <span className="text-[10px] text-text-muted font-mono ml-1">
+                  <span className="text-[11px] text-text-muted font-mono ml-1">
                     kurva teoretis memakai g = {selectedG.toFixed(2)} m/s²
                   </span>
                 </div>
@@ -478,7 +478,7 @@ export default function AnalysisView() {
                         </ComposedChart>
                       </ResponsiveContainer>
                     </div>
-                    <div className="mt-3 flex items-center gap-4 text-[10px] font-mono text-text-muted flex-wrap">
+                    <div className="mt-3 flex items-center gap-4 text-[11px] font-mono text-text-muted flex-wrap">
                       <span className="flex items-center gap-1.5">
                         <span className="w-3 h-3 rounded-full bg-[#1B4FD8] inline-block" /> Data percobaan
                       </span>
@@ -502,7 +502,7 @@ export default function AnalysisView() {
                   </CardHeader>
                   <CardContent className="grid sm:grid-cols-3 gap-3 text-center">
                     <div className="bg-white rounded-xl p-3 border border-border-default/60">
-                      <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
+                      <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">
                         Tebakan terbaik datamu
                       </span>
                       <span className="font-mono text-xl font-bold text-accent-cobalt">
@@ -510,20 +510,20 @@ export default function AnalysisView() {
                       </span>
                     </div>
                     <div className="bg-white rounded-xl p-3 border border-border-default/60">
-                      <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
+                      <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">
                         Prediksi teori
                       </span>
                       <span className="font-mono text-xl font-bold text-amber-600">
                         {optimalAngleTheoretical.toFixed(0)}°
                         {optimalAngleTheoretical < 44.5 && (
-                          <span className="text-[9px] font-normal text-text-muted block">
+                          <span className="text-[11px] font-normal text-text-muted block">
                             (h₀ &gt; 0: optimal &lt; 45°)
                           </span>
                         )}
                       </span>
                     </div>
                     <div className="bg-white rounded-xl p-3 border border-border-default/60">
-                      <span className="text-[9px] text-text-muted font-mono uppercase tracking-wider block">
+                      <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">
                         Status
                       </span>
                       {bestAtV0 && Math.abs(bestAtV0.angle - optimalAngleTheoretical) <= 3 ? (
@@ -549,15 +549,15 @@ export default function AnalysisView() {
                     <CardTitle className="text-sm text-white">Dari Rumus ke Sudut Optimal</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 text-xs font-mono text-slate-300">
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider">Derivasi ringkas</p>
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider">Derivasi ringkas</p>
                     <p>R = v₀·cosθ · t dengan t = 2·v₀·sinθ / g</p>
                     <p>
                       R = v₀² · 2·sinθ·cosθ / g = <span className="text-yellow-300">v₀² · sin(2θ) / g</span>
                     </p>
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider pt-2">Mengapa 45°?</p>
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider pt-2">Mengapa 45°?</p>
                     <p>sin(2θ) maksimal ketika 2θ = 90°, yaitu θ = 45°.</p>
                     <p className="text-green-300 font-bold">∴ R maks = v₀² / g pada θ = 45°</p>
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider pt-2">
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider pt-2">
                       Sudut komplemen
                     </p>
                     <p>
@@ -577,9 +577,9 @@ export default function AnalysisView() {
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-gray-50">
-                            <TableHead className="text-[10px] px-2 py-2">θ (°)</TableHead>
-                            <TableHead className="text-[10px] px-2 py-2 text-right">R teori (m)</TableHead>
-                            <TableHead className="text-[10px] px-2 py-2 text-right">R datamu (m)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-2">θ (°)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-2 text-right">R teori (m)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-2 text-right">R datamu (m)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -607,7 +607,7 @@ export default function AnalysisView() {
                         </TableBody>
                       </Table>
                     </div>
-                    <p className="text-[10px] text-text-muted mt-2 leading-relaxed">
+                    <p className="text-[11px] text-text-muted mt-2 leading-relaxed">
                       ★ = sudut optimal. Baris dengan &ldquo;—&rdquo; belum kamu coba — isi di laboratorium untuk
                       melengkapi tabel ini.
                     </p>

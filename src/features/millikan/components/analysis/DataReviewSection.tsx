@@ -55,7 +55,7 @@ export function DataReviewSection({
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                 Fokus Observasi Awal
               </span>
               <Badge variant="primary" size="sm">
@@ -81,7 +81,7 @@ export function DataReviewSection({
           <div className="font-mono text-xl font-bold text-primary-navy">
             {trials.length} <span className="text-xs font-normal text-text-muted font-sans">tetes</span>
           </div>
-          <p className="text-[10px] text-text-muted mt-0.5">Memenuhi syarat min. 5 data</p>
+          <p className="text-[11px] text-text-muted mt-0.5">Memenuhi syarat min. 5 data</p>
         </div>
 
         <div className="bg-white border border-border-default rounded-xl p-3.5 shadow-sm">
@@ -91,7 +91,7 @@ export function DataReviewSection({
           <div className="font-mono text-xl font-bold text-teal">
             {minR} – {maxR} <span className="text-xs font-normal text-text-muted font-sans">µm</span>
           </div>
-          <p className="text-[10px] text-text-muted mt-0.5">Variasi ukuran aerosol</p>
+          <p className="text-[11px] text-text-muted mt-0.5">Variasi ukuran aerosol</p>
         </div>
 
         <div className="bg-white border border-border-default rounded-xl p-3.5 shadow-sm">
@@ -101,7 +101,7 @@ export function DataReviewSection({
           <div className="font-mono text-xl font-bold text-indigo-600">
             {minV} – {maxV} <span className="text-xs font-normal text-text-muted font-sans">Volt</span>
           </div>
-          <p className="text-[10px] text-text-muted mt-0.5">Tegangan pelat pembelok</p>
+          <p className="text-[11px] text-text-muted mt-0.5">Tegangan pelat pembelok</p>
         </div>
 
         <div className="bg-white border border-border-default rounded-xl p-3.5 shadow-sm">
@@ -111,7 +111,7 @@ export function DataReviewSection({
           <div className="font-mono text-xl font-bold text-amber-600">
             {avgTf} <span className="text-xs font-normal text-text-muted font-sans">detik</span>
           </div>
-          <p className="text-[10px] text-text-muted mt-0.5">Lintasan 1.0 mm (gravitasi)</p>
+          <p className="text-[11px] text-text-muted mt-0.5">Lintasan 1.0 mm (gravitasi)</p>
         </div>
       </div>
 
@@ -126,7 +126,7 @@ export function DataReviewSection({
               Data murni kinematika dan instrumen sebelum diubah ke besaran muatan listrik
             </p>
           </div>
-          <span className="text-[10px] font-mono text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
+          <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
             ● Instrumen Siap Diolah
           </span>
         </div>
@@ -164,7 +164,7 @@ export function DataReviewSection({
                     </td>
                     <td className="py-2.5 px-3">
                       {isBalanced ? (
-                        <span className="inline-flex items-center gap-1 text-emerald-700 font-sans font-semibold text-[10px] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        <span className="inline-flex items-center gap-1 text-emerald-700 font-sans font-semibold text-[11px] bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                           Melayang Seimbang
                         </span>
                       ) : (
@@ -176,7 +176,7 @@ export function DataReviewSection({
                     <td className="py-2.5 px-3 text-slate-600">
                       {vfMm} mm/s
                     </td>
-                    <td className="py-2.5 px-3 font-sans text-slate-500 text-[10px]">
+                    <td className="py-2.5 px-3 font-sans text-slate-500 text-[11px]">
                       {isBalanced ? "Fe = Fg (Seimbang)" : "Fe > Fg (Naik teratur)"}
                     </td>
                   </tr>

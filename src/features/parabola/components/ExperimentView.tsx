@@ -201,7 +201,7 @@ export default function ExperimentView() {
       {/* ── Header ── */}
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 flex-shrink-0 z-30">
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">
             <ChevronLeft className="w-3.5 h-3.5 inline" /> Katalog
           </Link>
           <span>/</span>
@@ -216,10 +216,10 @@ export default function ExperimentView() {
               <div
                 className={
                   i === 1
-                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white"
+                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white"
                     : i < 1
-                      ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-success/10 text-success"
-                      : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-border-default text-text-muted"
+                      ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-success/10 text-emerald-700"
+                      : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-white border border-border-default text-text-muted"
                 }
               >
                 <span className="font-mono opacity-70">{i + 1}</span>
@@ -233,7 +233,7 @@ export default function ExperimentView() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/modules/parabola/analysis"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all"
           >
             Analisis <ChevronRight className="w-3.5 h-3.5" />
           </Link>
@@ -256,8 +256,8 @@ export default function ExperimentView() {
           />
 
           {/* HUD fisika real-time */}
-          <div className="absolute top-3 right-3 z-20 bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 border border-slate-700/60 shadow-depth space-y-1.5 text-[10px] font-mono min-w-[148px]">
-            <div className="text-slate-400 uppercase tracking-wider font-bold text-[8px] mb-1.5">
+          <div className="absolute top-3 right-3 z-20 bg-slate-900/90 backdrop-blur-sm rounded-xl p-3 border border-slate-700/60 shadow-depth space-y-1.5 text-[11px] font-mono min-w-[148px]">
+            <div className="text-slate-400 uppercase tracking-wider font-bold text-[11px] mb-1.5">
               Fisika Real-Time
             </div>
             {[
@@ -274,12 +274,12 @@ export default function ExperimentView() {
                 <span className={`font-bold ${color}`}>{value}</span>
               </div>
             ))}
-            <div className="border-t border-slate-700 pt-1.5 flex justify-between items-center text-[9px]">
+            <div className="border-t border-slate-700 pt-1.5 flex justify-between items-center text-[11px]">
               <span className="text-slate-400">R teori</span>
               {trials.length >= 3 ? (
                 <span className="text-green-400 font-bold">{theory.range.toFixed(1)} m</span>
               ) : (
-                <span className="text-slate-500 italic" title="Terbuka setelah mencatat minimal 3 percobaan">
+                <span className="text-slate-400 italic" title="Terbuka setelah mencatat minimal 3 percobaan">
                   Terkunci (≥3 data)
                 </span>
               )}
@@ -393,7 +393,7 @@ export default function ExperimentView() {
                         key={preset.label}
                         type="button"
                         onClick={() => setG(preset.g)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold border transition-all cursor-pointer ${
+                        className={`flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${
                           Math.abs(g - preset.g) < 0.005
                             ? "bg-accent-cobalt/10 border-accent-cobalt text-accent-cobalt"
                             : "bg-white border-border-default text-text-muted hover:border-accent-cobalt/30"
@@ -435,19 +435,19 @@ export default function ExperimentView() {
               {/* Prediksi teoretis */}
               <section className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-gray-50 rounded-xl p-2 border border-border-default/60">
-                  <span className="text-[8px] text-text-muted font-mono uppercase tracking-wider block">R teori</span>
+                  <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">R teori</span>
                   {trials.length >= 3 ? (
                     <span className="font-mono text-xs font-bold text-primary-navy">{theory.range.toFixed(1)} m</span>
                   ) : (
-                    <span className="font-mono text-[9px] text-text-muted italic block mt-0.5" title="Terbuka setelah mencatat minimal 3 data">≥3 data</span>
+                    <span className="font-mono text-[11px] text-text-muted italic block mt-0.5" title="Terbuka setelah mencatat minimal 3 data">≥3 data</span>
                   )}
                 </div>
                 <div className="bg-gray-50 rounded-xl p-2 border border-border-default/60">
-                  <span className="text-[8px] text-text-muted font-mono uppercase tracking-wider block">H maks</span>
+                  <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">H maks</span>
                   <span className="font-mono text-xs font-bold text-primary-navy">{theory.height.toFixed(1)} m</span>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-2 border border-border-default/60">
-                  <span className="text-[8px] text-text-muted font-mono uppercase tracking-wider block">t terbang</span>
+                  <span className="text-[11px] text-text-muted font-mono uppercase tracking-wider block">t terbang</span>
                   <span className="font-mono text-xs font-bold text-primary-navy">{theory.flight.toFixed(2)} s</span>
                 </div>
               </section>
@@ -507,19 +507,19 @@ export default function ExperimentView() {
                       <Table>
                         <TableHeader>
                           <TableRow className="bg-gray-50">
-                            <TableHead className="text-[10px] px-2 py-1.5">#</TableHead>
-                            <TableHead className="text-[10px] px-2 py-1.5">v₀ (m/s)</TableHead>
-                            <TableHead className="text-[10px] px-2 py-1.5">θ (°)</TableHead>
-                            <TableHead className="text-[10px] px-2 py-1.5 text-right">R (m)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-1.5">#</TableHead>
+                            <TableHead className="text-[11px] px-2 py-1.5">v₀ (m/s)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-1.5">θ (°)</TableHead>
+                            <TableHead className="text-[11px] px-2 py-1.5 text-right">R (m)</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {trials.map((t) => (
                             <TableRow key={t.id}>
-                              <TableCell className="text-[10px] font-mono px-2 py-1.5 text-text-muted">{t.id}</TableCell>
-                              <TableCell className="text-[10px] font-mono px-2 py-1.5">{t.v0}</TableCell>
-                              <TableCell className="text-[10px] font-mono px-2 py-1.5">{t.angle}</TableCell>
-                              <TableCell className="text-[10px] font-mono px-2 py-1.5 text-right font-bold text-accent-cobalt">
+                              <TableCell className="text-[11px] font-mono px-2 py-1.5 text-text-muted">{t.id}</TableCell>
+                              <TableCell className="text-[11px] font-mono px-2 py-1.5">{t.v0}</TableCell>
+                              <TableCell className="text-[11px] font-mono px-2 py-1.5">{t.angle}</TableCell>
+                              <TableCell className="text-[11px] font-mono px-2 py-1.5 text-right font-bold text-accent-cobalt">
                                 {t.range.toFixed(1)}
                               </TableCell>
                             </TableRow>
@@ -528,7 +528,7 @@ export default function ExperimentView() {
                       </Table>
                     </div>
                     {trials.length >= 5 ? (
-                      <p className="text-[10px] text-text-muted mt-2 leading-relaxed">
+                      <p className="text-[11px] text-text-muted mt-2 leading-relaxed">
                         Sudut mana yang memberi R terbesar sejauh ini? Lanjut ke Analisis untuk grafik lengkapnya.
                       </p>
                     ) : null}

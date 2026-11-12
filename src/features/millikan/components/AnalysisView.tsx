@@ -219,9 +219,9 @@ export default function AnalysisPage() {
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">Katalog</Link>
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">Katalog</Link>
           <span>/</span>
-          <Link href={`/modules/${moduleSlug}/experiment`} className="hover:text-primary-navy transition-colors whitespace-nowrap">{moduleTitle}</Link>
+          <Link href={`/modules/${moduleSlug}/experiment`} className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">{moduleTitle}</Link>
           <span>/</span>
           <span className="text-text-primary font-semibold">Analisis</span>
         </div>
@@ -231,9 +231,9 @@ export default function AnalysisPage() {
           {LAB_STEPS.map((s, i) => (
             <React.Fragment key={s}>
               <div className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all",
                 i === 3 ? "bg-accent-cobalt text-white" :
-                i < 3   ? "bg-success/10 text-success" :
+                i < 3   ? "bg-success/10 text-emerald-700" :
                 i === 4  ? "bg-white border border-border-default text-text-muted" :
                 "text-text-muted bg-gray-50 opacity-40"
               )}>
@@ -249,17 +249,17 @@ export default function AnalysisPage() {
         <div className="ml-auto flex items-center gap-2">
           {isMillikan && (
             <button onClick={() => setShowGuideModal(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt/10 border border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/20 transition-all cursor-pointer">
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt/10 border border-accent-cobalt/30 text-accent-cobalt hover:bg-accent-cobalt/20 transition-all cursor-pointer">
               <BookOpen className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Prinsip Lab</span>
             </button>
           )}
           <Link href={`/modules/${moduleSlug}/experiment`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
             <ChevronLeft className="w-3.5 h-3.5" /> Lab
           </Link>
           <Link href={`/modules/${moduleSlug}/reflection`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all">
             Refleksi <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -341,7 +341,7 @@ export default function AnalysisPage() {
                         </div>
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+                            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                               Tahap 03: Penyelidikan Pola
                             </span>
                             <Badge variant={isDiscovered ? "success" : "primary"} size="sm">
@@ -411,7 +411,9 @@ export default function AnalysisPage() {
                           Kamu bisa mendalami teori fisika &amp; grafik verifikasi standar NIST (Tahap 5), atau langsung menuju Refleksi Kognitif bersama Socratic AI.
                         </p>
                       </div>
-                      <div className="flex items-center gap-2.5 flex-shrink-0">
+                      {/* Tombol bisa membungkus di layar sempit — dua tombol
+                          bersebelahan meluber keluar viewport bila dipaksa satu baris. */}
+                      <div className="flex flex-wrap items-center justify-center gap-2.5 sm:justify-start lg:flex-nowrap">
                         <Button
                           variant="outline"
                           size="md"
@@ -485,8 +487,8 @@ export default function AnalysisPage() {
                     <span className="text-text-muted text-xs">R²</span>
                     <span className={cn("font-mono font-bold text-base",
                       !hasEnoughBandulData ? "text-text-muted" :
-                      regressionBandul.r2 > 0.99 ? "text-success" :
-                      regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-500")}>
+                      regressionBandul.r2 > 0.99 ? "text-emerald-700" :
+                      regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-700")}>
                       {hasEnoughBandulData ? regressionBandul.r2.toFixed(4) : "—"}
                     </span>
                   </div>
@@ -542,7 +544,7 @@ export default function AnalysisPage() {
                       </ComposedChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="mt-3 flex items-center gap-4 text-[10px] font-mono text-text-muted">
+                  <div className="mt-3 flex items-center gap-4 text-[11px] font-mono text-text-muted">
                     <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded-full bg-[#1B4FD8] inline-block" /> Data trial</span>
                     <span className="flex items-center gap-1.5"><span className="w-6 h-0.5 border-t-2 border-dashed border-[#14213D] inline-block" /> Garis regresi terbaik</span>
                   </div>
@@ -556,16 +558,16 @@ export default function AnalysisPage() {
                   </div>
                   <div className="grid sm:grid-cols-2 gap-4 text-xs font-mono text-slate-300">
                     <div className="space-y-1.5">
-                      <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Derivasi rumus</p>
+                      <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Derivasi rumus</p>
                       <p>T = 2π√(L/g)</p>
                       <p>T² = <span className="text-yellow-300">(4π²/g)</span> · L</p>
-                      <p className="text-slate-400 text-[10px] mt-2">Bentuk: y = m·x + c</p>
+                      <p className="text-slate-400 text-[11px] mt-2">Bentuk: y = m·x + c</p>
                       <p>Gradien m = 4π²/g</p>
                       <p className="text-green-300 font-bold">∴ g = 4π²/m</p>
                     </div>
                     <div className="space-y-1.5">
-                      <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Dari datamu</p>
-                      <div className="bg-slate-800 rounded-lg p-2.5 space-y-1.5 text-[10px]">
+                      <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Dari datamu</p>
+                      <div className="bg-slate-800 rounded-lg p-2.5 space-y-1.5 text-[11px]">
                         <div className="flex justify-between">
                           <span className="text-slate-400">Gradien (m)</span>
                           <span className="text-yellow-300">
@@ -645,14 +647,14 @@ export default function AnalysisPage() {
                   ) : (
                     <>
                       <div className="bg-accent-cobalt/5 rounded-xl p-4 border border-accent-cobalt/20 mb-3">
-                        <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
+                        <p className="text-[11px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
                         <div className="flex items-baseline gap-2">
                           <span className="font-mono text-3xl font-bold text-primary-navy">{calculatedG.toFixed(3)}</span>
                           <span className="font-mono text-sm text-text-muted">m/s²</span>
                         </div>
                       </div>
-                      <div className={cn("rounded-xl p-3 border text-[10px]",
-                        gError < 2 ? "bg-success/5 border-success/20 text-success" :
+                      <div className={cn("rounded-xl p-3 border text-[11px]",
+                        gError < 2 ? "bg-success/5 border-success/20 text-emerald-700" :
                         gError < 5 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
                         <div className="flex items-center gap-1.5 font-semibold mb-0.5">
                           {gError < 2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}

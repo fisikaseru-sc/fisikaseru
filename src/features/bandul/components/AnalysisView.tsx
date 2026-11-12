@@ -325,9 +325,9 @@ export default function AnalysisPage() {
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30">
         {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">Katalog</Link>
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">Katalog</Link>
           <span>/</span>
-          <Link href={`/modules/${moduleSlug}/experiment`} className="hover:text-primary-navy transition-colors whitespace-nowrap">{moduleTitle}</Link>
+          <Link href={`/modules/${moduleSlug}/experiment`} className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">{moduleTitle}</Link>
           <span>/</span>
           <span className="text-text-primary font-semibold">Analisis</span>
         </div>
@@ -337,9 +337,9 @@ export default function AnalysisPage() {
           {LAB_STEPS.map((s, i) => (
             <React.Fragment key={s}>
               <div className={cn(
-                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all",
+                "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all",
                 i === 3 ? "bg-accent-cobalt text-white" :
-                i < 3   ? "bg-success/10 text-success" :
+                i < 3   ? "bg-success/10 text-emerald-700" :
                 i === 4  ? "bg-white border border-border-default text-text-muted" :
                 "text-text-muted bg-gray-50 opacity-40"
               )}>
@@ -354,11 +354,11 @@ export default function AnalysisPage() {
         {/* Nav buttons */}
         <div className="ml-auto flex items-center gap-2">
           <Link href={`/modules/${moduleSlug}/experiment`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold text-text-muted hover:bg-gray-100 transition-all border border-border-default">
             <ChevronLeft className="w-3.5 h-3.5" /> Lab
           </Link>
           <Link href={`/modules/${moduleSlug}/reflection`}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all">
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white hover:bg-accent-cobalt/90 transition-all">
             Refleksi <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -369,7 +369,7 @@ export default function AnalysisPage() {
         {/* ─── Peringatan data demo ─── */}
         {isDemoData && (
           <div className="mb-5 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
             <div className="text-xs text-amber-800 leading-relaxed">
               <b>Ini adalah data contoh, bukan hasil eksperimenmu.</b> Grafik dan angka di bawah hanya
               ilustrasi. Jalankan eksperimen dan rekam data dulu di{" "}
@@ -417,23 +417,23 @@ export default function AnalysisPage() {
               {/* Summary stats bar */}
               <div className="flex items-center gap-4 px-4 py-3 bg-white rounded-xl border border-border-default shadow-sm text-sm flex-wrap">
                 <div>
-                  <span className="text-text-muted text-[10px] block uppercase tracking-wider">Stokes (raw)</span>
+                  <span className="text-text-muted text-[11px] block uppercase tracking-wider">Stokes (raw)</span>
                   <span className="font-mono font-bold text-slate-600">{calculatedE_stokes.toFixed(3)} ×10⁻¹⁹ C</span>
-                  <span className={cn("ml-1.5 text-[10px] font-semibold", errorPct_stokes < 5 ? "text-success" : "text-amber-500")}>
+                  <span className={cn("ml-1.5 text-[11px] font-semibold", errorPct_stokes < 5 ? "text-emerald-700" : "text-amber-700")}>
                     Δ{errorPct_stokes.toFixed(1)}%
                   </span>
                 </div>
                 <div className="w-px h-8 bg-border-default" />
                 <div>
-                  <span className="text-text-muted text-[10px] block uppercase tracking-wider">+ Cunningham</span>
+                  <span className="text-text-muted text-[11px] block uppercase tracking-wider">+ Cunningham</span>
                   <span className="font-mono font-bold text-teal">{calculatedE_corr.toFixed(3)} ×10⁻¹⁹ C</span>
-                  <span className={cn("ml-1.5 text-[10px] font-semibold", errorPct_corr < 3 ? "text-success" : "text-amber-500")}>
+                  <span className={cn("ml-1.5 text-[11px] font-semibold", errorPct_corr < 3 ? "text-emerald-700" : "text-amber-700")}>
                     Δ{errorPct_corr.toFixed(1)}%
                   </span>
                 </div>
                 <div className="w-px h-8 bg-border-default" />
                 <div>
-                  <span className="text-text-muted text-[10px] block uppercase tracking-wider">NIST 2018</span>
+                  <span className="text-text-muted text-[11px] block uppercase tracking-wider">NIST 2018</span>
                   <span className="font-mono font-bold text-primary-navy">{E_REF} ×10⁻¹⁹ C</span>
                 </div>
                 {errorPct_corr < 3 && (
@@ -500,7 +500,7 @@ export default function AnalysisPage() {
                           </ComposedChart>
                         </ResponsiveContainer>
                       </div>
-                      <div className="mt-3 flex items-center gap-4 text-[10px] font-mono text-text-muted flex-wrap">
+                      <div className="mt-3 flex items-center gap-4 text-[11px] font-mono text-text-muted flex-wrap">
                         <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-full bg-[#0891B2] inline-block" /> Stokes (tanpa koreksi)</span>
                         <span className="flex items-center gap-1"><span className="w-3 h-3 rotate-45 bg-teal inline-block" /> + Cunningham</span>
                         <span className="flex items-center gap-1"><span className="w-5 h-3 rounded bg-[#0ea5e9]/20 inline-block" /> Zona kuantum ±10%</span>
@@ -542,7 +542,7 @@ export default function AnalysisPage() {
                           </ComposedChart>
                         </ResponsiveContainer>
                       </div>
-                      <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-[10px] text-amber-700 flex items-start gap-2">
+                      <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-[11px] text-amber-700 flex items-start gap-2">
                         <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                         <span>Dengan banyak trial, GCD dari semua nilai q ≈ nilai e. Puncak-puncak pada histogram ini adalah bukti empiris kuantisasi tanpa asumsi awal.</span>
                       </div>
@@ -589,7 +589,7 @@ export default function AnalysisPage() {
                           </ResponsiveContainer>
                         </div>
                       )}
-                      <div className="mt-3 flex items-center gap-5 text-[10px] font-mono text-text-muted flex-wrap">
+                      <div className="mt-3 flex items-center gap-5 text-[11px] font-mono text-text-muted flex-wrap">
                         <span className="flex items-center gap-1.5"><span className="w-5 h-0.5 bg-[#0891B2] inline-block" /> Stokes</span>
                         <span className="flex items-center gap-1.5"><span className="w-5 h-0.5 bg-teal inline-block" /> +Cunningham</span>
                         <span className="flex items-center gap-1.5"><span className="w-4 h-0.5 inline-block border-t-2 border-red-400 border-dashed" /> NIST</span>
@@ -607,15 +607,15 @@ export default function AnalysisPage() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4 text-xs font-mono text-slate-300">
                   <div className="space-y-1.5">
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Mengapa Stokes tidak cukup</p>
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Mengapa Stokes tidak cukup</p>
                     <p>Untuk droplet <span className="text-yellow-300">r ≈ 1–2 µm</span>, ukurannya mendekati <span className="text-cyan-300">jarak bebas rata-rata molekul udara (λ ≈ 65 nm)</span>.</p>
                     <p>Akibatnya, drag aktual &lt; prediksi Stokes → q terukur &lt; q nyata.</p>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Formula</p>
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Formula</p>
                     <p className="text-green-300 text-sm font-bold">C(r) = 1 + A·λ/r</p>
-                    <p className="text-slate-400 text-[10px]">A = 1.257 · λ = 65 nm</p>
-                    <div className="bg-slate-800 rounded-lg p-2 space-y-1 text-[10px] mt-1">
+                    <p className="text-slate-400 text-[11px]">A = 1.257 · λ = 65 nm</p>
+                    <div className="bg-slate-800 rounded-lg p-2 space-y-1 text-[11px] mt-1">
                       {[1.0, 1.5, 2.0].map(r => (
                         <div key={r} className="flex justify-between">
                           <span className="text-slate-400">r = {r} µm</span>
@@ -639,7 +639,7 @@ export default function AnalysisPage() {
                   <Badge variant="primary" size="sm">n = {trials.length}</Badge>
                 </div>
                 <div className="rounded-lg border border-border-default overflow-auto">
-                  <table className="w-full text-[10px]" aria-label="Tabel data Millikan">
+                  <table className="w-full text-[11px]" aria-label="Tabel data Millikan">
                     <thead>
                       <tr className="bg-gray-50 border-b border-border-default">
                         {["#", "r(µm)", "V", "tf/tr (s)", "q Stokes", "C(r)", "q+Cunn.", "n"].map(h => (
@@ -670,27 +670,27 @@ export default function AnalysisPage() {
                 <h3 className="font-display font-semibold text-primary-navy mb-4 text-sm">Muatan Elementer e</h3>
                 <div className="space-y-3">
                   <div className="bg-slate-50 rounded-xl p-3 border border-border-default/60">
-                    <p className="text-[9px] text-text-muted font-mono mb-1 uppercase tracking-wider">Stokes (tanpa koreksi)</p>
+                    <p className="text-[11px] text-text-muted font-mono mb-1 uppercase tracking-wider">Stokes (tanpa koreksi)</p>
                     <div className="flex items-baseline gap-1.5">
                       <span className="font-mono text-xl font-bold text-slate-600">{calculatedE_stokes.toFixed(4)}</span>
-                      <span className="text-[10px] text-text-muted font-mono">×10⁻¹⁹ C</span>
-                      <span className={cn("ml-auto text-xs font-bold", errorPct_stokes < 5 ? "text-success" : "text-amber-500")}>
+                      <span className="text-[11px] text-text-muted font-mono">×10⁻¹⁹ C</span>
+                      <span className={cn("ml-auto text-xs font-bold", errorPct_stokes < 5 ? "text-emerald-700" : "text-amber-700")}>
                         Δ{errorPct_stokes.toFixed(2)}%
                       </span>
                     </div>
                   </div>
                   <div className="bg-teal/5 rounded-xl p-3 border border-teal/20">
-                    <p className="text-[9px] text-teal font-mono mb-1 uppercase tracking-wider">+ Koreksi Cunningham</p>
+                    <p className="text-[11px] text-teal font-mono mb-1 uppercase tracking-wider">+ Koreksi Cunningham</p>
                     <div className="flex items-baseline gap-1.5">
                       <span className="font-mono text-xl font-bold text-teal">{calculatedE_corr.toFixed(4)}</span>
-                      <span className="text-[10px] text-text-muted font-mono">×10⁻¹⁹ C</span>
-                      <span className={cn("ml-auto text-xs font-bold", errorPct_corr < 3 ? "text-success" : "text-amber-500")}>
+                      <span className="text-[11px] text-text-muted font-mono">×10⁻¹⁹ C</span>
+                      <span className={cn("ml-auto text-xs font-bold", errorPct_corr < 3 ? "text-emerald-700" : "text-amber-700")}>
                         Δ{errorPct_corr.toFixed(2)}%
                       </span>
                     </div>
                   </div>
-                  <div className={cn("rounded-xl p-3 border text-[10px]",
-                    errorPct_corr < 3 ? "bg-success/5 border-success/20 text-success" :
+                  <div className={cn("rounded-xl p-3 border text-[11px]",
+                    errorPct_corr < 3 ? "bg-success/5 border-success/20 text-emerald-700" :
                     errorPct_corr < 8 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
                     <div className="flex items-center gap-2 font-semibold mb-1">
                       {errorPct_corr < 3 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
@@ -705,7 +705,7 @@ export default function AnalysisPage() {
               {/* Per-trial e table */}
               <div className="bg-white rounded-xl border border-border-default p-4 shadow-sm">
                 <h3 className="font-display font-semibold text-sm text-primary-navy mb-3">Estimasi e per Trial</h3>
-                <table className="w-full text-[10px]">
+                <table className="w-full text-[11px]">
                   <thead>
                     <tr className="border-b border-border-default bg-gray-50">
                       <th className="px-2 py-1.5 text-left text-text-muted">#</th>
@@ -726,17 +726,17 @@ export default function AnalysisPage() {
                           <td className="px-2 py-1.5 font-mono">{d.n}e</td>
                           <td className="px-2 py-1.5 font-mono text-slate-500">{eS.toFixed(4)}</td>
                           <td className="px-2 py-1.5 font-mono font-bold text-teal">{eC.toFixed(4)}</td>
-                          <td className={cn("px-2 py-1.5 font-mono font-semibold", err < 3 ? "text-success" : err < 8 ? "text-amber-500" : "text-danger")}>
+                          <td className={cn("px-2 py-1.5 font-mono font-semibold", err < 3 ? "text-emerald-700" : err < 8 ? "text-amber-700" : "text-danger")}>
                             {err.toFixed(2)}%
                           </td>
                         </tr>
                       );
                     })}
-                    <tr className="bg-gray-50 font-bold text-[10px]">
+                    <tr className="bg-gray-50 font-bold text-[11px]">
                       <td colSpan={2} className="px-2 py-1.5 text-text-muted">Rata-rata</td>
                       <td className="px-2 py-1.5 font-mono text-slate-500">{calculatedE_stokes.toFixed(4)}</td>
                       <td className="px-2 py-1.5 font-mono text-teal">{calculatedE_corr.toFixed(4)}</td>
-                      <td className={cn("px-2 py-1.5 font-mono", errorPct_corr < 3 ? "text-success" : "text-amber-500")}>{errorPct_corr.toFixed(2)}%</td>
+                      <td className={cn("px-2 py-1.5 font-mono", errorPct_corr < 3 ? "text-emerald-700" : "text-amber-700")}>{errorPct_corr.toFixed(2)}%</td>
                     </tr>
                   </tbody>
                 </table>
@@ -783,8 +783,8 @@ export default function AnalysisPage() {
                   <span className="text-text-muted text-xs">R²</span>
                   <span className={cn("font-mono font-bold text-base",
                     !hasEnoughBandulData ? "text-text-muted" :
-                    regressionBandul.r2 > 0.99 ? "text-success" :
-                    regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-500")}>
+                    regressionBandul.r2 > 0.99 ? "text-emerald-700" :
+                    regressionBandul.r2 > 0.95 ? "text-accent-cobalt" : "text-amber-700")}>
                     {hasEnoughBandulData ? regressionBandul.r2.toFixed(4) : "—"}
                   </span>
                 </div>
@@ -840,7 +840,7 @@ export default function AnalysisPage() {
                     </ComposedChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-3 flex items-center gap-4 text-[10px] font-mono text-text-muted">
+                <div className="mt-3 flex items-center gap-4 text-[11px] font-mono text-text-muted">
                   <span className="flex items-center gap-1.5"><span className="w-4 h-4 rounded-full bg-[#1B4FD8] inline-block" /> Data trial</span>
                   <span className="flex items-center gap-1.5"><span className="w-6 h-0.5 border-t-2 border-dashed border-[#14213D] inline-block" /> Garis regresi terbaik</span>
                 </div>
@@ -854,16 +854,16 @@ export default function AnalysisPage() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4 text-xs font-mono text-slate-300">
                   <div className="space-y-1.5">
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Derivasi rumus</p>
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Derivasi rumus</p>
                     <p>T = 2π√(L/g)</p>
                     <p>T² = <span className="text-yellow-300">(4π²/g)</span> · L</p>
-                    <p className="text-slate-400 text-[10px] mt-2">Bentuk: y = m·x + c</p>
+                    <p className="text-slate-400 text-[11px] mt-2">Bentuk: y = m·x + c</p>
                     <p>Gradien m = 4π²/g</p>
                     <p className="text-green-300 font-bold">∴ g = 4π²/m</p>
                   </div>
                   <div className="space-y-1.5">
-                    <p className="text-slate-400 text-[10px] uppercase tracking-wider mb-1">Dari datamu</p>
-                    <div className="bg-slate-800 rounded-lg p-2.5 space-y-1.5 text-[10px]">
+                    <p className="text-slate-400 text-[11px] uppercase tracking-wider mb-1">Dari datamu</p>
+                    <div className="bg-slate-800 rounded-lg p-2.5 space-y-1.5 text-[11px]">
                       <div className="flex justify-between">
                         <span className="text-slate-400">Gradien (m)</span>
                         <span className="text-yellow-300">
@@ -944,14 +944,14 @@ export default function AnalysisPage() {
                 ) : (
                   <>
                     <div className="bg-accent-cobalt/5 rounded-xl p-4 border border-accent-cobalt/20 mb-3">
-                      <p className="text-[10px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
+                      <p className="text-[11px] text-text-muted font-mono uppercase tracking-wider mb-1">g hitung dari regresi T² vs L</p>
                       <div className="flex items-baseline gap-2">
                         <span className="font-mono text-3xl font-bold text-primary-navy">{calculatedG.toFixed(3)}</span>
                         <span className="font-mono text-sm text-text-muted">m/s²</span>
                       </div>
                     </div>
-                    <div className={cn("rounded-xl p-3 border text-[10px]",
-                      gError < 2 ? "bg-success/5 border-success/20 text-success" :
+                    <div className={cn("rounded-xl p-3 border text-[11px]",
+                      gError < 2 ? "bg-success/5 border-success/20 text-emerald-700" :
                       gError < 5 ? "bg-amber-50 border-amber-200 text-amber-700" : "bg-rose-50 border-rose-200 text-rose-700")}>
                       <div className="flex items-center gap-1.5 font-semibold mb-0.5">
                         {gError < 2 ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}

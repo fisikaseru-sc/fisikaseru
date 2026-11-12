@@ -417,7 +417,7 @@ export function MillikanReflectionExperience() {
       <div className="hidden print:block p-8 bg-white text-slate-900 font-sans text-xs space-y-6">
         <div className="border-b-2 border-slate-900 pb-3">
           <h1 className="text-xl font-bold">Laporan Refleksi Saintifik &amp; Kuantisasi Muatan — Eksperimen Millikan</h1>
-          <p className="text-[10px] text-slate-500">Platform Pembelajaran Inkuiri FisikaSeru · Validasi Bukti Konseptual</p>
+          <p className="text-[11px] text-slate-500">Platform Pembelajaran Inkuiri FisikaSeru · Validasi Bukti Konseptual</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -499,7 +499,7 @@ export function MillikanReflectionExperience() {
               >
                 <div
                   className={cn(
-                    "w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold flex-shrink-0",
+                    "w-6 h-6 rounded-lg flex items-center justify-center text-[11px] font-bold flex-shrink-0",
                     isActive
                       ? "bg-white/20 text-white"
                       : isDone
@@ -513,7 +513,7 @@ export function MillikanReflectionExperience() {
                   <span className="font-display font-semibold block truncate leading-tight">
                     {c.label}
                   </span>
-                  <span className={cn("text-[9px] truncate block mt-0.5", isActive ? "text-white/80" : "text-text-muted")}>
+                  <span className={cn("text-[11px] truncate block mt-0.5", isActive ? "text-white/80" : "text-text-muted")}>
                     {c.desc}
                   </span>
                 </div>
@@ -536,7 +536,7 @@ export function MillikanReflectionExperience() {
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-accent-cobalt" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                   Bab 01 · Rekap Penemuanmu
                 </span>
               </div>
@@ -551,27 +551,27 @@ export function MillikanReflectionExperience() {
 
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="bg-white border border-border-default rounded-xl p-4 shadow-sm space-y-1">
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-wider">Tetes Minyak Terekam</span>
+              <span className="text-[11px] text-text-muted font-display uppercase tracking-wider">Tetes Minyak Terekam</span>
               <div className="font-mono text-2xl font-bold text-primary-navy">{analysisResult.trialCount} <span className="text-xs text-text-muted font-normal font-sans">droplet</span></div>
-              <p className="text-[10px] text-slate-500">Masing-masing memiliki ukuran &amp; waktu jatuh unik</p>
+              <p className="text-[11px] text-slate-500">Masing-masing memiliki ukuran &amp; waktu jatuh unik</p>
             </div>
 
             <div className="bg-white border border-border-default rounded-xl p-4 shadow-sm space-y-1">
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-wider">Satuan Dasar Terukur (e)</span>
+              <span className="text-[11px] text-text-muted font-display uppercase tracking-wider">Satuan Dasar Terukur (e)</span>
               <div className="font-mono text-2xl font-bold text-teal">
                 {analysisResult.calculatedE_corr !== null ? (
                   <>{analysisResult.calculatedE_corr.toFixed(3)} <span className="text-xs text-text-muted font-sans font-normal">× 10⁻¹⁹ C</span></>
                 ) : (
-                  <span className="text-xs text-amber-600 font-sans">Data belum cukup</span>
+                  <span className="text-xs text-amber-700 font-sans">Data belum cukup</span>
                 )}
               </div>
-              <p className="text-[10px] text-slate-500">Hasil penurunan dari kesetimbangan Stokes &amp; Cunningham</p>
+              <p className="text-[11px] text-slate-500">Hasil penurunan dari kesetimbangan Stokes &amp; Cunningham</p>
             </div>
 
             <div className="bg-white border border-border-default rounded-xl p-4 shadow-sm space-y-1">
-              <span className="text-[10px] text-text-muted font-display uppercase tracking-wider">Sifat Struktur</span>
+              <span className="text-[11px] text-text-muted font-display uppercase tracking-wider">Sifat Struktur</span>
               <div className="font-mono text-xl font-bold text-indigo-700">Terkuantisasi</div>
-              <p className="text-[10px] text-slate-500">Rasio hasil pembagian berkali-kali mendekati bilangan bulat</p>
+              <p className="text-[11px] text-slate-500">Rasio hasil pembagian berkali-kali mendekati bilangan bulat</p>
             </div>
           </div>
 
@@ -582,13 +582,13 @@ export function MillikanReflectionExperience() {
             </h3>
             <div className="grid sm:grid-cols-2 gap-3 text-xs">
               <div className="bg-slate-50 border border-border-default rounded-xl p-4 space-y-2">
-                <span className="font-mono font-bold text-[10px] text-text-muted uppercase">Model Kontinu (Dugaan Awal Umum)</span>
+                <span className="font-mono font-bold text-[11px] text-text-muted uppercase">Model Kontinu (Dugaan Awal Umum)</span>
                 <p className="text-slate-600 leading-relaxed text-[11px]">
                   Muatan listrik dianggap zat cair bebas yang dapat bernilai pecahan berapa saja di sepanjang garis tanpa ada batas minimum.
                 </p>
               </div>
               <div className="bg-teal/5 border border-teal/20 rounded-xl p-4 space-y-2">
-                <span className="font-mono font-bold text-[10px] text-teal uppercase">Model Kuantisasi (Hasil Bukti Nyata)</span>
+                <span className="font-mono font-bold text-[11px] text-teal uppercase">Model Kuantisasi (Hasil Bukti Nyata)</span>
                 <p className="text-slate-700 leading-relaxed text-[11px]">
                   Muatan listrik selalu dibawa dalam paket diskret terkecil $e$. Setiap muatan adalah perkalian bilangan bulat $q = n \times e$.
                 </p>
@@ -621,7 +621,7 @@ export function MillikanReflectionExperience() {
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <Compass className="w-4 h-4 text-amber-600" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-700">
                   Bab 02 · Membandingkan Pemikiran
                 </span>
               </div>
@@ -639,13 +639,13 @@ export function MillikanReflectionExperience() {
             {/* Top: Initial Prediction */}
             <div className="p-5 border-b border-border-default bg-slate-50/70 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-text-muted">
                   Apa Dugaan Awalmu?
                 </span>
                 {savedPrediction && (
                   <div className="flex items-center gap-1.5 text-xs font-mono text-slate-600">
-                    <span className="text-[10px] text-text-muted">Keyakinan:</span>
-                    <span className="text-amber-500 font-bold">
+                    <span className="text-[11px] text-text-muted">Keyakinan:</span>
+                    <span className="text-amber-600 font-bold">
                       {"●".repeat(savedPrediction.confidence || 3)}
                       {"○".repeat(5 - (savedPrediction.confidence || 3))}
                     </span>
@@ -663,7 +663,7 @@ export function MillikanReflectionExperience() {
 
               {savedPrediction?.reasoning && savedPrediction.reasoning !== "(Tidak ada catatan tambahan)" && (
                 <div className="bg-white p-3 rounded-xl border border-border-default/60 text-xs text-slate-600 italic">
-                  <span className="not-italic font-bold text-primary-navy block text-[10px] uppercase font-mono mb-1">
+                  <span className="not-italic font-bold text-primary-navy block text-[11px] uppercase font-mono mb-1">
                     Alasan yang Kamu Tuliskan:
                   </span>
                   &quot;{savedPrediction.reasoning}&quot;
@@ -674,7 +674,7 @@ export function MillikanReflectionExperience() {
             {/* Bottom: Evidence & Respectful Outcome */}
             <div className="p-5 space-y-3.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                   Apa yang Ditunjukkan oleh Data Eksperimenmu?
                 </span>
                 <Badge variant={outcomeClassification.badgeVariant} size="sm">
@@ -763,7 +763,7 @@ export function MillikanReflectionExperience() {
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <BrainCircuit className="w-4 h-4 text-teal" />
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-teal">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-teal">
                   Bab 04 · Kesimpulan Mandiri &amp; Metakognisi
                 </span>
               </div>
@@ -783,7 +783,7 @@ export function MillikanReflectionExperience() {
                 Struktur Kesimpulan Ilmiah Mandiri
               </h3>
               <div className="flex items-center gap-1.5 text-xs font-mono text-text-muted">
-                <span className="text-[10px] font-bold">Status:</span>
+                <span className="text-[11px] font-bold">Status:</span>
                 <span className={cn(
                   "font-sans font-semibold text-[11px]",
                   conceptualEvaluation.cerEvaluation.isCompleteCER ? "text-emerald-700" : "text-amber-600"
@@ -801,7 +801,7 @@ export function MillikanReflectionExperience() {
                     1. Apa temuan utamamu? (Klaim / Kesimpulan)
                   </label>
                   {conceptualEvaluation.cerEvaluation.hasClaim && (
-                    <span className="text-[10px] text-emerald-700 font-mono font-bold flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-700 font-mono font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Klaim terdeteksi
                     </span>
                   )}
@@ -827,7 +827,7 @@ export function MillikanReflectionExperience() {
                     2. Bukti apa dari eksperimen yang mendukung temuanmu? (Data konkret)
                   </label>
                   {conceptualEvaluation.cerEvaluation.hasEvidence && (
-                    <span className="text-[10px] text-emerald-700 font-mono font-bold flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-700 font-mono font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Bukti terdeteksi
                     </span>
                   )}
@@ -853,7 +853,7 @@ export function MillikanReflectionExperience() {
                     3. Mengapa bukti itu mendukung temuanmu? (Penalaran Fisika)
                   </label>
                   {conceptualEvaluation.cerEvaluation.hasReasoning && (
-                    <span className="text-[10px] text-emerald-700 font-mono font-bold flex items-center gap-1">
+                    <span className="text-[11px] text-emerald-700 font-mono font-bold flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" /> Penalaran terdeteksi
                     </span>
                   )}
@@ -980,14 +980,14 @@ export function MillikanReflectionExperience() {
                   <h4 className="font-display font-bold text-xs text-primary-navy">
                     Teman Berpikir Sokratis (Thinking Partner)
                   </h4>
-                  <p className="text-[10px] text-text-muted">
+                  <p className="text-[11px] text-text-muted">
                     Mode Kognitif: <b className="text-primary-navy font-semibold">{COGNITIVE_STATE_LABELS[lastCognitiveState] || "Meneliti Data"}</b>
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="primary" size="sm" className="text-[10px] font-sans">
+                <Badge variant="primary" size="sm" className="text-[11px] font-sans">
                   Fokus: {INTENT_LABELS[lastIntent] || "Penyelidikan Saintifik"}
                 </Badge>
                 {!dialogueFinished && (
@@ -996,7 +996,7 @@ export function MillikanReflectionExperience() {
                     variant="outline"
                     size="sm"
                     onClick={handleProductivePause}
-                    className="text-[10px] h-6 px-2 cursor-pointer border-border-default text-text-muted hover:text-primary-navy flex items-center gap-1"
+                    className="text-[11px] h-6 px-2 cursor-pointer border-border-default text-text-muted hover:text-primary-navy flex items-center gap-1"
                     title="Ambil jeda waktu berpikir mandiri tanpa tekanan menjawab segera"
                   >
                     <Pause className="w-3 h-3" />
@@ -1052,8 +1052,8 @@ export function MillikanReflectionExperience() {
             {/* Thinking Starters Chips */}
             {!dialogueFinished && (
               <div className="px-4 py-2 bg-slate-50/80 border-t border-border-default/60 flex items-center gap-1.5 overflow-x-auto text-[11px]">
-                <span className="text-[10px] font-mono text-text-muted flex-shrink-0 flex items-center gap-1">
-                  <Lightbulb className="w-3 h-3 text-amber-500" /> Pemantik Berpikir:
+                <span className="text-[11px] font-mono text-text-muted flex-shrink-0 flex items-center gap-1">
+                  <Lightbulb className="w-3 h-3 text-amber-600" /> Pemantik Berpikir:
                 </span>
                 {THINKING_STARTERS.map((starter, i) => (
                   <button
@@ -1062,7 +1062,7 @@ export function MillikanReflectionExperience() {
                     onClick={() => {
                       setCurrentInput((prev) => (prev ? `${prev} ${starter}` : starter));
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-white border border-border-default hover:border-accent-cobalt/40 text-slate-700 hover:text-accent-cobalt transition-colors cursor-pointer flex-shrink-0 text-[10px]"
+                    className="px-2.5 py-1 rounded-lg bg-white border border-border-default hover:border-accent-cobalt/40 text-slate-700 hover:text-accent-cobalt transition-colors cursor-pointer flex-shrink-0 text-[11px]"
                   >
                     &quot;{starter}&quot;
                   </button>

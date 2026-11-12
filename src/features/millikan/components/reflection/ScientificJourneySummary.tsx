@@ -58,7 +58,7 @@ export function ScientificJourneySummary({
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-primary-navy text-white rounded-2xl p-6 shadow-depth relative overflow-hidden border border-slate-800">
         <div className="absolute top-0 right-0 w-48 h-48 bg-accent-cobalt/20 rounded-full filter blur-3xl pointer-events-none" />
         <div className="space-y-1.5 relative z-10">
-          <Badge className="bg-accent-cobalt/40 text-sky-200 border-accent-cobalt/50 text-[10px] font-mono uppercase tracking-wider">
+          <Badge className="bg-accent-cobalt/40 text-sky-200 border-accent-cobalt/50 text-[11px] font-mono uppercase tracking-wider">
             Sintesis Penyelidikan Ilmiah
           </Badge>
           <h2 className="font-display font-bold text-xl md:text-2xl text-white">
@@ -79,7 +79,7 @@ export function ScientificJourneySummary({
           </div>
           <div className="space-y-1 flex-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-text-muted">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-text-muted">
                 Gagasan Awal (Initial Idea)
               </span>
               <Compass className="w-3.5 h-3.5 text-amber-600" />
@@ -105,7 +105,7 @@ export function ScientificJourneySummary({
           </div>
           <div className="space-y-1 flex-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
                 Investigasi Laboratorium (What You Tested)
               </span>
               <FlaskConical className="w-3.5 h-3.5 text-accent-cobalt" />
@@ -126,7 +126,7 @@ export function ScientificJourneySummary({
           </div>
           <div className="space-y-1 flex-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-teal">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-teal">
                 Bukti Empiris (What The Data Showed)
               </span>
               <Sparkles className="w-3.5 h-3.5 text-teal" />
@@ -147,7 +147,7 @@ export function ScientificJourneySummary({
           </div>
           <div className="space-y-2 flex-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-indigo-700">
                 Model Mental Barumu (What You Now Think)
               </span>
               <BrainCircuit className="w-3.5 h-3.5 text-indigo-700" />
@@ -158,19 +158,19 @@ export function ScientificJourneySummary({
 
             <div className="bg-slate-50 rounded-xl p-3.5 border border-border-default/80 space-y-2 text-xs">
               <div>
-                <span className="font-bold text-primary-navy block text-[10px] uppercase font-mono">
+                <span className="font-bold text-primary-navy block text-[11px] uppercase font-mono">
                   Temuan Utama (Klaim):
                 </span>
                 <p className="text-slate-800 italic">{conclusion.claim || "—"}</p>
               </div>
               <div>
-                <span className="font-bold text-primary-navy block text-[10px] uppercase font-mono">
+                <span className="font-bold text-primary-navy block text-[11px] uppercase font-mono">
                   Bukti Pendukung:
                 </span>
                 <p className="text-slate-800 italic">{conclusion.evidence || "—"}</p>
               </div>
               <div>
-                <span className="font-bold text-primary-navy block text-[10px] uppercase font-mono">
+                <span className="font-bold text-primary-navy block text-[11px] uppercase font-mono">
                   Penalaran Fisika:
                 </span>
                 <p className="text-slate-800 italic">{conclusion.reasoning || "—"}</p>
@@ -193,7 +193,7 @@ export function ScientificJourneySummary({
           </div>
           <div className="space-y-1 flex-1">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-sky-700">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-sky-700">
                 Teka-Teki Lanjutan (What You Want To Explore)
               </span>
               <HelpCircle className="w-3.5 h-3.5 text-sky-600" />

@@ -46,7 +46,7 @@ export function TransformationSection({
           </div>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-teal">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-teal">
                 Tahap 02: Transformasi Fisika
               </span>
               <Badge variant="primary" size="sm">
@@ -76,7 +76,7 @@ export function TransformationSection({
           <div className="bg-slate-50 rounded-lg p-2 font-mono text-[11px] text-primary-navy text-center border border-border-default/60">
             F<sub>g</sub> = 6π · η · r · v<sub>f</sub>
           </div>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[11px] text-slate-500">
             → Menghasilkan radius tetes (r) dan massa tetes (m).
           </p>
         </div>
@@ -92,7 +92,7 @@ export function TransformationSection({
           <div className="bg-slate-50 rounded-lg p-2 font-mono text-[11px] text-primary-navy text-center border border-border-default/60">
             F<sub>e</sub> = q · (V / d)
           </div>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[11px] text-slate-500">
             → Menghasilkan nilai muatan mentah (q Stokes).
           </p>
         </div>
@@ -108,7 +108,7 @@ export function TransformationSection({
           <div className="bg-slate-50 rounded-lg p-2 font-mono text-[11px] text-teal font-semibold text-center border border-border-default/60">
             C(r) = 1 + A · (λ / r)
           </div>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[11px] text-slate-500">
             → q<sub>terkoreksi</sub> = q<sub>Stokes</sub> · C(r).
           </p>
         </div>
@@ -144,7 +144,7 @@ export function TransformationSection({
             >
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <h5 className="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">
+                  <h5 className="text-cyan-400 font-bold uppercase tracking-wider text-[11px]">
                     1. Menghitung Jari-Jari Tetes (r)
                   </h5>
                   <p className="text-[11px] leading-relaxed text-slate-300">
@@ -153,13 +153,13 @@ export function TransformationSection({
                   <div className="bg-slate-800 p-2.5 rounded-lg text-emerald-300 text-[11px]">
                     r = √[ (9 · η · v_f) / (2 · (ρ_minyak - ρ_udara) · g) ]
                   </div>
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[11px] text-slate-400">
                     Konstanta: η = 1.832×10⁻⁵ Pa·s, ρ_minyak = 886 kg/m³, ρ_udara = 1.204 kg/m³, g = 9.80665 m/s².
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <h5 className="text-cyan-400 font-bold uppercase tracking-wider text-[10px]">
+                  <h5 className="text-cyan-400 font-bold uppercase tracking-wider text-[11px]">
                     2. Menghitung Muatan Listrik (q)
                   </h5>
                   <p className="text-[11px] leading-relaxed text-slate-300">
@@ -168,7 +168,7 @@ export function TransformationSection({
                   <div className="bg-slate-800 p-2.5 rounded-lg text-yellow-300 text-[11px]">
                     q_stokes = [ 6π · η · r · (v_f + v_r) · d ] / V
                   </div>
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[11px] text-slate-400">
                     Saat tetes dibuat seimbang melayang (v_r = 0), rumusnya menyederhanakan menjadi: q = (m_eff · g · d) / V.
                   </p>
                 </div>
@@ -232,7 +232,7 @@ export function TransformationSection({
                   <td className="py-2.5 px-3 text-teal font-extrabold text-xs">
                     {t.qCorr ? t.qCorr.toFixed(2) : (t.q * 1.05).toFixed(2)}
                   </td>
-                  <td className="py-2.5 px-3 text-slate-500 font-sans text-[10px]">
+                  <td className="py-2.5 px-3 text-slate-500 font-sans text-[11px]">
                     ±{((t.uncRel || 0.05) * 100).toFixed(1)}% (stopwatch & optik)
                   </td>
                 </tr>
@@ -247,7 +247,7 @@ export function TransformationSection({
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-accent-cobalt" />
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
               Sebelum Melanjutkan
             </span>
           </div>
@@ -292,7 +292,7 @@ export function TransformationSection({
                 )}
               >
                 <span>{opt.label}</span>
-                <span className={cn("w-3.5 h-3.5 rounded-full border mt-2 flex items-center justify-center text-[9px] self-end",
+                <span className={cn("w-3.5 h-3.5 rounded-full border mt-2 flex items-center justify-center text-[11px] self-end",
                   isSelected ? "border-accent-cobalt bg-accent-cobalt text-white" : "border-slate-300"
                 )}>
                   {isSelected && "✓"}

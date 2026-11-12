@@ -66,10 +66,10 @@ export function ConfidenceRevisitSection({
       <div className="grid sm:grid-cols-2 gap-4">
         {/* Before */}
         <div className="p-4 bg-slate-50 border border-border-default rounded-xl space-y-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-text-muted block">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-text-muted block">
             Sebelum Eksperimen (Dugaan Awal)
           </span>
-          <div className="flex items-center gap-2 text-sm font-mono text-amber-500">
+          <div className="flex items-center gap-2 text-sm font-mono text-amber-600">
             <span className="font-bold text-base text-primary-navy">{initialConfidence}/5</span>
             <span className="tracking-widest">
               {"●".repeat(initialConfidence)}
@@ -83,7 +83,7 @@ export function ConfidenceRevisitSection({
 
         {/* Now */}
         <div className="p-4 bg-accent-cobalt/5 border border-accent-cobalt/20 rounded-xl space-y-2">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-accent-cobalt block">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-accent-cobalt block">
             Sekarang (Setelah Pengujian Bukti)
           </span>
           <div className="flex items-center gap-1.5 pt-0.5">

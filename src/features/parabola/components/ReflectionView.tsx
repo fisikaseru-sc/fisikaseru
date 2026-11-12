@@ -170,7 +170,7 @@ export default function ReflectionView() {
       {/* Header */}
       <header className="h-12 bg-white border-b border-border-default flex items-center px-4 sticky top-0 z-30">
         <div className="flex items-center gap-1.5 text-xs text-text-muted min-w-0">
-          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap">
+          <Link href="/modules" className="hover:text-primary-navy transition-colors whitespace-nowrap py-1 -my-1">
             Katalog
           </Link>
           <span>/</span>
@@ -185,8 +185,8 @@ export default function ReflectionView() {
               <div
                 className={
                   i === 3
-                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-accent-cobalt text-white"
-                    : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold text-text-muted bg-gray-50 opacity-40"
+                    ? "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-accent-cobalt text-white"
+                    : "flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold text-text-muted bg-gray-50 opacity-40"
                 }
               >
                 <span className="font-mono opacity-70">{i + 1}</span>
@@ -247,7 +247,7 @@ export default function ReflectionView() {
 
           {!prediction ? (
             <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 text-sm text-text-muted flex items-start gap-3">
-              <Lightbulb className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+              <Lightbulb className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-primary-navy mb-1">Langkah Prediksi Bersifat Opsional</p>
                 <p className="text-xs text-text-muted leading-relaxed">
@@ -272,7 +272,7 @@ export default function ReflectionView() {
             <div className="grid grid-cols-2 gap-3">
               {/* Kartu prediksi */}
               <div className="bg-white rounded-2xl border border-border-default shadow-sm p-5 text-center">
-                <p className="text-[10px] font-mono uppercase tracking-wider text-text-muted mb-1">
+                <p className="text-[11px] font-mono uppercase tracking-wider text-text-muted mb-1">
                   Prediksi awalmu
                 </p>
                 <p className="font-mono text-4xl font-bold text-primary-navy tabular-nums">
@@ -285,7 +285,7 @@ export default function ReflectionView() {
               {/* Kartu temuan */}
               <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl border border-slate-800 shadow-depth p-5 text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-accent-cobalt/20 rounded-full filter blur-2xl pointer-events-none" />
-                <p className="text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-1">
+                <p className="text-[11px] font-mono uppercase tracking-wider text-slate-300 mb-1">
                   Temuan eksperimenmu
                 </p>
                 <p className="font-mono text-4xl font-bold text-amber-400 tabular-nums">{best.angle}°</p>

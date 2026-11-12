@@ -44,7 +44,7 @@ export function PreDiscoveryModal({
         className="bg-white border border-border-default rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl space-y-5"
       >
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cobalt/10 text-accent-cobalt text-[10px] font-mono font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cobalt/10 text-accent-cobalt text-[11px] font-mono font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
             Konfirmasi Artikulasi Ilmiah
           </div>
@@ -75,7 +75,7 @@ export function PreDiscoveryModal({
                 <span>{c.label}</span>
                 <span
                   className={cn(
-                    "w-3.5 h-3.5 rounded-full border flex-shrink-0 ml-2 flex items-center justify-center text-[9px]",
+                    "w-3.5 h-3.5 rounded-full border flex-shrink-0 ml-2 flex items-center justify-center text-[11px]",
                     isSelected ? "border-accent-cobalt bg-accent-cobalt text-white" : "border-slate-300"
                   )}
                 >
