@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BookOpen, Sparkles, TrendingUp, BarChart2, BarChart3, Atom,
-  CheckCircle2, AlertCircle, Info, ArrowRight, ShieldCheck, HelpCircle
+  BookOpen, TrendingUp, BarChart2, BarChart3, Atom,
+  ArrowRight, ShieldCheck, HelpCircle
 } from "lucide-react";
 import {
   ComposedChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -158,7 +158,7 @@ export function ScientificExplanationSection({
                 q = n · e
               </span>
               <span className="text-xs text-slate-300 font-sans">
-                di mana e ≈ {calculatedE_corr.toFixed(3)} × 10⁻¹⁹ C (Standar NIST: {E_REF} × 10⁻¹⁹ C)
+                di mana e ≈ {calculatedE_stokes.toFixed(3)} × 10⁻¹⁹ C dari data pengukuranmu (Standar NIST: {E_REF} × 10⁻¹⁹ C)
               </span>
             </div>
           </div>
@@ -420,29 +420,25 @@ export function ScientificExplanationSection({
               <h4 className="font-display font-bold text-sm text-primary-navy">
                 Nilai Muatan Elementer (e) Terukur
               </h4>
-              <Badge variant={errorPct_corr < 3 ? "success" : "primary"} size="sm">
-                {errorPct_corr < 3 ? "✓ Sangat Akurat" : "Valid"}
+              <Badge variant={errorPct_stokes < 3 ? "success" : "primary"} size="sm">
+                {errorPct_stokes < 3 ? "✓ Sangat Akurat" : "Valid"}
               </Badge>
             </div>
 
             <div className="bg-teal/5 border border-teal/20 rounded-xl p-3.5">
               <div className="flex justify-between items-center text-[10px] font-mono text-teal uppercase tracking-wider mb-1">
-                <span>Rekomendasi (+ Cunningham)</span>
-                <span className="font-bold">Δ {errorPct_corr.toFixed(2)}% vs NIST</span>
+                <span>Hasil Pengukuranmu (Hukum Stokes)</span>
+                <span className="font-bold">Δ {errorPct_stokes.toFixed(2)}% vs NIST</span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-3xl font-extrabold text-teal">
-                  {calculatedE_corr.toFixed(4)}
+                  {calculatedE_stokes.toFixed(4)}
                 </span>
                 <span className="font-mono text-xs text-text-muted">× 10⁻¹⁹ C</span>
               </div>
             </div>
 
             <div className="bg-slate-50 border border-border-default rounded-xl p-3 text-xs space-y-1.5 font-mono">
-              <div className="flex justify-between text-slate-600">
-                <span>Stokes (Tanpa Koreksi):</span>
-                <span className="font-bold">{calculatedE_stokes.toFixed(4)} × 10⁻¹⁹ C</span>
-              </div>
               <div className="flex justify-between text-slate-600">
                 <span>Standar NIST 2018:</span>
                 <span className="font-bold text-primary-navy">{E_REF} × 10⁻¹⁹ C</span>
@@ -455,7 +451,31 @@ export function ScientificExplanationSection({
                 <span>Standar Error Mean (SEM):</span>
                 <span>±{sem.toFixed(4)}</span>
               </div>
+              <div className="flex justify-between text-text-muted text-[11px]">
+                <span>Rekayasa ulang (+ Cunningham):</span>
+                <span>{calculatedE_corr.toFixed(4)} × 10⁻¹⁹ C (Δ {errorPct_corr.toFixed(2)}%)</span>
+              </div>
             </div>
+
+            {/* Catatan jujur: pada simulasi ini gerak tetesan mengikuti hukum Stokes
+                murni (tidak ada slippage molekuler) dan q diekstraksi dengan rumus
+                Stokes yang sama, sehingga pengukuran Stokes sudah mengembalikan
+                muatan sejati. Koreksi Cunningham ada untuk mengompensasi tetesan yang
+                <i>licin</i> (slippage) — kejadian yang tidak dimodelkan simulasi ini, sehingga
+                menerapkannya pada data yang sebenarnya tidak licin justru
+                melesetkan hasil (F-09, ronde 2). Di lab NYATA koreksi ini
+                dibutuhkan. */}
+            <p className="text-[11px] text-text-muted leading-relaxed border border-amber-200/70 bg-amber-50 rounded-xl p-3">
+              <b className="text-amber-800">Catatan tentang koreksi Cunningham:</b> pada simulasi ini, gerak
+              tetesan mengikuti hukum Stokes murni — sehingga nilai pengukuranmu di atas sudah akurat. Koreksi
+              Cunningham ada untuk mengompensasi tetesan yang <i>licin</i> di sela molekul udara; karena simulasi
+              ini tidak memodelkan kejadian licin tersebut, penerapannya pada data yang sebenarnya tidak licin
+              justru melesetkan hasil (koreksi tanpa sebabnya — bukan salah hitung rumus, tapi koreksi untuk
+              kejadian yang tidak terjadi). Di laboratorium <b>nyata</b>, tetesan sekecil 1–2 µm memang
+              &apos;tergelincir&apos; dan koreksi Cunningham dibutuhkan untuk memperbaiki galat dari ~5% menjadi
+              &lt; 2%. Bandingkan kedua angka di atas dan diskusikan: kapan koreksi dibutuhkan, dan kapan koreksi
+              justru merusak?
+            </p>
           </div>
 
           {/* Per-Trial Quantum Decomposition Table */}

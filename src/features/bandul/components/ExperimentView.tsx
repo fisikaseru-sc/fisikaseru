@@ -62,6 +62,30 @@ function gaussianNoise(mean: number, std: number) {
 // ============================================================
 // COMPONENT
 // ============================================================
+/** Helper gambar panah gaya/tension — murni, tanpa state komponen. */
+function drawArrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, color: string, label: string) {
+  const dx = x2 - x1; const dy = y2 - y1;
+  if (Math.sqrt(dx * dx + dy * dy) < 3) return;
+  const angle = Math.atan2(dy, dx); const head = 7;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.shadowColor = color; ctx.shadowBlur = 4; ctx.stroke(); ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
+  ctx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
+  ctx.fillStyle = color; ctx.fill();
+  ctx.fillStyle = "#ffffff"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
+  ctx.fillText(label, x2 + 5 * Math.cos(angle + 0.4), y2 + 5 * Math.sin(angle + 0.4));
+}
+
+/** Helper gambar kotak membulat — murni, tanpa state komponen. */
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
+
 export default function LabPage() {
   const params   = useParams();
   const router   = useRouter();
@@ -81,7 +105,7 @@ export default function LabPage() {
 
   const [pretestAnswers, setPretestAnswers]     = useState<Record<number, number>>(() => {
     const savedAns = localStorage.getItem(`fisikaseru:pretest:ans:${slug}`);
-    if (savedAns) { try { return JSON.parse(savedAns); } catch (_) {} }
+    if (savedAns) { try { return JSON.parse(savedAns); } catch {} }
     return {};
   });
   const [pretestSubmitted, setPretestSubmitted] = useState(
@@ -89,7 +113,7 @@ export default function LabPage() {
   );
   const [expSteps, setExpSteps] = useState<{ interactionChanged: boolean }>(() => {
     const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
-    if (savedExp) { try { return JSON.parse(savedExp); } catch (_) {} }
+    if (savedExp) { try { return JSON.parse(savedExp); } catch {} }
     return { interactionChanged: false };
   });
 
@@ -102,7 +126,7 @@ export default function LabPage() {
       try {
         const p: unknown = JSON.parse(savedTrials);
         if (Array.isArray(p) && p.length > 0 && p.every(isBandulTrial)) return p;
-      } catch (_) {}
+      } catch {}
     }
     return [];
   });
@@ -119,7 +143,7 @@ export default function LabPage() {
           return { length: l, mass: m, angle: a, gravity: g };
         }
       }
-    } catch (_) {}
+    } catch {}
     return {
       length: 0.75, mass: 0.1, angle: 10, gravity: G_DEFAULT,
     };
@@ -129,8 +153,29 @@ export default function LabPage() {
   useEffect(() => {
     try {
       localStorage.setItem(`fisikaseru:params:${slug}`, JSON.stringify(sliders));
-    } catch (_) {}
+    } catch {}
   }, [sliders, slug]);
+
+  // ── Mini-aktivitas massa (keputusan pedagogis F-05, ronde 2): rekam T pada
+  // saat terakhir kali massa digeser, agar panel aktivitas bisa menampilkan
+  // perbandingan "T @ m lama" vs "T @ m baru" secara live — bukti bahwa massa
+  // tidak memengaruhi periode. Perhatian: T dihitung dengan slider SAAT ITU
+  // (L, θ₀, g tidak berubah antar langkah aktivitas karena instruksinya
+  // meminta L tetap). Nilai T tak bergantung massa, jadi kedua angka sama.
+  const [massProbe, setMassProbe] = useState<{
+    fromMass: number; fromT: number; toMass: number;
+  } | null>(null);
+  const [prevMass, setPrevMass] = useState(sliders.mass);
+  // Pola "adjust state saat render" (rekomendasi React resmi, bukan efek):
+  // ketika massa berubah, simpan T pada nilai slider yang berlaku saat itu.
+  // Penyesuaian state saat render menghindari efek + dependensi, dan tetap hydration-safe.
+  if (prevMass !== sliders.mass) {
+    const tNow =
+      2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) *
+      (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16);
+    setPrevMass(sliders.mass);
+    setMassProbe({ fromMass: prevMass, fromT: tNow, toMass: sliders.mass });
+  }
 
   const bandulRef    = useRef<HTMLCanvasElement>(null);
   const animRef      = useRef<number>(0);
@@ -181,12 +226,18 @@ export default function LabPage() {
     });
   };
 
+  // Stopwatch: durasi berjalan disimpan di ref (bukan state) supaya efek hanya
+  // bergantung pada `isRunning` — kalau state ikut jadi dependensi, interval
+  // akan terus dibuat ulang tiap tick dan pengukuran jadi tidak stabil.
+  const stopwatchRef = useRef(0);
   useEffect(() => {
-    let id: ReturnType<typeof setInterval> | undefined;
-    if (isRunning) {
-      const t0 = Date.now() - stopwatch * 1000;
-      id = setInterval(() => setStopwatch((Date.now() - t0) / 1000), 30);
-    }
+    if (!isRunning) return;
+    const t0 = Date.now() - stopwatchRef.current * 1000;
+    const id = setInterval(() => {
+      const elapsed = (Date.now() - t0) / 1000;
+      stopwatchRef.current = elapsed;
+      setStopwatch(elapsed);
+    }, 30);
     return () => clearInterval(id);
   }, [isRunning]);
 
@@ -197,7 +248,7 @@ export default function LabPage() {
   // ================================================================
   // PENDULUM CANVAS (2D)
   // ================================================================
-  function drawBandul(dt: number) {
+  const drawBandul = useCallback((dt: number) => {
     const canvas = bandulRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -303,31 +354,9 @@ export default function LabPage() {
     ctx.fillText(`${T_theory.toFixed(3)} s`, W - 126, H - 20);
 
     ctx.restore();
-  }
+  }, [isRunning, showVectors, sliders]);
 
   // ── Helper draw functions ──
-  function drawArrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, color: string, label: string) {
-    const dx = x2 - x1; const dy = y2 - y1;
-    if (Math.sqrt(dx * dx + dy * dy) < 3) return;
-    const angle = Math.atan2(dy, dx); const head = 7;
-    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
-    ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.shadowColor = color; ctx.shadowBlur = 4; ctx.stroke(); ctx.shadowBlur = 0;
-    ctx.beginPath(); ctx.moveTo(x2, y2);
-    ctx.lineTo(x2 - head * Math.cos(angle - Math.PI / 6), y2 - head * Math.sin(angle - Math.PI / 6));
-    ctx.lineTo(x2 - head * Math.cos(angle + Math.PI / 6), y2 - head * Math.sin(angle + Math.PI / 6));
-    ctx.fillStyle = color; ctx.fill();
-    ctx.fillStyle = "#ffffff"; ctx.font = "bold 8px monospace"; ctx.textAlign = "left";
-    ctx.fillText(label, x2 + 5 * Math.cos(angle + 0.4), y2 + 5 * Math.sin(angle + 0.4));
-  }
-
-  function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
-    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r); ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
-  }
-
   // ── Animation loop (2D canvas) ──
   useEffect(() => {
     if (visualMode !== "2d") return;
@@ -340,7 +369,7 @@ export default function LabPage() {
     }
     animRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(animRef.current);
-  }, [isRunning, sliders, showVectors, visualMode]);
+  }, [isRunning, visualMode, drawBandul]);
 
   // ── Record Trial ──
   function recordTrial() {
@@ -491,7 +520,7 @@ export default function LabPage() {
                 {isRunning ? "Pause" : "Mulai"}
               </button>
               <button
-                onClick={() => { setIsRunning(false); setStopwatch(0); setResetCount(c => c + 1); }}
+                onClick={() => { setIsRunning(false); stopwatchRef.current = 0; setStopwatch(0); setResetCount(c => c + 1); }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold cursor-pointer text-text-muted hover:text-text-primary hover:bg-gray-50 transition-all"
                 title="Mengembalikan bandul ke posisi awal — data percobaan tetap aman">
                 <RotateCcw className="w-3.5 h-3.5" /> Reset Simulasi
@@ -697,9 +726,45 @@ export default function LabPage() {
                         </button>
                       ))}
                     </div>
-                    <p className="text-[10px] text-amber-800 bg-amber-50/90 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
+                    <div className="text-[10px] text-amber-800 bg-amber-50/90 border border-amber-200/80 rounded-lg p-2 leading-relaxed">
                       💡 <strong>Uji Miskonsepsi:</strong> Coba variasikan <em>Massa Beban (m)</em> pada panjang tali tetap. Perhatikan apakah nilai periode (T) berubah!
-                    </p>
+                    </div>
+                    {/* Mini-aktivitas terarah (keputusan pedagogis F-05): langkah
+                        eksplisit + perbandingan T live saat massa digeser. */}
+                    <div className="rounded-xl border border-accent-cobalt/25 bg-accent-cobalt/5 p-2.5 space-y-1.5">
+                      <p className="text-[9px] font-mono font-bold uppercase tracking-wider text-accent-cobalt">
+                        Mini-aktivitas · Apakah massa memengaruhi T?
+                      </p>
+                      <ol className="text-[10px] text-text-muted list-decimal pl-4 space-y-0.5 leading-snug">
+                        <li>Pastikan <b>Panjang Tali (L)</b> tetap.</li>
+                        <li>Geser <b>Massa Beban (m)</b> 2–3 langkah.</li>
+                        <li>Bandingkan nilai T di bawah ini.</li>
+                      </ol>
+                      {massProbe && (
+                        <div className="text-[10px] font-mono bg-white rounded-lg border border-border-default p-2 space-y-1">
+                          <div className="flex justify-between gap-2">
+                            <span className="text-text-muted">T @ m = {Math.round(massProbe.fromMass * 1000)} g</span>
+                            <span className="font-bold text-primary-navy">{massProbe.fromT.toFixed(3)} s</span>
+                          </div>
+                          <div className="flex justify-between gap-2">
+                            <span className="text-text-muted">T @ m = {Math.round(massProbe.toMass * 1000)} g</span>
+                            <span className="font-bold text-primary-navy">
+                              {(2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)).toFixed(3)} s
+                            </span>
+                          </div>
+                          {Math.abs(massProbe.fromT - 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)) < 0.005 && (
+                            <p className="text-[10px] font-sans font-semibold text-success">
+                              ✓ T tetap — massa tidak memengaruhi periode!
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      {massProbe && Math.abs(massProbe.fromT - 2 * Math.PI * Math.sqrt(sliders.length / sliders.gravity) * (1 + ((sliders.angle * Math.PI / 180) ** 2) / 16)) >= 0.005 && (
+                        <p className="text-[10px] font-sans text-amber-700 leading-snug">
+                          Nilai T berubah — tapi karena massa, atau karena L/θ₀ ikut bergeser? Kembalikan L, lalu geser massa lagi.
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   {/* Data table */}

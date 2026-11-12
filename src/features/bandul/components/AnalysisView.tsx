@@ -5,13 +5,13 @@ import React, { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FlaskConical, ChevronLeft, ChevronRight, TrendingUp, Sparkles,
+  ChevronLeft, ChevronRight, TrendingUp, Sparkles,
   CheckCircle2, BarChart2, Atom, Info, AlertCircle, BarChart3,
 } from "lucide-react";
 import {
-  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
+  Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, ReferenceArea,
-  ComposedChart, Area, Line, BarChart, Bar, Cell, LabelList,
+  ComposedChart, Area, Line, Bar, Cell, LabelList,
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -132,7 +132,7 @@ export default function AnalysisPage() {
         const p: unknown = JSON.parse(saved);
         if (Array.isArray(p) && p.length > 0 &&
           (p.every(isMillikanRecord) || p.every(isBandulRecord))) return false;
-      } catch (_) {}
+      } catch {}
     }
     return true; // fallback demo — DITANDAI agar siswa tidak mengira ini hasilnya sendiri.
   });
@@ -145,7 +145,7 @@ export default function AnalysisPage() {
           // Validasi bentuk sesuai modul; tolak data korup (fallback demo).
           if (p.every(isMillikanRecord) || p.every(isBandulRecord)) return p as TrialRecord[];
         }
-      } catch (_) {}
+      } catch {}
     }
     // Fallback demo data
     if (isMillikan) {
@@ -958,6 +958,30 @@ export default function AnalysisPage() {
                         Referensi: {gRef.toFixed(4)} m/s²{Math.abs(gRef - 9.80665) > 0.05 ? " (lab non-Bumi)" : ""}
                       </div>
                       <p>Galat: <b>{gError.toFixed(3)}%</b> · R² = <b>{regressionBandul.r2.toFixed(4)}</b></p>
+                    </div>
+
+                    {/* Sumber galat (temuan ronde 2 F-02): jelaskan dari mana
+                        selisih g hitung vs referensi berasal, agar siswa
+                        tidak menganggap galat sebagai "kesalahan". */}
+                    <div className="rounded-xl p-3 border border-border-default bg-slate-50 text-[11px] text-text-muted space-y-2 mt-2">
+                      <p className="font-semibold text-primary-navy text-[11px]">Dari mana galat ini berasal?</p>
+                      <p className="leading-relaxed">
+                        Dua sumber utama, sama seperti di laboratorium nyata:
+                      </p>
+                      <ul className="list-disc pl-4 space-y-1.5 leading-relaxed">
+                        <li>
+                          <b className="text-text-default">Ketelitian stopwatch.</b> Setiap pengukuran waktumu
+                          meleset acak sekitar ±1,5% — kadang terlalu cepat, kadang terlalu lambat. Makin banyak
+                          data yang direkam, makin saling meniadakan dosanya (lihat R²).
+                        </li>
+                        <li>
+                          <b className="text-text-default">Sudut ayunan besar.</b> Rumus T = 2π√(L/g) hanya persis
+                          untuk ayunan kecil. Bila sudutmu jauh dari kecil, periode sebenarnya lebih panjang
+                          (kira-kira membesar sebesar θ₀²/16), sehingga grafik T² vs L bergeser dan g hitung
+                          sedikit tergeser juga. Coba rekam ulang dengan sudut lebih kecil (mis. 5–10°) dan
+                          bandingkan hasilnya!
+                        </li>
+                      </ul>
                     </div>
                   </>
                 )}

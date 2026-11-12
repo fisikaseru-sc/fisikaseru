@@ -3,14 +3,14 @@
 import Link from "next/link";
 import React, { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ChevronLeft, ChevronRight, TrendingUp, Sparkles,
-  CheckCircle2, AlertCircle, BookOpen, FlaskConical, Search,
-  Compass, Eye, RefreshCw
+  CheckCircle2, AlertCircle, BookOpen, Search,
+  RefreshCw
 } from "lucide-react";
 import {
-  ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
+  Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, ComposedChart
 } from "recharts";
 import { Button } from "@/components/ui/button";
@@ -98,7 +98,7 @@ export default function AnalysisPage() {
   );
   const [showGuideModal, setShowGuideModal] = useState(false);
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
-  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // dari mismatch hidrasi.
   const [trials, setTrials] = useState<TrialRecord[]>(() => {
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
     if (saved) {
@@ -109,7 +109,7 @@ export default function AnalysisPage() {
             typeof t === "object" && t !== null && typeof (t as { L?: unknown }).L === "number"))) {
           return p as TrialRecord[];
         }
-      } catch (_) {}
+      } catch {}
     }
     // Fallback demo data
     return isMillikan ? DEMO_MILLIKAN_TRIALS : [
@@ -396,7 +396,7 @@ export default function AnalysisPage() {
                     className="space-y-6"
                   >
                     <AhaMomentBanner
-                      calculatedE={calculatedE_corr}
+                      calculatedE={calculatedE_stokes}
                       onContinueToReflection={() => {
                         setActiveStage(5);
                       }}

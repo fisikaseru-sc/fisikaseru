@@ -3,12 +3,11 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles, HelpCircle, ArrowRight, RefreshCw,
-  Search, Plus, Minus, CheckCircle2, ChevronDown, ChevronUp
+  HelpCircle, ArrowRight, RefreshCw,
+  Search, Plus, Minus, ChevronDown, ChevronUp, Lightbulb
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { NumberLineVisualization } from "./analysis/NumberLineVisualization";
 import { CandidateHistory, type TestedCandidateRecord } from "./analysis/CandidateHistory";
 import { PatternObservationPrompt } from "./analysis/PatternObservationPrompt";
@@ -50,7 +49,7 @@ export function PatternDiscoveryTool({
   const [candidateInputText, setCandidateInputText] = useState<string>(initialCandidate.toFixed(2));
   // Load candidate history from localStorage — lazy init (komponen ini
   // dirender di dalam Analysis/Experiment view yang dynamic ssr:false).
-  // (Pembayaran debt lint: set-state-in-effect.)
+  //
   const [candidateHistory, setCandidateHistory] = useState<TestedCandidateRecord[]>(() => {
     try {
       const saved = localStorage.getItem("fisikaseru:pattern-history:millikan");
@@ -58,7 +57,7 @@ export function PatternDiscoveryTool({
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) return parsed as TestedCandidateRecord[];
       }
-    } catch (_) {}
+    } catch {}
     return [];
   });
   const [showPreDiscoveryModal, setShowPreDiscoveryModal] = useState<boolean>(false);
@@ -67,7 +66,7 @@ export function PatternDiscoveryTool({
 
   // Sinkronkan teks input ketika candidateUnit berubah secara programatik
   // (slider/tombol) — pola "adjust state during render" dari dokumen React,
-  // tanpa effect. (Pembayaran debt lint: set-state-in-effect.)
+  // tanpa effect.
   const [prevCandidateUnit, setPrevCandidateUnit] = useState(candidateUnit);
   if (prevCandidateUnit !== candidateUnit) {
     setPrevCandidateUnit(candidateUnit);
@@ -114,6 +113,24 @@ export function PatternDiscoveryTool({
     return "Titik-titik masih tersebar";
   }, [meanDeviation, nearPercentage]);
 
+  // Hint adaptif (temuan ronde 2 R2-2): tanpa memberi jawaban (nilai 1.6),
+  // pandu siswa yang kandidatnya buntu — eskalasi bertingkat sesuai usaha.
+  const adaptiveHint = useMemo(() => {
+    if (isAlreadyDiscovered || ratioResults.length === 0) return null;
+    const struggling = meanDeviation > 0.14 || nearPercentage < 80;
+    if (!struggling) return null;
+    if (!hasTestedChange && candidateHistory.length === 0) return null;
+    const failedTests = candidateHistory.filter((h) => h.meanDeviation > 0.14).length;
+    if (failedTests >= 3) {
+      // Eskalasi kuat — reasoning GCD, tanpa menyebut angka jawaban.
+      return "Kandidatmu masih menyisakan deviasi besar di hampir semua titik. Perhatikan pola hasil baginya: bila mereka menggerombol di sekitar bilangan yang sama besar, artinya pembagimu adalah kelipatan dari satu satuan yang lebih dasar. Cari faktor persekutuan dari hasil bagi yang tergerombol itu — satuan dasarnya lebih kecil dari kandidat yang sedang kamu uji.";
+    }
+    if (candidateHistory.length >= 2 || failedTests >= 2) {
+      return "Kandidat ini belum menjelaskan titik-titikmu (deviasi masih besar). Coba kandidat lain — geser slider atau pakai hipotesis dari riwayatmu, lalu amati tabel rincian: kandidat yang tepat membuat BANYAK titik sekaligus jatuh dekat bilangan bulat, bukan satu-dua saja.";
+    }
+    return "Kandidat ini belum konsisten. Uji kandidat lain: geser slider pelan-pelan dan bandingkan kondisi keteraturan tiap kandidat di riwayat hipotesismu.";
+  }, [isAlreadyDiscovered, ratioResults.length, meanDeviation, nearPercentage, hasTestedChange, candidateHistory]);
+
   // Evidence-driven discovery readiness
   const isDiscoveryReady = useMemo(() => {
     // 1. Data sufficiency
@@ -149,7 +166,7 @@ export function PatternDiscoveryTool({
       ];
       try {
         localStorage.setItem("fisikaseru:pattern-history:millikan", JSON.stringify(updated.slice(-6)));
-      } catch (_) {}
+      } catch {}
       return updated;
     });
   };
@@ -311,6 +328,17 @@ export function PatternDiscoveryTool({
         <p className="text-[11px] text-text-muted leading-relaxed font-sans">
           💡 <i>Nilai terkecil sering menjadi titik awal yang menarik untuk diuji. Mari lihat apakah kandidat ini dapat menjelaskan nilai lainnya.</i>
         </p>
+
+        {/* Hint adaptif (F-10 ronde 2) — muncul saat kandidat buntu & siswa sudah mencoba */}
+        {adaptiveHint && (
+          <div
+            role="status"
+            className="bg-amber-50 border border-amber-200/80 rounded-xl p-3.5 text-xs font-sans text-amber-900 flex items-start gap-2.5"
+          >
+            <Lightbulb className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p className="leading-relaxed">{adaptiveHint}</p>
+          </div>
+        )}
       </div>
 
       {/* ── Section 3: Number Line Visualization (Primary Discovery Surface) ── */}
