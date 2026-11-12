@@ -71,9 +71,6 @@ export function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/auth/login" aria-label="Masuk ke akun FisikaSeru">
-            <Button variant="ghost" size="sm">Masuk</Button>
-          </Link>
           <Link href="/modules" aria-label="Mulai gratis — buka katalog modul">
             <Button size="sm">
               Mulai Gratis <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -123,11 +120,6 @@ export function Navbar() {
               <Badge variant="teal" size="sm" className="self-start mb-1">
                 Gratis untuk fitur inti
               </Badge>
-              <SheetClose asChild>
-                <Link href="/auth/login" className="w-full" aria-label="Masuk ke akun">
-                  <Button variant="outline" size="md" className="w-full">Masuk</Button>
-                </Link>
-              </SheetClose>
               <SheetClose asChild>
                 <Link href="/modules" className="w-full" aria-label="Mulai gratis">
                   <Button size="md" className="w-full">

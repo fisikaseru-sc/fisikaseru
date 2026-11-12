@@ -2,7 +2,6 @@
 import Link from "next/link";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { 
@@ -10,7 +9,6 @@ import {
   Play, RefreshCw, Send, Sparkles, BookOpen, Clock, 
   BarChart3, Database, Award, ArrowUpRight, Trash2, HelpCircle
 } from "lucide-react";
-import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from "@/components/ui/card";
@@ -71,7 +69,6 @@ const SAMPLE_TRIALS: TrialData[] = [
 ];
 
 export default function StudentDashboard() {
-  const router = useRouter();
   const [authChecked, setAuthChecked] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [trials, setTrials] = useState<TrialData[]>([]);
@@ -84,16 +81,11 @@ export default function StudentDashboard() {
   const [inputMessage, setInputMessage] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Auth guard: check session, redirect to login if not authenticated
+  // Versi tanpa login: dashboard berjalan lokal dari localStorage —
+  // tidak ada auth guard maupun redirect ke halaman login.
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        router.replace("/auth/login");
-      } else {
-        setAuthChecked(true);
-      }
-    });
-  }, [router]);
+    setAuthChecked(true);
+  }, []);
 
   // Prevent hydration mismatch (Next.js SSR safety)
   useEffect(() => {
