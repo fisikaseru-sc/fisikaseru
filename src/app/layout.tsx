@@ -3,6 +3,7 @@ import { Sora, Inter, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
+import { TelemetryReporter } from "@/components/TelemetryReporter";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -63,6 +64,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-body bg-bg-primary text-text-primary" suppressHydrationWarning>
         {children}
+        <TelemetryReporter />
         <Toaster richColors position="top-center" />
       </body>
     </html>

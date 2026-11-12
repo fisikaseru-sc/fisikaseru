@@ -165,6 +165,26 @@ Berikut adalah tabel-tabel utama yang berjalan di PostgreSQL (diatur dengan *Row
     npm run start
     ```
 
+6.  **Cek Kesehatan & Metrik (opsional)**:
+    ```bash
+    curl http://localhost:3000/api/health
+    curl http://localhost:3000/api/metrics
+    ```
+    Ringkasan endpoint, format data, dan batasan Jujur store in-memory ada di
+    [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
+
+---
+
+## 📈 Observabilitas
+
+| Endpoint | Fungsi |
+|---|---|
+| `GET /api/health` | Status proses + uptime (aman untuk load balancer) |
+| `GET /api/metrics` | Error-rate, p50/p95 latensi, error per rute (jendela 15 menit) |
+| `POST /api/telemetry` | Laporan error & latensi dari sisi klien (dipanggil otomatis) |
+
+Error server ditangkap lewat hook `onRequestError` (`src/instrumentation.ts`). Latensi diukur dua kali dengan makna berbeda: header `Server-Timing: proxy;dur=…` (`src/proxy.ts`) untuk durasi proxy, dan Resource Timing sisi klien (TTFB) yang diagregasi menjadi p50/p95 di `/api/metrics`. Data yang dikumpulkan **agregat saja** — rute tanpa query string, jenis error, durasi; tanpa data siswa. Bila `METRICS_TOKEN` diisi di `.env.local`, endpoint `/api/metrics` memerlukan header `x-metrics-token`.
+
 ---
 
 ## 🤝 Kontribusi
