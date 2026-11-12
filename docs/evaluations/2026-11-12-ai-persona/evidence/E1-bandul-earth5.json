@@ -1,0 +1,68 @@
+{
+  "label": "earth5",
+  "preset": null,
+  "records": [],
+  "ls": [
+    {
+      "id": 1,
+      "L": 0.2,
+      "T": 0.8938402437387021,
+      "T2": 0.7989503813268624,
+      "g": 9.80665
+    },
+    {
+      "id": 2,
+      "L": 0.4,
+      "T": 1.2742486027876607,
+      "T2": 1.6237095017063055,
+      "g": 9.80665
+    },
+    {
+      "id": 3,
+      "L": 0.6,
+      "T": 1.5734022686359308,
+      "T2": 2.4755946989486937,
+      "g": 9.80665
+    },
+    {
+      "id": 4,
+      "L": 0.8,
+      "T": 1.7929201540132196,
+      "T2": 3.214562678666787,
+      "g": 9.80665
+    },
+    {
+      "id": 5,
+      "L": 1,
+      "T": 1.9906898808520126,
+      "T2": 3.9628462017266,
+      "g": 9.80665
+    }
+  ],
+  "analysis": {
+    "relevant": [
+      "Gunakan grafik T² vs L untuk regresi linear yang ideal — T = 2π√(L/g) menjadi T² = (4π²/g)·L, sehingga gradien langsung memberi nilai g. Target R² > 0.99.",
+      "T² vs L",
+      "Grafik Regresi: T² vs L",
+      "T² = (4π²/g)·L — hubungan linear sempurna. Gradien garis regresi = 4π²/g, dari sini kita hitung nilai g.",
+      "T² (s²)",
+      "Garis regresi terbaik",
+      "Dari Regresi ke Nilai g",
+      "T² = (4π²/g) · L",
+      "∴ g = 4π²/m",
+      "9.9710 m/s²",
+      "9.8066 m/s²",
+      "Galat",
+      "#\tL (m)\tT (s)\tT² (s²)",
+      "Nilai Gravitasi Terukur",
+      "G HITUNG DARI REGRESI T² VS L",
+      "m/s²",
+      "Referensi: 9.8066 m/s²",
+      "Galat: 1.676% · R² = 0.9990"
+    ],
+    "gRefNote": []
+  },
+  "errors": [
+    "console:❌ Supabase environment variables are missing or unconfigured! Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your enviro"
+  ]
+}

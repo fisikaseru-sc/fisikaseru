@@ -1,0 +1,56 @@
+{
+  "label": "jupiter3",
+  "preset": "Jupiter",
+  "records": [],
+  "ls": [
+    {
+      "id": 1,
+      "L": 0.3,
+      "T": 0.6834152915751261,
+      "T2": 0.4670564607587147,
+      "g": 24.79
+    },
+    {
+      "id": 2,
+      "L": 0.6,
+      "T": 0.9895643497520434,
+      "T2": 0.9792376023001845,
+      "g": 24.79
+    },
+    {
+      "id": 3,
+      "L": 0.9,
+      "T": 1.1830679322192932,
+      "T2": 1.399649732245634,
+      "g": 24.79
+    }
+  ],
+  "analysis": {
+    "relevant": [
+      "Gunakan grafik T² vs L untuk regresi linear yang ideal — T = 2π√(L/g) menjadi T² = (4π²/g)·L, sehingga gradien langsung memberi nilai g. Target R² > 0.99.",
+      "T² vs L",
+      "Grafik Regresi: T² vs L",
+      "T² = (4π²/g)·L — hubungan linear sempurna. Gradien garis regresi = 4π²/g, dari sini kita hitung nilai g.",
+      "T² (s²)",
+      "Garis regresi terbaik",
+      "Dari Regresi ke Nilai g",
+      "T² = (4π²/g) · L",
+      "∴ g = 4π²/m",
+      "25.3991 m/s²",
+      "24.7900 m/s²",
+      "Galat",
+      "#\tL (m)\tT (s)\tT² (s²)",
+      "Nilai Gravitasi Terukur",
+      "G HITUNG DARI REGRESI T² VS L",
+      "m/s²",
+      "Referensi: 24.7900 m/s² (lab non-Bumi)",
+      "Galat: 2.457% · R² = 0.9968"
+    ],
+    "gRefNote": [
+      "Referensi: 24.7900 m/s² (lab non-Bumi)"
+    ]
+  },
+  "errors": [
+    "console:❌ Supabase environment variables are missing or unconfigured! Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your enviro"
+  ]
+}

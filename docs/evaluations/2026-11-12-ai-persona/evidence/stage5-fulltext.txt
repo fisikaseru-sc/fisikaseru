@@ -1,0 +1,69 @@
+Katalog
+/
+Tetes Minyak Millikan
+/
+Analisis
+Persiapan
+Pengamatan
+Pengukuran
+4
+Analisis
+5
+Refleksi
+Prinsip Lab
+Lab
+Refleksi
+Kaji Data
+
+Observasi Mentah
+
+Terjemahkan
+
+Konversi ke Muatan q
+
+Cari Pola
+
+Uji Satuan Terkecil
+
+04
+Temukan
+
+Momen Kuantisasi
+
+05
+Pahami
+
+Teori & Verifikasi NIST
+
+LANGKAH 1 DARI 3 · KEMBALI KE TEMUANMU
+Kamu Tidak Hanya Menemukan Angka.
+
+Ketika kamu membagi muatan tetesan minyak dengan kandidat satuan ~1.727 × 10⁻¹⁹ C, hasil bagi berkali-kali mendekati bilangan bulat.
+
+SAMPEL RASIO HASIL PEMBAGIAN YANG KAMU AMATI:
+Tetes #1
+1.01
+≈ 1 satuan
+Tetes #2
+1.99
+≈ 2 satuan
+Tetes #3
+3.02
+≈ 3 satuan
+Tetes #4
+4.01
+≈ 4 satuan
+Jika nilai-nilai muatan yang berbeda ini dapat tersusun dari pengulangan satu satuan yang sama, apa yang mungkin terjadi secara fisika?
+Saya melihat adanya satuan dasar yang berulang
+Pilih
+Saya menduga ada hubungan kelipatan
+Pilih
+Saya belum yakin dengan maknanya
+Pilih
+Lanjut: Formalisasi Model Ilmiah
+Dua Langkah Selanjutnya untuk Melengkapi Pembelajaran
+
+Kamu bisa mendalami teori fisika & grafik verifikasi standar NIST (Tahap 5), atau langsung menuju Refleksi Kognitif bersama Socratic AI.
+
+Pahami Teori & NIST (Tahap 5)
+Lanjut Refleksi

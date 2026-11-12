@@ -1,0 +1,159 @@
+{
+  "bandul-exp-step2": {
+    "ranges": [
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      },
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      },
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      },
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      }
+    ],
+    "canvases": [
+      {
+        "ariaLabel": true,
+        "role": "img"
+      }
+    ],
+    "svgFocusables": 0,
+    "unlabeledBtns": [
+      {
+        "title": null,
+        "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 2"
+      }
+    ]
+  },
+  "millikan-exp-step2": {
+    "ranges": [
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      },
+      {
+        "tag": "input",
+        "type": "range",
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": null,
+        "ariaValuetext": null,
+        "role": null,
+        "tabindex": null
+      }
+    ],
+    "canvases": [
+      {
+        "ariaLabel": true,
+        "role": "img"
+      }
+    ],
+    "svgFocusables": 0,
+    "unlabeledBtns": [
+      {
+        "title": null,
+        "html": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 2"
+      }
+    ]
+  },
+  "parabola-experiment": {
+    "ranges": [
+      {
+        "tag": "span",
+        "type": null,
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": "1",
+        "ariaValuetext": null,
+        "role": "slider",
+        "tabindex": "0"
+      },
+      {
+        "tag": "span",
+        "type": null,
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": "25",
+        "ariaValuetext": null,
+        "role": "slider",
+        "tabindex": "0"
+      },
+      {
+        "tag": "span",
+        "type": null,
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": "30",
+        "ariaValuetext": null,
+        "role": "slider",
+        "tabindex": "0"
+      },
+      {
+        "tag": "span",
+        "type": null,
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": "9.81",
+        "ariaValuetext": null,
+        "role": "slider",
+        "tabindex": "0"
+      },
+      {
+        "tag": "span",
+        "type": null,
+        "label": null,
+        "inLabel": false,
+        "ariaValuenow": "0",
+        "ariaValuetext": null,
+        "role": "slider",
+        "tabindex": "0"
+      }
+    ],
+    "canvases": [
+      {
+        "ariaLabel": false,
+        "role": null
+      }
+    ],
+    "svgFocusables": 0,
+    "unlabeledBtns": []
+  },
+  "_errors": []
+}

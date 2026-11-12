@@ -4,6 +4,8 @@
 > **Frekuensi = jumlah persona (dari 13) yang menyebut temuan — BUKAN prevalensi pada populasi guru/siswa nyata.**
 > Kolom "Verifikasi evaluator" = pemeriksaan ulang terhadap kode sumber / bukti mentah yang dilakukan setelah evaluasi persona. Tidak ada perubahan kode produksi yang dilakukan (sesuai mandat — temuan dicatat untuk ditriase).
 
+> **🔄 Pemutakhiran 12 Nov 2026 (Ronde 2):** seluruh backlog terbuka dari ronde ini (F-02, F-05, F-07, F-09, F-10, G-9) disimulasikan ulang via model AI aktif. Hasil, triase, dan perbaikan yang diimplementasi ada di [`../2026-11-12-ai-persona/findings.md`](../2026-11-12-ai-persona/findings.md). Ringkas: F-05 a11y + console Supabase **sudah diperbaiki**; F-09 akar masalah terverifikasi (koreksi Cunningham ganda); F-02/F-07/jalur kandidat/mini-aktivitas massa/G-9 menunggu keputusan pedagogis user.
+
 ## F-01 · Bug: regresi bandul n=1 menampilkan galat 0.00% (g=0)
 
 - **Kategori:** Bug fungsional + potensi miskonsepsi

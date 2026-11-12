@@ -43,8 +43,8 @@ Kriteria: model berspesifikasi+teruji, test kritis lulus, alignment CP berbukti,
 |---|---|---|---|
 | G-1 | ~~Dokumen CP & buku referensi tidak ada~~ **TERSELESAIKAN (audit kedua):** sumber ditemukan di `Physics Source/` (di luar repo) & ditelaah — arsitektur registry diimplementasikan (`src/lib/physicsSources/registry.ts`, 19 test isolasi) | — | — |
 | G-2 | Uji guru/siswa nyata belum dijalankan | klaim UX tetap non-empiris | protokol 5 guru + 8 siswa |
-| G-3 | E2E browser otomatis belum ada (O-9) | regresi UI tak terkunci; verifikasi persist parabola di level tsc/build | Playwright suite |
-| G-4 | 89 error lint tersisa (debt `any`, setState-in-effect, escape) (O-8) | technical debt; beberapa pola setState-in-effect berisiko render berantai | pengetikan + refactor bertahap |
+| G-3 | ~~E2E browser otomatis belum ada (O-9)~~ **TERSELESAIKAN (ronde 1, 17–18 Okt 2026):** Playwright suite `e2e/smoke.spec.ts` — 22 test, di-regresikan hijau 12 Nov 2026 | tertutup | — |
+| G-4 | ~~89 error lint~~ **TERSELESAIKAN (ronde 1):** lint kini 0 error (102 warning — pola `'_'` unused & exhaustive-deps, technical debt non-error) | tertutup (warning tersisa = debt) | — |
 | G-5 | Monitoring/observabilitas belum ada (O-7) | insiden produksi tak terdeteksi | error-rate + latency sederhana |
 | G-6 | ~~HUD R-teori membocorkan jawaban (O-5); state bandul/millikan tak persist~~ **TERSELESAIKAN (18 Okt 2026):** R-teori di HUD & sidebar parabola dikunci sampai siswa mencatat ≥3 data (inkonsekuensi terbongkar teratasi); parameter kontrol bandul (`fisikaseru:params:bandul`) dan millikan (`fisikaseru:params:millikan`) dipersist ke localStorage dengan validasi batas & diuji E2E. | tertutup | — |
 | G-7 | ~~`calculateMassFromRadius` (ρ tanpa apung) dead-code di Millikan~~ **TERSELESAIKAN (18 Okt 2026):** fungsi dead-code dihapus dari `src/features/millikan/simulation/physics.ts` setelah verifikasi 0 referensi pemanggil. | P3 — miskonsepsi bila kelak dipakai | — |
@@ -82,3 +82,32 @@ Semua dijalankan pada audit ini dengan hasil §A. Tidak ada asersi/coverage yang
 - **Tidak bisa diselesaikan:** identitas penulis dokumen ATP (tidak tercantum di dokumen); diskrepansi nomor keputusan CP Fisika F (046 vs 064 — butuh konfirmasi pengguna); telaah isi Erlangga (PDF scan, OCR bahasa Indonesia tidak terpasang).
 - **Belum dijalankan:** uji manusia; E2E browser; audit aksesibilitas sistematis; isolasi lintas-proyek penuh (hanya 1 proyek konsumen).
 - **Tidak di-commit** — semua perubahan di working tree, menunggu instruksi pengguna.
+
+## G. Pembaruan ronde 2 (12 Nov 2026) — evaluasi persona AI aktif + perbaikan clear-cut
+
+Detail lengkap: [`evaluations/2026-11-12-ai-persona/`](evaluations/2026-11-12-ai-persona/findings.md) (label `AI_SIMULATED_USER_EVALUATION`).
+
+### Perbaikan kode yang diimplementasi (clear-cut saja)
+
+| Perbaikan | File |
+|---|---|
+| A11y F-05: aria-label slider (4 bandul + 2 millikan, termasuk Tegangan), teruskan aria-label Radix Root→Thumb, canvas 3D `role="img"`+`aria-label`, 4 tombol collapse/expand ikon-only | `bandul/ExperimentView.tsx`, `millikan/ExperimentView.tsx`, `ui/slider.tsx`, `PhysicsScene.tsx`, `ProjectileScene3D.tsx` |
+| Console error Supabase → warning (pesan lokal, fitur inti tidak bergantung Supabase) | `src/lib/supabase/client.ts` |
+
+### Akar masalah F-09 terverifikasi (perbaikan menunggu keputusan user)
+
+Koreksi Cunningham diterapkan **dua kali**: simulasi & ekstraksi q murni Stokes (q/n ≈ 1.596, Δ0.4% — akurat), lalu lapisan analisis mengalikan q·cf lagi → 1.727 (Δ7.80%). UI stage 4/5 menampilkan `calculatedE_corr`. Pilihan A/B/C dicatat di findings ronde 2 §1.
+
+### Gate yang dijalankan ulang nyata (12 Nov)
+
+| Gate | Hasil |
+|---|---|
+| lint / tsc / 4 suite test / build / E2E | 0 error / 0 / semua lulus / sukses / **22/22** |
+| Audit a11y ulang (production build, E5) | 0 unlabeled range, 0 tombol ikon-only tanpa nama, canvas bernama, console warning bukan error |
+
+### Sisa backlog (menunggu keputusan pengguna)
+
+- **Keputusan pedagogis:** F-02 (noise 1.5% & penjelasan sumber galat; Bulan 4.8% > kriteria 2%), jalur kandidat Millikan buntu (hint adaptif vs ubah default vs droplet n=1), mini-aktivitas massa (S8), pilihan perbaikan F-09 (A/B/C), F-07 verifikasi ulang gerbang prediksi.
+- **G-2** uji manusia nyata: tetap PENDING (5 guru + 8 siswa).
+- **G-9** bandul CP/ATP: tetap NEEDS_REVIEW — butuh dokumen resmi dari pengguna.
+- **Debt lint non-error:** 102 warning (pola lama).

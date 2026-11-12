@@ -1,0 +1,71 @@
+{
+  "steps": [
+    {
+      "phase": "kandidat-3.13-default",
+      "text": [
+        "Urutkan nilai muatanmu dari yang terkecil ke terbesar, lalu uji berbagai kandidat satuan pembagi dasar. Jika semua muatan menghasilkan pembagian bilangan bulat yang konsisten, kamu telah menemukan bukti kuantisasi!",
+        "Bagaimana jika setiap nilai terdiri dari satu satuan dasar yang sama? Uji apakah beberapa nilai dapat dijelaskan menggunakan satu satuan dasar yang konsisten.",
+        "Kandidat Satuan",
+        "💡 Nilai terkecil sering menjadi titik awal yang menarik untuk diuji. Mari lihat apakah kandidat ini dapat menjelaskan nilai lainnya.",
+        "Perhatikan posisi titik-titik rasio: apakah mereka tersebar acak di antara garis, atau berkumpul di dekat posisi bilangan bulat?",
+        "Skala: Rasio (q / Kandidat)",
+        "Titik-titik masih tersebar",
+        "Saat suatu kandidat menghasilkan titik yang tersebar acak, data tersebut membuktikan bahwa muatan tidak tersusun dari kelipatan angka tersebut. Bandingkan dengan kandidat yang membuat titik-titik merapat ke bilangan bulat."
+      ]
+    },
+    {
+      "phase": "kandidat-1.60",
+      "text": [
+        "Urutkan nilai muatanmu dari yang terkecil ke terbesar, lalu uji berbagai kandidat satuan pembagi dasar. Jika semua muatan menghasilkan pembagian bilangan bulat yang konsisten, kamu telah menemukan bukti kuantisasi!",
+        "Bagaimana jika setiap nilai terdiri dari satu satuan dasar yang sama? Uji apakah beberapa nilai dapat dijelaskan menggunakan satu satuan dasar yang konsisten.",
+        "Kandidat Satuan",
+        "💡 Nilai terkecil sering menjadi titik awal yang menarik untuk diuji. Mari lihat apakah kandidat ini dapat menjelaskan nilai lainnya.",
+        "Perhatikan posisi titik-titik rasio: apakah mereka tersebar acak di antara garis, atau berkumpul di dekat posisi bilangan bulat?",
+        "Skala: Rasio (q / Kandidat)",
+        "Posisi bilangan bulat",
+        "Titik-titik masih tersebar",
+        "Struktur lebih konsisten",
+        "Saat suatu kandidat menghasilkan titik yang tersebar acak, data tersebut membuktikan bahwa muatan tidak tersusun dari kelipatan angka tersebut. Bandingkan dengan kandidat yang membuat titik-titik merapat ke bilangan bulat.",
+        "Banyak nilai tampak dekat dengan bilangan bulat",
+        "🔍 Ada Sesuatu yang Menarik pada Data Ini",
+        "Kandidat satuan ini tampaknya membuat banyak hasil pembagian berulang kali mendekati posisi yang teratur pada garis bilangan.",
+        "Teliti Temuan Ini"
+      ]
+    }
+  ],
+  "discovered": "true",
+  "history": [
+    {
+      "c": 3.13,
+      "dev": 0.2231236885983831,
+      "st": "Titik-titik masih tersebar"
+    },
+    {
+      "c": 1.6,
+      "dev": 0.054250299445114655,
+      "st": "Struktur lebih konsisten"
+    }
+  ],
+  "stage4Text": [
+    "Teori & Verifikasi NIST",
+    "Ketika kamu membagi muatan tetesan minyak dengan kandidat satuan ~1.727 × 10⁻¹⁹ C, hasil bagi berkali-kali mendekati bilangan bulat.",
+    "Kamu bisa mendalami teori fisika & grafik verifikasi standar NIST (Tahap 5), atau langsung menuju Refleksi Kognitif bersama Socratic AI.",
+    "Pahami Teori & NIST (Tahap 5)"
+  ],
+  "stage5Text": [
+    "Teori & Verifikasi NIST",
+    "TAHAP 05: TEORI ILMIAH & VERIFIKASI NIST",
+    "Kuantisasi Terverifikasi",
+    "di mana e ≈ 1.727 × 10⁻¹⁹ C (Standar NIST: 1.6022 × 10⁻¹⁹ C)",
+    "3. Peran Koreksi Slip Cunningham",
+    "Hukum Stokes mengasumsikan udara sebagai fluida mulus tanpa celah. Namun untuk tetesan sekecil 1-2 µm, tetesan sering 'tergelincir' di sela molekul udara. Koreksi Cunningham meningkatkan akurasi dari galat 5% ke < 2%.",
+    "q Terkoreksi (+Cunningham)",
+    "REKOMENDASI (+ CUNNINGHAM)",
+    "Δ 7.80% VS NIST",
+    "Stokes (Tanpa Koreksi):",
+    "Standar NIST 2018:",
+    "1.6022 × 10⁻¹⁹ C",
+    "#\tq Terkoreksi\tKuantum n\te Terhitung\tGalat %"
+  ],
+  "errors": []
+}

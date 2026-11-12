@@ -1,0 +1,29 @@
+
+## BUKTI RONDE 2 (diproduksi 12 Nov 2026, production build, Playwright, alur nyata diklik)
+
+### E1 — Bandul: preset non-Bumi (F-10) & galat g Bumi (F-02)
+- Bumi, 5 trial L=0.2–1.0 m: analisis menampilkan g terukur 9.9710 m/s² vs referensi 9.8066, galat ≈ 1.68%, R² sangat tinggi → LULUS kriteria <2% (kali ini; ronde 1 dengan data lain galatnya 3.60% — noise 1.5% relatif pada T membuat hasil tidak deterministik).
+- Preset Bulan (g=1.62 m/s²), 3 trial L=0.3/0.6/0.9: referensi gravitasi di analisis MENGIKUTI lab (kontekstual, fix ronde 1 bekerja), galat ≈ 4.8%.
+- Preset Jupiter (g=24.79 m/s²), 3 trial: galat ≈ 2.46%. Dengan hanya 3 titik data, galat cenderung > 2%.
+- Console error produksi di SEMUA halaman: "❌ Supabase environment variables are missing or unconfigured! Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set..." — muncul tiap load walau fitur inti lokal bekerja.
+
+### E2/E2b — Millikan: alur discovery PENUH (F-09)
+- 5 droplet direkam; sinar-X ditembakkan di antara rekaman → variasi q: 6.62, 4.81, 6.40, 4.67, 3.13 (semua ×10⁻¹⁹ C), n terdeteksi 4,3,4,3,2. Label "Drop #01 (obs 2)" benar (fix F-08 ronde 1 bekerja).
+- Tahap 3 "Cari Pola": kandidat default = q terkecil (3.13) → deviasi 0.22, pesan "Titik-titik masih tersebar" — jalur pertama BUNTU karena 3.13 ternyata 2 satuan (bukan 1). Siswa HARUS iterasi sendiri ke kandidat ~1.60.
+- Kandidat 1.60 → deviasi 0.054 → tombol "Teliti Temuan Ini" muncul → modal PreDiscovery → konfirmasi → localStorage fisikaseru:discovered:millikan = true → stage 4/5 terbuka. Alur discovery END-TO-END BERHASIL.
+- Tahap 4/5: estimasi e yang ditampilkan ≈ 1.727×10⁻¹⁹ C, Δ vs NIST (1.602×10⁻¹⁹) = 7.80% — GAGAL kriteria protokol H3 "Δ < 3% (dengan koreksi Cunningham)". Tahap 5 menampilkan rasio 1.01/1.99/3.02/4.01 ≈ bilangan bulat (kuantisasi tampak).
+
+### E3/E3b — Audit aksesibilitas (F-05), 5 halaman inti
+- Bandul experiment (step Pengukuran): 4 input[type=range] TANPA aria-label & tanpa label wrapper → screen reader tidak menyebut variabel apa yang diatur.
+- Millikan experiment (step Pengukuran): 2 input[type=range] tanpa label.
+- Parabola experiment: canvas TANPA aria-label dan TANPA role (canvas bandul & millikan SUDAH aria-label + role=img — inkonsisten).
+- 2 tombol ikon-only tanpa nama aksesibel: tombol collapse panel (ikon ChevronRight saja) — bandul ExperimentView.tsx:533, millikan :1372. Screen reader membaca tombol kosong.
+- Fokus keyboard terlihat (outline 3px solid) — OK. Struktur heading & img alt — OK. Slider Radix parabola = span tanpa nama aksesibel.
+
+### Konteks temuan terbuka ronde 1 (belum selesai saat itu)
+- F-02: galat g bandul (ronde 1: 3.60% > kriteria 2%; ronde 2 Bumi: 1.68% — tidak konsisten).
+- F-05: aksesibilitas (ronde 2 audit lengkap terlampir di atas).
+- F-07: gerbang prediksi parabola bisa dilewati total (siswa tipu: refleksi tetap terbuka, pesan "Kamu tetap bisa melanjutkan").
+- F-09: estimasi e Millikan Δ 7.80% > kriteria 3% (ronde 2 teramati langsung).
+- F-10: preset non-Bumi (ronde 2: bekerja, gRef kontekstual; galat 4.8%–2.46% dengan 3 titik).
+- G-9: akurasi konten bandul berstatus NEEDS_REVIEW (menunggu dokumen CP/ATP resmi dari pengguna).

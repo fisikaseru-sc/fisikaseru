@@ -1,0 +1,80 @@
+[
+  {
+    "id": "G1",
+    "model": "cai/glm-5.3",
+    "ok": true,
+    "dur": "40"
+  },
+  {
+    "id": "G2",
+    "model": "cai/gpt-5.6-sol",
+    "ok": true,
+    "dur": "36"
+  },
+  {
+    "id": "G3",
+    "model": "cai/qwen3.8-max",
+    "ok": true,
+    "dur": "11"
+  },
+  {
+    "id": "G4",
+    "model": "cbai/glm-5.2",
+    "ok": true,
+    "dur": "45"
+  },
+  {
+    "id": "G5",
+    "model": "cai/deepseek-v4.1-flash",
+    "ok": true,
+    "dur": "17"
+  },
+  {
+    "id": "S1",
+    "model": "cai/kimi-k3",
+    "ok": true,
+    "dur": "49"
+  },
+  {
+    "id": "S2",
+    "model": "cai/minimax-m3",
+    "ok": true,
+    "dur": "31"
+  },
+  {
+    "id": "S3",
+    "model": "cbai/kimi-k2.6",
+    "ok": true,
+    "dur": "53"
+  },
+  {
+    "id": "S4",
+    "model": "cbai/minimax-m3",
+    "ok": true,
+    "dur": "22"
+  },
+  {
+    "id": "S5",
+    "model": "cai/deepseek-v4.1-flash",
+    "ok": true,
+    "dur": "12"
+  },
+  {
+    "id": "S6",
+    "model": "cai/claude-haiku-5.5",
+    "ok": true,
+    "dur": "18"
+  },
+  {
+    "id": "S7",
+    "model": "cai/kimi-k3",
+    "ok": false,
+    "err": "empty content: {\"error\":{\"message\":\"[openai-compatible-responses-12e18e05-9547-473d-ba16-92eaffa0088e/kimi-k3] [402]: {\\\"error\\\":{\\\"message\\\":\\\"Kredit tidak cukup — isi di https://router.classai.id/is"
+  },
+  {
+    "id": "S8",
+    "model": "cai/minimax-m3",
+    "ok": false,
+    "err": "empty content: {\"error\":{\"message\":\"[openai-compatible-responses-12e18e05-9547-473d-ba16-92eaffa0088e/minimax-m3] [402]: {\\\"error\\\":{\\\"message\\\":\\\"Kredit tidak cukup — isi di https://router.classai.id"
+  }
+]

@@ -1,0 +1,311 @@
+{
+  "parabola-experiment": {
+    "audit": {
+      "inputCount": 0,
+      "inputs": [],
+      "unlabeledInputs": 0,
+      "canvases": [
+        {
+          "ariaLabel": null,
+          "role": null,
+          "w": 1100
+        }
+      ],
+      "headings": [
+        "H2:Variabel Peluncur",
+        "H2:Data Percobaan"
+      ],
+      "imgsNoAlt": 0,
+      "totalFocusables": 15
+    },
+    "focusOrder": [
+      "a :: Katalog",
+      "a :: Analisis",
+      "button:button :: Luncurkan",
+      "button:button :: Reset",
+      "span :: ",
+      "span :: ",
+      "span :: ",
+      "span :: ",
+      "button:button :: 🌙 Bulan",
+      "button:button :: 🔴 Mars",
+      "button:button :: 🌍 Bumi",
+      "button:button :: 🪐 Jupiter",
+      "span :: ",
+      "a :: Analisis Data (0)",
+      "button :: Analisis Data (0)",
+      "body :: Katalog/Gerak Parabola/Eksperimen1Pr",
+      "a :: Katalog",
+      "a :: Analisis",
+      "button:button :: Luncurkan",
+      "button:button :: Reset",
+      "span :: ",
+      "span :: ",
+      "span :: ",
+      "span :: ",
+      "button:button :: 🌙 Bulan",
+      "button:button :: 🔴 Mars",
+      "button:button :: 🌍 Bumi",
+      "button:button :: 🪐 Jupiter",
+      "span :: ",
+      "a :: Analisis Data (0)"
+    ],
+    "focusStyle": {
+      "outlineWidth": "3px",
+      "outlineStyle": "solid",
+      "outlineColor": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
+      "boxShadow": true
+    },
+    "errors": []
+  },
+  "bandul-experiment": {
+    "audit": {
+      "inputCount": 0,
+      "inputs": [],
+      "unlabeledInputs": 0,
+      "canvases": [
+        {
+          "ariaLabel": "Simulasi interaktif bandul sederhana: beban di ujung tali berosolasi di bawah rel, dengan vektor gaya berat dan tegangan tali",
+          "role": "img",
+          "w": 1120
+        }
+      ],
+      "headings": [
+        "H2:Pretest",
+        "H3:Pretest Kognitif"
+      ],
+      "imgsNoAlt": 0,
+      "totalFocusables": 20
+    },
+    "focusOrder": [
+      "a :: Katalog",
+      "button :: 1Persiapan",
+      "button :: 2Pengamatan",
+      "button :: 3Pengukuran",
+      "button :: 4Analisis",
+      "button :: 5Refleksi",
+      "button :: Tampilkan vektor gaya",
+      "a :: Dashboard",
+      "button :: 2D",
+      "button :: 3D",
+      "button :: Mulai",
+      "button :: Reset Simulasi",
+      "button :: Rekam 0/10",
+      "button :: ",
+      "button :: A.Hanya panjang tali (L) dan gravita",
+      "button :: B.Massa beban (m) dan sudut simpanga",
+      "button :: C.Semua: L, m, g, dan θ",
+      "button :: A.T menjadi 4× lebih lambat",
+      "button :: B.T menjadi 2× lebih lambat (karena ",
+      "button :: C.T tidak berubah",
+      "body :: Katalog/Bandul Sederhana1Persiapan2P",
+      "a :: Katalog",
+      "button :: 1Persiapan",
+      "button :: 2Pengamatan",
+      "button :: 3Pengukuran",
+      "button :: 4Analisis",
+      "button :: 5Refleksi",
+      "button :: Tampilkan vektor gaya",
+      "a :: Dashboard",
+      "button :: 2D"
+    ],
+    "focusStyle": {
+      "outlineWidth": "3px",
+      "outlineStyle": "solid",
+      "outlineColor": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
+      "boxShadow": false
+    },
+    "errors": [
+      "console:❌ Supabase environment variables are missing or unconfigured! Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your enviro"
+    ]
+  },
+  "millikan-experiment": {
+    "audit": {
+      "inputCount": 1,
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "range",
+          "text": null,
+          "label": null,
+          "ariaHidden": null,
+          "inLabelWrapper": false
+        }
+      ],
+      "unlabeledInputs": 1,
+      "canvases": [
+        {
+          "ariaLabel": "Simulasi interaktif eksperimen tetes minyak Millikan: tetesan minyak melayang di antara dua pelat listrik di dalam chamber, dengan vektor gaya berat dan gaya listrik",
+          "role": "img",
+          "w": 1110
+        }
+      ],
+      "headings": [
+        "H2:Dugaan Awal",
+        "H3:\"Apakah muatan listrik dapat bernilai berapa saja?"
+      ],
+      "imgsNoAlt": 0,
+      "totalFocusables": 23
+    },
+    "focusOrder": [
+      "a :: Katalog",
+      "button :: 1Persiapan",
+      "button :: 2Pengamatan",
+      "button :: 3Pengukuran",
+      "button :: 4Analisis",
+      "button :: 5Refleksi",
+      "button :: Prinsip Lab",
+      "button :: Tampilkan vektor gaya",
+      "a :: Dashboard",
+      "button :: 2D",
+      "button :: 3D",
+      "button :: Chamber",
+      "button :: Okular",
+      "button :: Inspeksi",
+      "button :: Mulai Observasi",
+      "button :: Reset",
+      "button :: ",
+      "button:button :: A. Muatan Acak & KontinuSetiap tetes",
+      "button:button :: B. Semua Tetes IdentikSemua tetes mi",
+      "button:button :: C. Pola Kelipatan TertentuNilai muat",
+      "button:button :: D. Belum YakinBelum memiliki gambara",
+      "textarea :: ",
+      "input:range :: ",
+      "body :: Katalog/Tetes Minyak Millikan1Persia",
+      "a :: Katalog",
+      "button :: 1Persiapan",
+      "button :: 2Pengamatan",
+      "button :: 3Pengukuran",
+      "button :: 4Analisis",
+      "button :: 5Refleksi"
+    ],
+    "focusStyle": {
+      "outlineWidth": "3px",
+      "outlineStyle": "solid",
+      "outlineColor": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
+      "boxShadow": false
+    },
+    "errors": [
+      "console:❌ Supabase environment variables are missing or unconfigured! Please make sure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your enviro"
+    ]
+  },
+  "bandul-analysis": {
+    "audit": {
+      "inputCount": 0,
+      "inputs": [],
+      "unlabeledInputs": 0,
+      "canvases": [],
+      "headings": [
+        "H3:Grafik Regresi: T² vs L",
+        "H4:Dari Regresi ke Nilai g",
+        "H3:Data Rekaman",
+        "H3:Nilai Gravitasi Terukur"
+      ],
+      "imgsNoAlt": 0,
+      "totalFocusables": 13
+    },
+    "focusOrder": [
+      "a :: Katalog",
+      "a :: Bandul Sederhana",
+      "a :: Lab",
+      "a :: Refleksi",
+      "a :: Lab",
+      "button :: T vs L",
+      "button :: T² vs L",
+      "button :: Log-Log",
+      "svg :: 00.250.50.751Panjang Tali, L (m)0246",
+      "a :: Lab",
+      "button :: Lab",
+      "a :: Refleksi",
+      "button :: Refleksi",
+      "body :: Katalog/Bandul Sederhana/AnalisisPer",
+      "a :: Katalog",
+      "a :: Bandul Sederhana",
+      "a :: Lab",
+      "a :: Refleksi",
+      "a :: Lab",
+      "button :: T vs L",
+      "button :: T² vs L",
+      "button :: Log-Log",
+      "svg :: 00.250.50.751Panjang Tali, L (m)0246",
+      "a :: Lab",
+      "button :: Lab",
+      "a :: Refleksi",
+      "button :: Refleksi",
+      "body :: Katalog/Bandul Sederhana/AnalisisPer",
+      "a :: Katalog",
+      "a :: Bandul Sederhana"
+    ],
+    "focusStyle": {
+      "outlineWidth": "3px",
+      "outlineStyle": "solid",
+      "outlineColor": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
+      "boxShadow": false
+    },
+    "errors": []
+  },
+  "parabola-reflection": {
+    "audit": {
+      "inputCount": 1,
+      "inputs": [
+        {
+          "tag": "input",
+          "type": "number",
+          "text": null,
+          "label": "Tebakan jarak di Bulan (m)",
+          "ariaHidden": null,
+          "inLabelWrapper": false
+        }
+      ],
+      "unlabeledInputs": 0,
+      "canvases": [],
+      "headings": [
+        "H1:Saatnya Berhadapan dengan Data",
+        "H2:Prediksimu vs Temuanmu",
+        "H2:Pertanyaan Refleksi",
+        "H2:Tantangan: Pindahkan Meriam ke Bulan 🌙"
+      ],
+      "imgsNoAlt": 0,
+      "totalFocusables": 8
+    },
+    "focusOrder": [
+      "a :: Katalog",
+      "a :: halaman prediksi",
+      "textarea :: Jawaban pertanyaan refleksi 1",
+      "textarea :: Jawaban pertanyaan refleksi 2",
+      "textarea :: Jawaban pertanyaan refleksi 3",
+      "input:number :: ",
+      "a :: Analisis",
+      "button :: Analisis",
+      "body :: Katalog/Gerak Parabola/Refleksi1Pred",
+      "a :: Katalog",
+      "a :: halaman prediksi",
+      "textarea :: Jawaban pertanyaan refleksi 1",
+      "textarea :: Jawaban pertanyaan refleksi 2",
+      "textarea :: Jawaban pertanyaan refleksi 3",
+      "input:number :: ",
+      "a :: Analisis",
+      "button :: Analisis",
+      "body :: Katalog/Gerak Parabola/Refleksi1Pred",
+      "a :: Katalog",
+      "a :: halaman prediksi",
+      "textarea :: Jawaban pertanyaan refleksi 1",
+      "textarea :: Jawaban pertanyaan refleksi 2",
+      "textarea :: Jawaban pertanyaan refleksi 3",
+      "input:number :: ",
+      "a :: Analisis",
+      "button :: Analisis",
+      "body :: Katalog/Gerak Parabola/Refleksi1Pred",
+      "a :: Katalog",
+      "a :: halaman prediksi",
+      "textarea :: Jawaban pertanyaan refleksi 1"
+    ],
+    "focusStyle": {
+      "outlineWidth": "3px",
+      "outlineStyle": "solid",
+      "outlineColor": "oklab(0.707999 -0.00000712276 0.0000166297 / 0.5)",
+      "boxShadow": true
+    },
+    "errors": []
+  }
+}
