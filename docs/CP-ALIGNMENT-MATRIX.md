@@ -1,6 +1,6 @@
 # FisikaSeru — Matriks Alignment Capaian Pembelajaran
 
-**Tanggal:** 17 Okt 2026 (audit kedua — kutipan kini VERBATIM dari dokumen sumber) · **Sumber:** `Physics Source/` (di luar repo)
+**Tanggal:** 17 Okt 2026 (audit kedua — kutipan VERBATIM) · **Diperbarui 12 Nov 2026 (G-9: penelusuran bukti getaran/bandul)** · **Sumber:** `Physics Source/` (di luar repo)
 
 ## Definisi status
 
@@ -35,16 +35,16 @@
 | Field | Isi |
 |---|---|
 | Module | `bandul` |
-| Phase/class | Di-klaim design.md sebagai "Kelas 11, Bab 5: Getaran" — **TIDAK TERVERIFIKASI** |
-| CP reference | CP Fisika Fase F 2025 (`CP_2025_BSKAP_046H_KR_Fisika_Fase_F.docx`, SRC-CP-FISIKA-F-2025) |
-| Verbatim excerpt | Rumusan Pemahaman Fisika Fase F lengkap telah dibaca: "Menganalisis hubungan gerak dan gaya…; membuat karya… hukum fluida…; menganalisis konsep kalor dan termodinamika…; menganalisis gejala gelombang…; mengevaluasi rangkaian listrik; menganalisis fenomena elektromagnetik; menganalisis teori dasar fisika modern…; serta menerapkan teori dasar digital…" — **getaran/osilasi/bandul TIDAK termuat** |
-| Source location | CP Fisika F, bagian "Capaian Pembelajaran — Fase F" |
-| TP mapping | Tidak ada TP bandul di ATP Fase F (11 TP, tidak memuat getaran). Catatan: ATP IPA Fase E juga tidak memuat getaran. Referensi materi: Mikrajuddin I Bab 7 (mendukung fisika bandul secara ilmiah, bukan sebagai bukti CP) |
-| Activity mapping | Pretest → Experiment → Analyze (T² vs L) → Reflect — pedagogis kuat, tapi TANPA tautan CP terverifikasi |
-| Assessment evidence | Regresi T² vs L → g terukur; refleksi miskonsepsi |
-| Gap | **Tidak ada dukungan CP/TP untuk bandul pada Fase E maupun F dari dokumen yang ditelaah.** Kemungkinan: materi bandul berada di Fase E fisika SMA kelas X pada kurikulum sebelumnya, atau di dokumen CP yang belum tersedia di `Physics Source/` |
-| Interpretation | Modul tetap layak secara pedagogis (miskonsepsi FCI terdokumentasi; keterampilan proses terintegrasi), tapi klaim "Kelas 11 Bab 5 Getaran" dari design.md TIDAK dapat dipertahankan sebagai alignment — Erlangga XI (buku Kelas XI yang tersedia) justru TIDAK memuat bab getaran |
-| Review status | **NEEDS_REVIEW** (kesesuaian CP) + **posisi pedagogis sementara: PENGAYAAN** — keputusan pengguna 17 Okt 2026. Modul tetap dapat dipakai untuk eksplorasi/simulasi/penyelidikan ilmiah TANPA mengklaim sebagai tuntutan CP langsung. Status kurikulum baru diperbarui bila dokumen pendukung ditemukan atau keputusan guru dibuat. Dimensi lain (implementasi/numerik/sumber) tetap Verified sesuai laporan audit |
+| Phase/class | **Fase F (Kelas XI)** untuk fisika bandul — dibuku-supported lewat Buku Sekolah XI Bab 5 "Gelombang, Bunyi dan Cahaya" (SRC-BS-XI-2022). Klaim lama design.md "Kelas 11, Bab 5: Getaran" kini **TERVERIFIKASI sebagian** (buku resmi memuat bandul di Bab 5, meski bukan bab "Getaran" tersendiri) |
+| CP reference | CP Fisika Fase F 2025 (SRC-CP-FISIKA-F-2025) + Panduan Pembelajaran dan Asesmen 2025 (SRC-PANDUAN-2025) + Buku Sekolah XI (SRC-BS-XI-2022) |
+| Verbatim excerpt | CP Fisika Fase F, elemen "Pemahaman Fisika" (PDF hal. 3): "Pemahaman fakta, konsep, prinsip, hukum, teori, dan model pada materi **mekanika**; fluida; gelombang; termodinamika; kelistrikan dan kemagnetan; fisika modern; dan teori dasar digital". Rumusan CP Fase F (PDF hal. 5): "**Menganalisis hubungan gerak dan gaya** serta pemanfaatannya untuk menjelaskan fenomena alam…". Buku Sekolah XI Bab 5 (hal. 117): "Energi mekanik pada **bandul** akan diubah menjadi getaran pada permukaan air, kemudian getaran tersebut merambat dan membentuk gelombang" (Gambar 5.3). Buku Sekolah XI hal. 134 (Aktivitas 5.6): "Siapkan plastisin sebagai **pemberat/bandul**… **Simpangkan salah satu bandul** kemudian lepaskan, amati gerak bandul yang lain" |
+| Source location | CP Fisika F (PDF hal. 3 & 5); Buku Sekolah Fisika XI Bab 5 (PDF page 138–156 → halaman cetak 115–136) |
+| TP mapping | **Tetap tidak ada TP bernama "bandul/getaran".** ATP Fase F (11 TP) tidak memuat getaran; ATP IPA Fase E juga tidak. Konfirmasi negatif 12 Nov 2026: pencarian teks penuh atas PDF resmi CP Fisika Fase F **dan** Panduan Pembelajaran dan Asesmen 2025 → **0 hit** untuk getaran/bandul/ayunan/osilasi/simpangan. Yang berubah: dasar penalaran **adanya** = elemen CP "materi mekanika" + TP Fase F "menganalisis hubungan gerak dan gaya" (T = 2π√(L/g) persis berada di dalamnya), dan bandul **dibuat eksplisit sebagai objek belajar di Buku Sekolah resmi** |
+| Activity mapping | Pretest → Experiment (slider L/m/θ₀/g + rekam trial) → Analyze (regresi T² vs L → g) → Reflect — **kini memiliki Activities 5.6 resmi yang analogous** (resonansi bandul di Buku Sekolah XI) dan dapat dipakai guru sebagai pembanding |
+| Assessment evidence | Regresi T² vs L → g terukur (galat <2%); refleksi miskonsepsi; penjelasan sumber galat (round 2); mini-aktivitas massa |
+| Gap | (1) Bandul tidak memiliki TP tersendiri → status alignment tetap **tidak eksplisit** (bukan ALIGNED); (2) buku resmi memakai bandul terutama sebagai sumber gelombang & resonansi, sementara modul memakai bandul sebagai alat ukur gravitasi — penggunaan unsurRequirements berbeda tetapi fisika intinya sama (osilasi harmonik sederhana); (3) keputusan kurikulum akhir tetap milik guru/sekolah |
+| Interpretation | Klaim "Bab 5" **terbukti ada isinya** (buku resmi XI memuat bandul di Bab 5) tetapi **bukan bab getaran** — jadi tidak boleh ditulis sebagai "Bab 5: Getaran". Modul tetap **ENRICHMENT** secara formal (TP getaran tidak ada), namun kini **berpijak pada bukti positif**: elemen mekanika CP Fase F + penggunaan bandul di Buku Sekolah XI, bukan lagi hanya bukti negatif |
+| Review status | **ENRICHMENT (dengan bukti positif)** —menggantikan NEEDS_REVIEW. Keputusan pedagogis sementara pengguna (17 Okt 2026): pengayaan. G-9 ditutup pada 12 Nov 2026: bukti CP/ATP negatif terkonfirmasi penuh, bukti buku sekolah positif ditemukan dan tercatat verbatim |
 
 ### Modul: Millikan
 
@@ -69,3 +69,4 @@
 3. ~~Diskrepansi nomor keputusan CP Fisika F (file: 046/H/KR/2025; isi: 064/H/KR/2025) tidak diselesaikan dengan tebakan~~ **TERSELESAIKAN (17 Okt 2026, verifikasi eksternal pengguna):** nomor resmi = 046/H/KR/2025 (salinan keputusan bpmpbabel.kemendikdasmen.go.id + siaran pers Kemendikdasmen 23 Jun 2026); teks "064" di dalam docx = kesalahan dokumen sumber. Rumusan CP yang dikutip tidak terpengaruh; dokumen sumber tidak diubah. Bukti + tanggal verifikasi dicatat di PHYSICS-SOURCE-MATRIX.md.
 4. Dokumen ATP (Analisis CP…) penulisnya tidak tercantum — status parabola dibatasi PARTIALLY_ALIGNED, bukan ALIGNED, sampai identitas dokumen pendukung terverifikasi.
 5. Tidak ada status yang dinaikkan tanpa bukti; bandul justru **diturunkan** dari asumsi lama "Kelas 11 Bab 5" menjadi NEEDS_REVIEW.
+6. **12 Nov 2026 (G-9):** asumsi itu diuji ulang, bukan diasumsikan. Hasil: buku resmi XI memang memuat bandul di Bab 5 (verbatim di atas) tetapi **bukan** bab "Getaran" — klaim pun tidak boleh ditulis "Bab 5: Getaran". Karena CP/ATP tetap 0 hit untuk getaran/bandul, status dinaikkan dari "hanya bukti negatif" menjadi "ENRICHMENT dengan bukti positif (elemen mekanika CP Fase F + penggunaan bandul di Buku Sekolah XI)", **tidak** menjadi ALIGNED. Bukti negatif dan positif keduanya dicatat — status tidak pernah hanya satu sisi.

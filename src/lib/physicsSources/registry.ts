@@ -152,7 +152,7 @@ export const REVIEWED_SOURCES: readonly PhysicsSourceMeta[] = [
     verification_date: "2026-10-17",
     source_version_or_hash: "sha256:5bc5fc48cf54f082",
     reviewer_or_process:
-      "Auditor AI — ekstraksi python-docx penuh (35 paragraf), dibaca seluruhnya. Nomor keputusan diverifikasi eksternal oleh pengguna 17 Okt 2026: resmi = 046/H/KR/2025 (salinan keputusan bpmpbabel.kemendikdasmen.go.id + siaran pers Kemendikdasmen 23 Juni 2026); teks '064' di dalam docx = kesalahan dokumen sumber.",
+      "Auditor AI — ekstraksi python-docx penuh (35 paragraf), dibaca seluruhnya. 12 Nov 2026 (G-9): pdftotext penuh atas PDF resmi CP_2025_BSKAP_046H_KR_Fisika_Fase_F.pdf + pencarian kata kunci getaran/bandul/ayunan/osilasi/simpangan → 0 hit (konfirmasi negatif kata 'bandul'), tetapi elemen 'Pemahaman Fisika' memuat 'materi mekanika' dan CP menyatakan 'menganalisis hubungan gerak dan gaya' (hal. 3 & 5 PDF). Nomor keputusan diverifikasi eksternal oleh pengguna 17 Okt 2026: resmi = 046/H/KR/2025 (salinan keputusan bpmpbabel.kemendikdasmen.go.id + siaran pers Kemendikdasmen 23 Juni 2026); teks '064' di dalam docx = kesalahan dokumen sumber.",
     limitations:
       "DISKREPANSI TERSELESAIKAN (verifikasi eksternal oleh pengguna, 17 Okt 2026): nomor resmi yang benar adalah 046/H/KR/2025 — dikonfirmasi dari salinan keputusan resmi di situs pemerintah (bpmpbabel.kemendikdasmen.go.id, KepKaBSKAP-046_2025-ttg-CP.pdf) dan siaran pers Kemendikdasmen 23 Juni 2026 (Keputusan 020/2026 hanya mengubah CP Agama & Budi Pekerti; mapel lain tetap 046/H/KR/2025). Teks 'NOMOR 064/H/KR/2025' di dalam file docx adalah kesalahan pada dokumen sumber itu sendiri — dokumen sumber TIDAK diubah; catatan bibliografi ini yang dikoreksi. Rumusan CP yang dikutip untuk alignment tidak terpengaruh penomoran.",
   },
@@ -173,7 +173,7 @@ export const REVIEWED_SOURCES: readonly PhysicsSourceMeta[] = [
     source_version_or_hash: "sha256:32b0adcade68717c",
     reviewer_or_process: "Auditor AI — ekstraksi python-docx (29 paragraf + 3 tabel), tabel dibaca penuh",
     limitations:
-      "Penulis/lembaga tidak tercantum dalam teks ekstraksi — butuh verifikasi identitas. Bandul TIDAK muncul di ATP Fase F → pemetaan bandul ke Fase F tidak didukung dokumen ini.",
+      "Penulis/lembaga tidak tercantum dalam teks ekstraksi — butuh verifikasi identitas. Bandul TIDAK muncul di ATP Fase F → pemetaan bandul ke Fase F tidak didukung dokumen ini. 12 Nov 2026 (G-9): dokumen PDF resmi CP Fisika Fase F dan Panduan Pembelajaran dan Asesmen 2025 ikut diperiksa penuh — keduanya 0 hit untuk getaran/bandul/ayunan/osilasi; dukungan bandul bersumber dari Buku Sekolah XI (SRC-BS-XI-2022, Bab 5), bukan dari CP/ATP.",
   },
   {
     source_id: "SRC-ATP-IPA-E-2025",
@@ -202,16 +202,16 @@ export const REVIEWED_SOURCES: readonly PhysicsSourceMeta[] = [
     edition: "",
     source_type: "TEXTBOOK",
     filename: "Fisika_BS_KLS_XI.pdf",
-    chapter: "Bab 2 Kinematika — D. Gerak Parabola (hal. 53–57)",
-    page_range: "53–57 (terekstraksi pdftotext)",
+    chapter: "Bab 2 Kinematika — D. Gerak Parabola (hal. 53–57); Bab 5 Gelombang, Bunyi dan Cahaya — getaran & bandul (hal. 115–136)",
+    page_range: "53–57 (parabola); 115–136 (Bab 5, terbaca terfokus — PDF page 138–156)",
     claim_supported:
-      "Buku siswa memverifikasi: vx = v·cosθ, vy = v·sinθ; kecepatan horizontal konstan; vy = 0 di puncak; waktu tanah-puncak-tanah = 2× waktu ke puncak; penyelidikan jarak horizontal R; peluncuran dari ketinggian meja (h0 > 0) sebagai kasus utama.",
+      "Buku siswa memverifikasi: vx = v·cosθ, vy = v·sinθ; kecepatan horizontal konstan; vy = 0 di puncak; waktu tanah-puncak-tanah = 2× waktu ke puncak; penyelidikan jarak horizontal R; peluncuran dari ketinggian meja (h0 > 0) sebagai kasus utama. Bab 5 (gelombang) memuat bandul sebagai objek belajar resmi: 'Energi mekanik pada bandul akan diubah menjadi getaran pada permukaan air, kemudian getaran tersebut merambat dan membentuk gelombang' (Gambar 5.3, hal. 117) dan Aktivitas 5.6 resonansi bandul — 'Siapkan plastisin sebagai pemberat/bandul… Simpangkan salah satu bandul kemudian lepaskan, amati gerak bandul yang lain' (hal. 134).",
     review_status: "PARTIALLY_REVIEWED",
     verification_date: "2026-10-17",
     source_version_or_hash: "sha256:88e3e464ef384b79",
-    reviewer_or_process: "Auditor AI — pdftotext penuh (12.232 baris), Bab 2 bagian parabola dibaca terfokus",
+    reviewer_or_process: "Auditor AI — pdftotext penuh (12.232 baris), Bab 2 bagian parabola dibaca terfokus; 12 Nov 2026: Bab 5 (PDF page 138–156) dibaca terfokus untuk bukti getaran/bandul (G-9)",
     limitations:
-      "Telaah terfokus pada subbab gerak parabola saja; bab lain belum ditelaah. Tabel/berntisikit persamaan hilang di ekstraksi teks (dibaca dari konteks prosa dan contoh soal).",
+      "Telaah terfokus pada subbab gerak parabola (Bab 2) dan getaran/bandul (Bab 5); bab lain belum ditelaah. Tabel/berntisikit persamaan hilang di ekstraksi teks (dibaca dari konteks prosa dan contoh soal).",
   },
   {
     source_id: "SRC-MIKRA-I",
@@ -262,7 +262,7 @@ export const REVIEWED_SOURCES: readonly PhysicsSourceMeta[] = [
     chapter: "Dokumen 159 halaman — dibaca sampul, identitas, dan struktur",
     page_range: "1–3 (identitas); keseluruhan terekstraksi (11.313 baris)",
     claim_supported:
-      "Identitas dokumen resmi BSKAP 'Edisi Revisi Tahun 2025' terverifikasi. Tidak memuat topik spesifik (bandul/Millikan/parabola) — panduan pedagogi umum.",
+      "Identitas dokumen resmi BSKAP 'Edisi Revisi Tahun 2025' terverifikasi. Tidak memuat topik spesifik (bandul/Millikan/parabola) — panduan pedagogi umum. 12 Nov 2026 (G-9): pencarian teks penuh atas getaran/bandul/ayunan/osilasi → 0 hit, mengonfirmasi dokumen ini tidak dapat dijadikan bukti pendukung topik bandul.",
     review_status: "PARTIALLY_REVIEWED",
     verification_date: "2026-10-17",
     source_version_or_hash: "sha256:e1465534cb386d03",
