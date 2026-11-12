@@ -50,7 +50,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PARABOLA_CONFIG } from "../config";
-import { OPTIMAL_ANGLE_DEG, theoreticalRange, velocityComponents } from "../simulation/projectile";
+import { OPTIMAL_ANGLE_DEG, theoreticalRange } from "../simulation/projectile";
 
 /**
  * Sudut optimal teoretis untuk kondisi umum (h0 ≥ 0):
@@ -106,7 +106,7 @@ function TrialTooltip({
 
 export default function AnalysisView() {
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
-  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // aman dari mismatch hidrasi.
   const [trials] = useState<ParabolaTrial[]>(() => loadTrials());
   // Default: v₀ dari percobaan terakhir.
   const [selectedV0, setSelectedV0] = useState<number | null>(() => {

@@ -3,7 +3,7 @@
 // SPRINT F: Cognitive State, Socratic Intent & Thinking Partner
 // ============================================================
 
-import { PredictionHypothesis, StudentPrediction } from "../types";
+import { StudentPrediction } from "../types";
 import { ConceptualProgressStage, EvidenceQualityLevel, MisconceptionCode } from "../intelligence/learningTypes";
 
 /**

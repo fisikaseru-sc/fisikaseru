@@ -6,13 +6,12 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Sparkles, ChevronLeft, ChevronRight, CheckCircle2, ArrowRight,
-  HelpCircle, MessageCircle, Bot, User, Send, Download, Home,
-  FileText, Atom, Layers, Compass, BrainCircuit, FlaskConical,
-  Scale, ShieldAlert, AlertCircle, Lightbulb, Pause
+  Sparkles, ChevronRight, CheckCircle2,
+  MessageCircle, Bot, User, Send,
+  FileText, Compass, BrainCircuit, FlaskConical,
+  Lightbulb, Pause
 } from "lucide-react";
 
 const INTENT_LABELS: Record<string, string> = {
@@ -126,7 +125,7 @@ export function MillikanReflectionExperience() {
   const [recentIntents, setRecentIntents] = useState<string[]>([]);
   const [lastIntent, setLastIntent] = useState<string>("CONNECT_PATTERN");
   const [lastCognitiveState, setLastCognitiveState] = useState<string>("OBSERVING");
-  const [isProductivePause, setIsProductivePause] = useState<boolean>(false);
+  const [, setIsProductivePause] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -147,7 +146,7 @@ export function MillikanReflectionExperience() {
           setConfidenceData((prev) => ({ ...prev, currentConfidence: parsed.confidence }));
         }
       }
-    } catch (_) {}
+    } catch {}
 
     // 2. Trials
     try {
@@ -156,13 +155,13 @@ export function MillikanReflectionExperience() {
         const parsed = JSON.parse(trialsRaw);
         if (Array.isArray(parsed) && parsed.length > 0) setTrials(parsed);
       }
-    } catch (_) {}
+    } catch {}
 
     // 3. Pattern History
     try {
       const histRaw = localStorage.getItem("fisikaseru:pattern-history:millikan");
       if (histRaw) setPatternHistory(JSON.parse(histRaw));
-    } catch (_) {}
+    } catch {}
 
     // 4. Existing Reflection
     try {
@@ -180,7 +179,7 @@ export function MillikanReflectionExperience() {
         if (parsed.transfer) setTransferData(parsed.transfer);
         if (parsed.confidenceRevisit) setConfidenceData(parsed.confidenceRevisit);
       }
-    } catch (_) {}
+    } catch {}
   }, []);
 
   // Single source of truth calculation from domain physics
@@ -261,7 +260,7 @@ export function MillikanReflectionExperience() {
       };
       try {
         localStorage.setItem("fisikaseru:reflection:millikan", JSON.stringify(payload));
-      } catch (_) {}
+      } catch {}
     }
   }, [metacognition, conclusion, transferData, confidenceData]);
 

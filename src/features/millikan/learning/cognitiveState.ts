@@ -115,7 +115,7 @@ export function inferCognitiveState(context: SocraticEvaluationContext): Cogniti
   const primaryState = sortedEntries[0][1] > 0 ? sortedEntries[0][0] : "OBSERVING";
   const secondaryStates = sortedEntries
     .slice(1, 3)
-    .filter(([_, score]) => score > 1)
+    .filter(([, score]) => score > 1)
     .map(([state]) => state);
 
   // 4. Determine confidence

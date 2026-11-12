@@ -17,6 +17,10 @@ const eslintConfig = defineConfig([
     "src/tests/**",
     "src/features/millikan/learning/socraticEngine.test.ts",
     "src/features/millikan/learning/outcomes/__tests__/**",
+    // Dokumentasi & skrip pendukung di docs/ bukan kode aplikasi: skrip
+    // analisis paket uji manusia sengaja memakai CommonJS agar bisa dijalankan
+    // dengan `node` tanpa dependensi tambahan.
+    "docs/**",
   ]),
   // Compiled test output (never linted).
   globalIgnores([".test-dist/**"]),

@@ -519,30 +519,34 @@ export function ProjectileScene3D({
     onStep: stepPhysics,
     onReset: resetSim,
   });
+  // Destructure anggota jam simulasi: `play`/`pause`/`reset`/`setSpeed` adalah
+  // useCallback stabil, sedangkan `running`/`time`/`speed` adalah nilai state.
+  // Mengambil primitifnya membuat dependensi efek eksplisit & stabil.
+  const { running: clockRunning, time: clockTime, play, pause, reset, setSpeed } = clock;
 
   const trailActiveRef = useRef(false);
   useEffect(() => {
-    trailActiveRef.current = clock.running;
-  }, [clock.running]);
+    trailActiveRef.current = clockRunning;
+  }, [clockRunning]);
 
   // Sinkronisasi mode terkontrol dari parent.
   useEffect(() => {
     if (running === undefined) return;
-    if (running) clock.play();
-    else clock.pause();
-  }, [running, clock.play, clock.pause]);
+    if (running) play();
+    else pause();
+  }, [running, play, pause]);
 
   useEffect(() => {
-    clock.setSpeed(speed);
-  }, [speed, clock.setSpeed]);
+    setSpeed(speed);
+  }, [speed, setSpeed]);
 
   // Reset dari parent (counter resetKey).
   const lastResetKeyRef = useRef(resetKey);
   useEffect(() => {
     if (resetKey === lastResetKeyRef.current) return;
     lastResetKeyRef.current = resetKey;
-    clock.reset();
-  }, [resetKey, clock.reset]);
+    reset();
+  }, [resetKey, reset]);
 
   // Perubahan variabel → mulai ulang peluncuran (preview slider live).
   const paramsSignature = `${v0}|${angleDeg}|${g}|${h0}`;
@@ -550,13 +554,13 @@ export function ProjectileScene3D({
   useEffect(() => {
     if (prevSignatureRef.current === paramsSignature) return;
     prevSignatureRef.current = paramsSignature;
-    clock.reset();
-  }, [paramsSignature, clock.reset]);
+    reset();
+  }, [paramsSignature, reset]);
 
   // Terbitkan pengukuran ±10 Hz saat berjalan.
   useEffect(() => {
-    if (clock.running) publishState();
-  }, [clock.time, clock.running, publishState]);
+    if (clockRunning) publishState();
+  }, [clockTime, clockRunning, publishState]);
 
   // ── Posisi proyektil (untuk jejak) ──
   const getPoint = useCallback(

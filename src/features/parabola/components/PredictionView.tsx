@@ -25,7 +25,7 @@ const STEPS = ["Prediksi", "Eksperimen", "Analisis", "Refleksi"];
 
 export default function PredictionView() {
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
-  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // aman dari mismatch hidrasi.
   const [savedInit] = useState(() => {
     try {
       const raw = window.localStorage.getItem(STORAGE_KEYS.prediction);

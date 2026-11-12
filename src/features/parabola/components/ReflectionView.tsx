@@ -53,7 +53,7 @@ const slideIn = {
 export default function ReflectionView() {
   // ── Muat state tersimpan ──
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage
-  // aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // aman dari mismatch hidrasi.
   const [prediction] = useState<ParabolaPrediction | null>(() => {
     try {
       const rawPrediksi = window.localStorage.getItem(STORAGE_KEYS.prediction);

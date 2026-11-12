@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Mail, ArrowRight, AlertCircle, CheckCircle2, UserCheck, HelpCircle } from "lucide-react";
+import { ShieldCheck, Mail, ArrowRight, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as zod from "zod";
@@ -27,7 +27,7 @@ type ConsentFormValues = zod.infer<typeof consentSchema>;
 
 export default function ConsentPage() {
   const [step, setStep] = useState<"evaluate" | "parent-email" | "parent-sent" | "success">("evaluate");
-  const [isMinor, setIsMinor] = useState(false);
+  const [, setIsMinor] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [parentEmail, setParentEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");

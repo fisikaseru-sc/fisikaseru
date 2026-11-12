@@ -6,7 +6,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, HelpCircle, ArrowRight, CheckCircle2, FlaskConical, Lightbulb } from "lucide-react";
+import { HelpCircle, ArrowRight, FlaskConical, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

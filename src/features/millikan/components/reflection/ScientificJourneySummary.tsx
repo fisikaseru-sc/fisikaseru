@@ -8,7 +8,7 @@
 import React from "react";
 import {
   Compass, FlaskConical, Sparkles, BrainCircuit, HelpCircle,
-  CheckCircle2, Download, Home, ArrowRight
+  CheckCircle2, Download, Home
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

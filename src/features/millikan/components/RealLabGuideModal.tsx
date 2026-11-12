@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X, BookOpen, Microscope, Zap, Radio, Sparkles, Scale,
-  ChevronRight, ArrowRight, CheckCircle2, Atom, Layers
+  X, Microscope, Zap, Sparkles, Scale,
+  Atom, Layers
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

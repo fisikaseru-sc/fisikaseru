@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  Sparkles, ArrowRight, HelpCircle, CheckCircle2,
+  Sparkles, ArrowRight, HelpCircle,
   Atom, Layers, ChevronRight, Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

@@ -421,27 +421,31 @@ export function PendulumScene3D({
     onStep: stepPhysics,
     onReset: resetSim,
   });
+  // Destructure anggota jam simulasi: `play`/`pause`/`reset`/`setSpeed` adalah
+  // useCallback stabil, sedangkan `running`/`time`/`speed` adalah nilai state.
+  // Mengambil primitifnya membuat dependensi efek eksplisit & stabil.
+  const { running: clockRunning, time: clockTime, play, pause, setSpeed } = clock;
   // Sinkronisasi flag aktif jejak — penulisan ref di effect, bukan saat render
   // (aturan react-hooks/refs).
   useEffect(() => {
-    trailActiveRef.current = clock.running;
-  }, [clock.running]);
+    trailActiveRef.current = clockRunning;
+  }, [clockRunning]);
 
   // Sinkronisasi mode terkontrol dari parent.
   useEffect(() => {
     if (running === undefined) return;
-    if (running) clock.play();
-    else clock.pause();
-  }, [running, clock.play, clock.pause]);
+    if (running) play();
+    else pause();
+  }, [running, play, pause]);
 
   useEffect(() => {
-    clock.setSpeed(speed);
-  }, [speed, clock.setSpeed]);
+    setSpeed(speed);
+  }, [speed, setSpeed]);
 
   // Terbitkan pengukuran ±10 Hz saat berjalan (clock.time = snapshot 10 Hz).
   useEffect(() => {
-    if (clock.running) publishState();
-  }, [clock.time, clock.running, publishState]);
+    if (clockRunning) publishState();
+  }, [clockTime, clockRunning, publishState]);
 
   // Saat dijeda, mengubah sudut awal langsung diterapkan (mengikuti perilaku
   // modul 2D: slider sudut terlihat real-time sebelum simulasi dijalankan).

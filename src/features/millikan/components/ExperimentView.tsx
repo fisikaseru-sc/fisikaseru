@@ -166,7 +166,7 @@ export default function LabPage() {
         const p = JSON.parse(raw);
         if (typeof p?.voltageOn === "boolean") return p.voltageOn;
       }
-    } catch (_) {}
+    } catch {}
     return true;
   });
   const [showGuideModal, setShowGuideModal] = useState(false);
@@ -180,7 +180,7 @@ export default function LabPage() {
     try {
       const saved = JSON.parse(localStorage.getItem(`fisikaseru:trials:${slug}`) || "[]");
       if (Array.isArray(saved) && saved.length > 0) savedCount = saved.length;
-    } catch (_) {}
+    } catch {}
     return savedCount > 0 ? generateDropletIdentity(savedCount + 1) : generateDropletIdentity(1);
   });
   const [chargeN, setChargeN]               = useState(currentDroplet.trueN);
@@ -196,7 +196,7 @@ export default function LabPage() {
   }
   const [expSteps, setExpSteps] = useState<ExpSteps>(() => {
     const savedExp = localStorage.getItem(`fisikaseru:exp:${slug}`);
-    if (savedExp) { try { return JSON.parse(savedExp) as ExpSteps; } catch (_) {} }
+    if (savedExp) { try { return JSON.parse(savedExp) as ExpSteps; } catch {} }
     return { sprayed: false, viewSwapped: false, voltageChanged: false, xrayTriggered: false };
   });
 
@@ -204,14 +204,14 @@ export default function LabPage() {
   // "Target: x/5" dan gerbang "kumpulkan minimal 5 droplet". (Temuan audit P2.)
   const MAX_TRIALS = 5;
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
-  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // dari mismatch hidrasi.
   const [trials, setTrials] = useState<MillikanTrialRecord[]>(() => {
     const savedTrials = localStorage.getItem(`fisikaseru:trials:${slug}`);
     if (savedTrials) {
       try {
         const p: unknown = JSON.parse(savedTrials);
         if (Array.isArray(p) && p.length > 0 && p.every(isMillikanTrial)) return p;
-      } catch (_) {}
+      } catch {}
     }
     return [];
   });
@@ -225,7 +225,7 @@ export default function LabPage() {
           savedV = p.voltage;
         }
       }
-    } catch (_) {}
+    } catch {}
     return {
       voltage: savedV,
       // Radius mengikuti droplet restore (setara triggerAtomizer saat muat ulang).
@@ -240,7 +240,7 @@ export default function LabPage() {
         voltage: sliders.voltage,
         voltageOn,
       }));
-    } catch (_) {}
+    } catch {}
   }, [sliders.voltage, voltageOn, slug]);
 
   const millikanRef  = useRef<HTMLCanvasElement>(null);
@@ -332,12 +332,18 @@ export default function LabPage() {
     setTimeout(() => setIonFlash(false), 600);
   }
 
+  // Stopwatch: durasi berjalan disimpan di ref (bukan state) supaya efek hanya
+  // bergantung pada `isRunning` — kalau state ikut jadi dependensi, interval
+  // akan terus dibuat ulang tiap tick dan pengukuran jadi tidak stabil.
+  const stopwatchRef = useRef(0);
   useEffect(() => {
-    let id: ReturnType<typeof setInterval> | undefined;
-    if (isRunning) {
-      const t0 = Date.now() - stopwatch * 1000;
-      id = setInterval(() => setStopwatch((Date.now() - t0) / 1000), 30);
-    }
+    if (!isRunning) return;
+    const t0 = Date.now() - stopwatchRef.current * 1000;
+    const id = setInterval(() => {
+      const elapsed = (Date.now() - t0) / 1000;
+      stopwatchRef.current = elapsed;
+      setStopwatch(elapsed);
+    }, 30);
     return () => clearInterval(id);
   }, [isRunning]);
 
@@ -918,9 +924,7 @@ export default function LabPage() {
         {/* Step progress (center) */}
         <div className="hidden md:flex items-center gap-0.5 absolute left-1/2 -translate-x-1/2">
           {LAB_STEPS.map((step, i) => {
-            const isDone = (i < 3 && i < currentStep) || (i === 3) || (i === 4);
             const isCurrent = (i < 3 && i === currentStep);
-            const isLocked = (i < 3 && i > currentStep + 1);
             return (
               <React.Fragment key={step}>
                 <button
@@ -1169,6 +1173,7 @@ export default function LabPage() {
                   size="sm"
                   onClick={() => {
                     setIsRunning(false);
+                    stopwatchRef.current = 0;
                     setStopwatch(0);
                     dropFracRef.current = 0.5;
                     setResetCount(c => c + 1);

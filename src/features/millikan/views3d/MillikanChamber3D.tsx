@@ -39,7 +39,6 @@ const PLATE_W = 2.6;
 const PLATE_D = 1.6;
 const PLATE_T = 0.1;
 const PLATE_GAP_M = MILLIKAN_CONSTANTS.PLATE_D; // 0.005 m
-const SCALE = GAP / PLATE_GAP_M; // unit dunia per meter
 
 // ── Tipe publik ──────────────────────────────────────────────
 export interface MillikanDropletState {
@@ -283,6 +282,10 @@ export function MillikanChamber3D({
     onStep: stepPhysics,
     onReset: resetSim,
   });
+  // Destructure anggota jam simulasi: `play`/`pause`/`reset`/`setSpeed` adalah
+  // useCallback stabil, sedangkan `running`/`time`/`speed` adalah nilai state.
+  // Mengambil primitifnya membuat dependensi efek eksplisit & stabil.
+  const { running: clockRunning, time: clockTime, play, pause, setSpeed } = clock;
 
   const fieldActiveRef = useRef(false);
   // Sinkronisasi flag visual garis medan — penulisan ref dipindah ke effect
@@ -293,17 +296,17 @@ export function MillikanChamber3D({
 
   useEffect(() => {
     if (running === undefined) return;
-    if (running) clock.play();
-    else clock.pause();
-  }, [running, clock.play, clock.pause]);
+    if (running) play();
+    else pause();
+  }, [running, play, pause]);
 
   useEffect(() => {
-    clock.setSpeed(speed);
-  }, [speed, clock.setSpeed]);
+    setSpeed(speed);
+  }, [speed, setSpeed]);
 
   useEffect(() => {
-    if (clock.running) publishState();
-  }, [clock.time, clock.running, publishState]);
+    if (clockRunning) publishState();
+  }, [clockTime, clockRunning, publishState]);
 
   // ── Geometri kamar ──
   // Pusat grup diangkat agar pelat bawah menempel lantai y=0.

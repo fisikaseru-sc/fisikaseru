@@ -112,7 +112,7 @@ export default function ExperimentView() {
 
   // ── Data percobaan ──
   // Komponen dimuat via dynamic({ ssr: false }) — lazy init localStorage aman
-  // dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // dari mismatch hidrasi.
   const [trials, setTrials] = useState<ParabolaTrial[]>(() => loadTrials());
   const [hint, setHint] = useState<string | null>(null);
   const noiseRef = useRef<GaussianNoise | null>(null);

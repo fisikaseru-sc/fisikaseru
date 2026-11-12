@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Compass, HelpCircle, ArrowRight, ChevronDown, ChevronUp, Atom, Zap, ShieldAlert, Sparkles } from "lucide-react";
+import { Compass, ArrowRight, ChevronDown, ChevronUp, Atom, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

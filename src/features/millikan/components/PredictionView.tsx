@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Sparkles, HelpCircle, ArrowRight, CheckCircle2, ShieldQuestion } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StudentPrediction, PredictionHypothesis } from "../types";
@@ -38,7 +37,7 @@ const HYPOTHESIS_OPTIONS: { id: PredictionHypothesis; label: string; desc: strin
 
 export function PredictionView({ slug, onComplete }: PredictionViewProps) {
   // Komponen dipakai di dalam ExperimentView (dynamic ssr:false) — lazy init
-  // localStorage aman dari mismatch hidrasi. (Pembayaran debt lint: set-state-in-effect.)
+  // localStorage aman dari mismatch hidrasi.
   const [savedInit] = useState<StudentPrediction | null>(() => {
     try {
       const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
@@ -203,12 +202,12 @@ export function CompactPredictionCard({
   onExpand?: () => void;
 }) {
   // Dipakai di dalam ExperimentView (dynamic ssr:false) — lazy init aman.
-  // (Pembayaran debt lint: set-state-in-effect.)
+  //
   const [prediction] = useState<StudentPrediction | null>(() => {
     try {
       const saved = localStorage.getItem(`fisikaseru:prediction:${slug}`);
       return saved ? (JSON.parse(saved) as StudentPrediction) : null;
-    } catch (_) {
+    } catch {
       return null;
     }
   });

@@ -88,7 +88,7 @@ export default function ReflectionPage() {
     if (predRaw) {
       try {
         setSavedPrediction(JSON.parse(predRaw));
-      } catch (_) {}
+      } catch {}
     }
 
     const saved = localStorage.getItem(`fisikaseru:trials:${moduleSlug}`);
@@ -96,7 +96,7 @@ export default function ReflectionPage() {
       try {
         const p = JSON.parse(saved);
         if (Array.isArray(p) && p.length > 0) { setTrials(p); return; }
-      } catch (_) {}
+      } catch {}
     }
     // Fallback demo — DITANDAI agar siswa/guru tidak mengira ini hasil eksperimen sendiri.
     setIsDemoData(true);
@@ -482,7 +482,6 @@ export default function ReflectionPage() {
               moduleSlug={moduleSlug}
               trials={trials}
               prediction={savedPrediction}
-              writtenReflections={writtenReflections}
               setWrittenReflections={setWrittenReflections}
               onBack={() => setStep("confront")}
               onNext={() => setStep("reconstruct")}
@@ -626,9 +625,9 @@ function ResultRow({ label, value, status }: { label: string; value: string; sta
 }
 
 // ─── Dialogue Section ─────────────────────────────────────────────────────────
-function DialogueSection({ moduleSlug, trials, prediction, writtenReflections, setWrittenReflections, onBack, onNext }: {
+function DialogueSection({ moduleSlug, trials, prediction, setWrittenReflections, onBack, onNext }: {
   moduleSlug: string; trials: unknown[]; prediction?: { hypothesis: string; reasoning: string; confidence: number; submittedAt?: string } | null;
-  writtenReflections: { q1: string; q2: string; q3: string; final: string }; setWrittenReflections: React.Dispatch<React.SetStateAction<{ q1: string; q2: string; q3: string; final: string }>>;
+  setWrittenReflections: React.Dispatch<React.SetStateAction<{ q1: string; q2: string; q3: string; final: string }>>;
   onBack: () => void; onNext: () => void;
 }) {
   const questions = ConfigRegistry[moduleSlug]?.questions || [];

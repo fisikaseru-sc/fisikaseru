@@ -48,7 +48,7 @@ export function trackLearningEvent<T extends Record<string, unknown>>(
   listeners.forEach((listener) => {
     try {
       listener(learningEvent as LearningEvent);
-    } catch (_) {}
+    } catch {}
   });
 
   // 2. Persist to local queue (max 100 events)
@@ -58,7 +58,7 @@ export function trackLearningEvent<T extends Record<string, unknown>>(
       const existing: LearningEvent[] = raw ? JSON.parse(raw) : [];
       const updated = [...existing, learningEvent].slice(-MAX_EVENTS_STORED);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch (_) {}
+    } catch {}
   }
 }
 
@@ -80,7 +80,7 @@ export function getStoredLearningEvents(): LearningEvent[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
-  } catch (_) {
+  } catch {
     return [];
   }
 }

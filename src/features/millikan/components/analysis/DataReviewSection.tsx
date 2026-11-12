@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Eye, HelpCircle, ArrowRight, Activity, Gauge, Clock, Sparkles } from "lucide-react";
+import { Eye, HelpCircle, ArrowRight, Activity, Gauge, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 

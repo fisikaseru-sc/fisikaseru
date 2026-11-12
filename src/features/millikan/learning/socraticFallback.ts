@@ -3,7 +3,7 @@
 // SPRINT F: High-Quality Deterministic Socratic Dialogue Library
 // ============================================================
 
-import { SocraticIntent, SocraticResponseContract, SocraticStrategy, SocraticEvaluationContext } from "./types";
+import { SocraticResponseContract, SocraticStrategy, SocraticEvaluationContext } from "./types";
 
 /**
  * Deterministic fallback generator for all 12 Socratic pedagogical intents.
@@ -16,7 +16,6 @@ export function generateSocraticFallback(
   context: SocraticEvaluationContext
 ): SocraticResponseContract {
   const intent = strategy.primaryIntent;
-  const userText = context.userResponse.trim();
   const cand = context.candidateUnit ? context.candidateUnit.toFixed(2) : "1.60";
   const droplets = context.trialCount || 5;
 
